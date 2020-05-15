@@ -3,7 +3,10 @@
 #include <fmod.h>
 #include "resource.h"
 #include "Source.h"
+#include "Object_Move.h"
 #include "Object_Player.h"
+#include "Camera.h"
+#include "Map_Village.h"
 
 #pragma comment(lib, "msimg32.lib")
 #pragma comment(lib,"fmodL_vc.lib")
@@ -54,7 +57,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 }
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
-	static HDC hdc, memdc, bitdc, alphadc;
+	static HDC hdc, memdc, gamedc, bitdc, alphadc;
 	PAINTSTRUCT ps;
 
 	//더블 버퍼링 비트맵
@@ -66,6 +69,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 	//플레이어 관련 객체
 	static Warrior* warrior;
 
+	//카메라 관련 객체
+	static Camera* camera;
+
+	//맵 관련 객체
+	static Map_Village* map_v;
+
 	switch (iMsg)
 	{
 	case WM_CREATE:
@@ -73,17 +82,26 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 
 		hdc = GetDC(hwnd);
 		memdc = CreateCompatibleDC(hdc);
+		gamedc = CreateCompatibleDC(hdc);
 		bitdc = CreateCompatibleDC(hdc);
 		alphadc = CreateCompatibleDC(hdc);
 		db_bitmap = CreateCompatibleBitmap(hdc, c_rect.right, c_rect.bottom);
 
-		ReleaseDC(hwnd, hdc);
-
 		//플레이어 관련
 		warrior = Create_Class<Warrior>();		
-		Reset_Warrior(*warrior, c_rect);
+		Reset_Warrior(*warrior);
 
-		SetTimer(hwnd, Player_Move_Timer, 10, NULL);
+		//카메라 관련
+		camera = Create_Class<Camera>();
+		Reset_Camera(*camera, c_rect);
+
+		//맵 관련
+		map_v = Create_Class<Map_Village>();
+		Reset_Village_Map(hdc, *map_v);
+
+		SetTimer(hwnd, Player_Move_Timer, 30, NULL);
+
+		ReleaseDC(hwnd, hdc);
 
 		break;
 	case WM_GETMINMAXINFO:
@@ -97,7 +115,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 		switch (wParam)
 		{
 		case Player_Move_Timer:
-			Move_Player(*warrior, c_rect);
+			Move_Player<Map_Village>(*warrior, *map_v);
+			Move_Camera(*camera, *warrior, *map_v, c_rect);
 			break;
 		default:
 			break;
@@ -110,7 +129,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 
 		FillRect(memdc, &c_rect, WHITE_BRUSH);
 
-		Paint_Warrior(memdc, bitdc, *warrior);
+		Paint_Village_Map(gamedc, bitdc, *warrior, *map_v);
+
+		BitBlt(memdc, 0, 0, c_rect.right, c_rect.bottom, gamedc, camera->Get_Cam_Left(), camera->Get_Cam_Top(), SRCCOPY);
 
 		BitBlt(hdc, 0, 0, c_rect.right, c_rect.bottom, memdc, 0, 0, SRCCOPY);
 		SelectObject(memdc, db_oldbitmap);

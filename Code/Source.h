@@ -17,7 +17,11 @@ void Delete_Class(T** t) {
 }
 
 enum Object_Direction {
-	Up, UpRight, Right, DownRight, Down, DownLeft, Left, UpLeft
+	Right, UpRight, Up, UpLeft, Left, DownLeft, Down, DownRight
+};
+
+enum Object_Status {
+	Stop, Move, Run
 };
 
 enum Timer_Name {

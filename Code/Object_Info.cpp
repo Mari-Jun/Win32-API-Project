@@ -30,7 +30,7 @@ void Object_Info::Set_Speed(const int& speed) {
 
 void Reset_Object_Info(Object_Info& o_info, const int& hp, const int& defence) {
 	o_info.Set_Hp(hp);
-	o_info.Set_Speed(4);
+	o_info.Set_Speed(8);
 	o_info.Set_Defence(defence);
 }
 

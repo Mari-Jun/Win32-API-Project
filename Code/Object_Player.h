@@ -4,44 +4,44 @@
 
 class Player_Info;
 
-class Player : public Object {
+class Player : public Move_Object {
 public:
 	~Player();
 
-	const int& Get_Direction() const;
+	const int& Get_Status() const;
 	const Player_Info& Get_Player_Info_Const() const;
 	Player_Info& Get_Player_Info() const;
 
-	void Set_Direction(const int& direction);
+	void Set_Status(const int& status);
 	void Create_Player_Info();
 
-	void Move_Player_Up(RECT c_rect, bool diagonal);
-	void Move_Player_Down(RECT c_rect, bool diagonal);
-	void Move_Player_Left(RECT c_rect, bool diagonal);
-	void Move_Player_Right(RECT c_rect, bool diagonal);
-
-
 private:
-	int direction;
+	int status;
 	Player_Info* p_info;
 };
 
-void Reset_Player(Player& player, RECT c_rect, const int& width, const int& height);
-void Move_Player(Player& player, RECT c_rect);
+void Reset_Player(Player& player, const int& width, const int& height);
+
+//비트맵을 그냥 Player에 선언할지 고민좀 해보자.
 
 class Warrior : public Player {
 public:
 	~Warrior();
 
-	const HBITMAP Get_Stop_Motion(int direction) const;
+	const HBITMAP Get_Stop_Motion(const int& direction) const;
 	const BITMAP Get_Stop_Motion_Size() const;
+	const HBITMAP Get_Move_Motion(const int& direction, const int& index);
+	const BITMAP Get_Move_Motion_Size() const;
 
 	void Set_Stop_Motion();
+	void Set_Move_Motion();
 
 private:
 	HBITMAP stop_motion_bitmap[8];
 	BITMAP stop_motion_size;
+	HBITMAP move_motion_bitmap[8][8];
+	BITMAP move_motion_size;
 };
 
-void Reset_Warrior(Warrior& warrior, RECT c_rect);
+void Reset_Warrior(Warrior& warrior);
 void Paint_Warrior(HDC hdc, HDC bitdc, Warrior& warrior);
