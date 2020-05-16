@@ -51,17 +51,29 @@ private:
 
 void Reset_Non_Move_Object(Non_Move_Object& nm_object, const int& x_pos, const int& y_pos, HBITMAP bitmap);
 
+
+class Hitting_Range;
+
 class Move_Object : public Object {
 public:
+	~Move_Object();
+
+	const int& Get_Status() const;
 	const int& Get_Direction() const;
 	const int& Get_Ani_Count() const;
+	const Hitting_Range& Get_Hit_Range_Const(const int& index) const;
+	Hitting_Range& Get_Hit_Range(const int& index) const;
 
+	void Set_Status(const int& status);
 	void Set_Direction(const int& direction);
 	void Set_Ani_Count(const int& ani_count);
+	void Set_Hit_Range(const int& index, const RECT hit_rect, const int& owner);
 
 private:
+	int status;
 	int direction;
 	int animaition_count;
+	Hitting_Range* hit_range[20];
 };
 
 void Reset_Move_Object(Move_Object& m_object, const int& x_pos, const int& y_pos, const int& width, const int& height);

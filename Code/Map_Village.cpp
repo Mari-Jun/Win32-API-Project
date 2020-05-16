@@ -5,6 +5,7 @@
 #include "Object_Main.h"
 #include "Object_Player.h"
 #include "Object_Npc.h"
+#include "Object_Enemy.h"
 
 Map_Village::~Map_Village() {
 	for (int index = 0; index < 10; index++) 
@@ -17,8 +18,20 @@ const Non_Move_Object& Map_Village::Get_NM_Object(const int& index) const {
 	return *nm_object[index];
 }
 
-const Non_Move_Npc& Map_Village::Get_NM_Npc(const int& index) const {
+const Non_Move_Npc& Map_Village::Get_NM_Npc_Const(const int& index) const {
 	return *nm_npc[index];
+}
+
+Non_Move_Npc& Map_Village::Get_NM_Npc(const int& index) const {
+	return *nm_npc[index];
+}
+
+const Practice_Enemy& Map_Village::Get_P_Enemy_Const() const {
+	return *p_enemy;
+}
+
+Practice_Enemy& Map_Village::Get_P_Enemy() const {
+	return *p_enemy;
 }
 
 const HBITMAP Map_Village::Get_Texture(const int& index) const {
@@ -49,7 +62,17 @@ void Map_Village::Set_NM_Object() {
 }
 
 void Map_Village::Set_NM_Npc() {
-	
+	nm_npc[Npc_Name::Elder] = Create_Class<Non_Move_Npc>();
+	Reset_Non_Move_Npc(*nm_npc[Npc_Name::Elder], 240, 1140, (HBITMAP)LoadImage(NULL, _T(".\\BitMap\\Npc\\Non_Move\\Elder.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
+	nm_npc[Npc_Name::Elder]->Set_Crash_Height(30);
+}
+
+void Map_Village::Set_P_Enemy() {
+	p_enemy = Create_Class<Practice_Enemy>();
+	p_enemy->Set_Stop_Motion();
+	Reset_Move_Object(*p_enemy, 1100, 400, p_enemy->Get_Bitmap_Size().bmWidth, p_enemy->Get_Bitmap_Size().bmHeight);
+	p_enemy->Set_Crash_Width(40);
+	p_enemy->Set_Crash_Height(40);
 }
 
 void Map_Village::Set_Texture() {
@@ -63,6 +86,7 @@ void Reset_Village_Map(HDC hdc, Map_Village& map_v) {
 	map_v.Set_Map_Size_Bit(hdc);
 	map_v.Set_NM_Object();
 	map_v.Set_NM_Npc();
+	map_v.Set_P_Enemy();
 	map_v.Set_Texture();
 }
 
@@ -74,7 +98,6 @@ void Paint_Village_Map_Texture(HDC hdc, HDC bitdc, Map_Village& map_v) {
 			BitBlt(hdc, x, y, 80, 80, bitdc, 0, 0, SRCCOPY);
 		}
 	}
-	
 
 	SelectObject(bitdc, map_v.Get_Texture(VT::Load));
 	for (int x = 0; x < map_v.Get_Map_Rect().right; x += 80) {
@@ -118,23 +141,25 @@ void Paint_Village_Map(HDC hdc, HDC bitdc, Warrior& warrior, Map_Village& map_v)
 	Paint_Village_Map_Texture(hdc, bitdc, map_v);
 
 	int y_pos = 0;
-	for (y_pos = 0; y_pos < warrior.Get_YPos() + warrior.Get_Height(); y_pos += 10) {
+	for (y_pos = 0; y_pos <= map_v.Get_Map_Rect().bottom; y_pos++) {
 		for (int index = 0; index < 10; index++) {
 			if (&map_v.Get_NM_Object(index) != NULL && y_pos == map_v.Get_NM_Object(index).Get_YPos() + map_v.Get_NM_Object(index).Get_Height()) {
 				SelectObject(bitdc, map_v.Get_NM_Object(index).Get_Object_Bitmap());
 				TransparentBlt(hdc, map_v.Get_NM_Object(index).Get_XPos(), map_v.Get_NM_Object(index).Get_YPos(), map_v.Get_NM_Object(index).Get_Width(), map_v.Get_NM_Object(index).Get_Height(), bitdc, 0, 0, map_v.Get_NM_Object(index).Get_Width(), map_v.Get_NM_Object(index).Get_Height(), RGB(255, 255, 255));
 			}
 		}
+		for (int index = 0; index < 4; index++) {
+			if (&map_v.Get_NM_Npc_Const(index) != NULL && y_pos == map_v.Get_NM_Npc_Const(index).Get_YPos() + map_v.Get_NM_Npc_Const(index).Get_Height()) {
+				SelectObject(bitdc, map_v.Get_NM_Npc_Const(index).Get_Object_Bitmap());
+				TransparentBlt(hdc, map_v.Get_NM_Npc_Const(index).Get_XPos(), map_v.Get_NM_Npc_Const(index).Get_YPos(), map_v.Get_NM_Npc_Const(index).Get_Width(), map_v.Get_NM_Npc_Const(index).Get_Height(), bitdc, 0, 0, map_v.Get_NM_Npc_Const(index).Get_Width(), map_v.Get_NM_Npc_Const(index).Get_Height(), RGB(255, 255, 255));
+			}
+		}
+		if (&map_v.Get_P_Enemy_Const() != NULL && y_pos == map_v.Get_P_Enemy_Const().Get_YPos() + map_v.Get_P_Enemy_Const().Get_Height()) {
+			SelectObject(bitdc, map_v.Get_P_Enemy_Const().Get_Stop_Motion_Bitmap(map_v.Get_P_Enemy_Const().Get_Ani_Count()));
+			TransparentBlt(hdc, map_v.Get_P_Enemy_Const().Get_XPos() - 20, map_v.Get_P_Enemy_Const().Get_YPos(), map_v.Get_P_Enemy_Const().Get_Width(), map_v.Get_P_Enemy_Const().Get_Height(), bitdc, 0, 0, map_v.Get_P_Enemy_Const().Get_Width(), map_v.Get_P_Enemy_Const().Get_Height(), RGB(255, 255, 255));
+		}
+
+		if(y_pos == warrior.Get_YPos()+warrior.Get_Height())
+			Paint_Warrior(hdc, bitdc, warrior);
 	}
-
-	Paint_Warrior(hdc, bitdc, warrior);
-
-	for (y_pos; y_pos <= map_v.Get_Map_Rect().bottom; y_pos += 10) {
-		for (int index = 0; index < 10; index++) {
-			if (&map_v.Get_NM_Object(index) != NULL && y_pos == map_v.Get_NM_Object(index).Get_YPos() + map_v.Get_NM_Object(index).Get_Height()) {
-				SelectObject(bitdc, map_v.Get_NM_Object(index).Get_Object_Bitmap());
-				TransparentBlt(hdc, map_v.Get_NM_Object(index).Get_XPos(), map_v.Get_NM_Object(index).Get_YPos(), map_v.Get_NM_Object(index).Get_Width(), map_v.Get_NM_Object(index).Get_Height(), bitdc, 0, 0, map_v.Get_NM_Object(index).Get_Width(), map_v.Get_NM_Object(index).Get_Height(), RGB(255, 255, 255));
-			}
-		}
-	}	
 }

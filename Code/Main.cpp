@@ -3,8 +3,9 @@
 #include <fmod.h>
 #include "resource.h"
 #include "Source.h"
-#include "Object_Move.h"
+#include "Object_Command.h"
 #include "Object_Player.h"
+#include "Object_Player_Interaction.h"
 #include "Camera.h"
 #include "Map_Village.h"
 
@@ -12,7 +13,7 @@
 #pragma comment(lib,"fmodL_vc.lib")
 
 static const int WindowX = 1280 + GetSystemMetrics(SM_CXFRAME);
-static const int WindowY = 720 + GetSystemMetrics(SM_CYFRAME) + GetSystemMetrics(SM_CYCAPTION) + GetSystemMetrics(SM_CYMENU);
+static const int WindowY = 720 + GetSystemMetrics(SM_CYFRAME) + GetSystemMetrics(SM_CYCAPTION);
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam);
 
@@ -43,7 +44,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 		WindowX,
 		WindowY,
 		NULL,
-		LoadMenu(hInstance,MAKEINTRESOURCE(IDR_MENU)),
+		NULL,
 		hInstance,
 		NULL
 	);
@@ -57,11 +58,11 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 }
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
-	static HDC hdc, memdc, gamedc, bitdc, alphadc;
+	static HDC hdc, memdc, gamedc, bitdc, interfacedc, alphadc;
 	PAINTSTRUCT ps;
 
-	//더블 버퍼링 비트맵
-	static HBITMAP db_bitmap, db_oldbitmap;
+	//비트맵
+	static HBITMAP db_bitmap, db_alpha;
 
 	//클라이언트 사각형
 	static RECT c_rect;
@@ -71,6 +72,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 
 	//카메라 관련 객체
 	static Camera* camera;
+
+	//메세지 박스 관련 객체
+	static Interaction_Box* it_box;
 
 	//맵 관련 객체
 	static Map_Village* map_v;
@@ -86,14 +90,19 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 		bitdc = CreateCompatibleDC(hdc);
 		alphadc = CreateCompatibleDC(hdc);
 		db_bitmap = CreateCompatibleBitmap(hdc, c_rect.right, c_rect.bottom);
+		db_alpha = CreateCompatibleBitmap(hdc, c_rect.right, c_rect.bottom);
 
 		//플레이어 관련
-		warrior = Create_Class<Warrior>();		
+		warrior = Create_Class<Warrior>();
 		Reset_Warrior(*warrior);
 
 		//카메라 관련
 		camera = Create_Class<Camera>();
 		Reset_Camera(*camera, c_rect);
+
+		//인터페이스 관련
+		it_box = Create_Class<Interaction_Box>();
+		Reset_Interaction_Box(*it_box, c_rect);
 
 		//맵 관련
 		map_v = Create_Class<Map_Village>();
@@ -111,12 +120,24 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 		((MINMAXINFO*)lParam)->ptMaxTrackSize.x = WindowX;
 		((MINMAXINFO*)lParam)->ptMaxTrackSize.y = WindowY;
 		break;
+	case WM_CHAR:
+		switch (wParam)
+		{
+		case Command_Key::Co_Interaction:
+			Interaction_Command(*warrior, *map_v, *it_box);
+			break;
+		default:
+			break;
+		}
+		break;
 	case WM_TIMER:
 		switch (wParam)
 		{
 		case Player_Move_Timer:
-			Move_Player<Map_Village>(*warrior, *map_v);
+			Command_Player<Warrior, Map_Village>(*warrior, *map_v);
 			Move_Camera(*camera, *warrior, *map_v, c_rect);
+			break;
+		case Player_Attack_Timer:
 			break;
 		default:
 			break;
@@ -125,7 +146,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 		break;
 	case WM_PAINT:
 		hdc = BeginPaint(hwnd, &ps);
-		db_oldbitmap = (HBITMAP)SelectObject(memdc, db_bitmap);
+		SelectObject(memdc, db_bitmap);
+		SelectObject(alphadc, db_alpha);
 
 		FillRect(memdc, &c_rect, WHITE_BRUSH);
 
@@ -133,8 +155,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 
 		BitBlt(memdc, 0, 0, c_rect.right, c_rect.bottom, gamedc, camera->Get_Cam_Left(), camera->Get_Cam_Top(), SRCCOPY);
 
+		if (Paint_Interaction_Box(memdc, alphadc, bitdc, c_rect, *warrior, *it_box))
+			Show_Npc_Interaction<Map_Village>(memdc, *map_v, *it_box);
+
 		BitBlt(hdc, 0, 0, c_rect.right, c_rect.bottom, memdc, 0, 0, SRCCOPY);
-		SelectObject(memdc, db_oldbitmap);
 		EndPaint(hwnd, &ps);
 		break;
 	case WM_DESTROY:

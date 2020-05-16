@@ -8,15 +8,12 @@ class Player : public Move_Object {
 public:
 	~Player();
 
-	const int& Get_Status() const;
 	const Player_Info& Get_Player_Info_Const() const;
 	Player_Info& Get_Player_Info() const;
 
-	void Set_Status(const int& status);
 	void Create_Player_Info();
 
 private:
-	int status;
 	Player_Info* p_info;
 };
 
@@ -28,19 +25,20 @@ class Warrior : public Player {
 public:
 	~Warrior();
 
+	const BITMAP Get_Motion_Size() const;
 	const HBITMAP Get_Stop_Motion(const int& direction) const;
-	const BITMAP Get_Stop_Motion_Size() const;
 	const HBITMAP Get_Move_Motion(const int& direction, const int& index);
-	const BITMAP Get_Move_Motion_Size() const;
+	const HBITMAP Get_Attack_Motion(const int& direction, const int& index) const;
 
 	void Set_Stop_Motion();
 	void Set_Move_Motion();
+	void Set_Attack_Motion();
 
 private:
+	BITMAP motion_size;
 	HBITMAP stop_motion_bitmap[8];
-	BITMAP stop_motion_size;
 	HBITMAP move_motion_bitmap[8][8];
-	BITMAP move_motion_size;
+	HBITMAP attack_motion_bitmap[8][10];
 };
 
 void Reset_Warrior(Warrior& warrior);

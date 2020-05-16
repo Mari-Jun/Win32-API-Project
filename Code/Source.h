@@ -16,14 +16,26 @@ void Delete_Class(T** t) {
 	}
 }
 
+enum Player_Select {
+	Class_Warrior
+};
+
+enum Map_Select {
+	Village1
+};
+
+enum Command_Key {
+	Co_Interaction = 'f'
+};
+
 enum Object_Direction {
 	Right, UpRight, Up, UpLeft, Left, DownLeft, Down, DownRight
 };
 
-enum Object_Status {
-	Stop, Move, Run
+enum Player_Status {
+	Stop, Move, Run, Interaction, Attack
 };
 
 enum Timer_Name {
-	Player_Move_Timer = 40
+	Player_Move_Timer = 10, Player_Attack_Timer
 };

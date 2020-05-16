@@ -4,6 +4,7 @@
 #include "Object_Info.h"
 #include "Map_Main.h"
 #include "Map_Village.h"
+#include "Hitting_Range.h"
 
 const int& Object::Get_XPos() const {
 	return x_pos;
@@ -99,12 +100,33 @@ void Reset_Non_Move_Object(Non_Move_Object& nm_object, const int& x_pos, const i
 	Reset_Object(nm_object, x_pos, y_pos, nm_object.Get_Object_Image_Size().bmWidth, nm_object.Get_Object_Image_Size().bmHeight);
 }
 
+Move_Object::~Move_Object() {
+	for (int index = 0; index < 20; index++)
+		Delete_Class<Hitting_Range>(&hit_range[index]);
+}
+
+const int& Move_Object::Get_Status() const {
+	return status;
+}
+
 const int& Move_Object::Get_Direction() const {
 	return direction;
 }
 
 const int& Move_Object::Get_Ani_Count() const {
 	return animaition_count;
+}
+
+const Hitting_Range& Move_Object::Get_Hit_Range_Const(const int& index) const {
+	return *hit_range[index];
+}
+
+Hitting_Range& Move_Object::Get_Hit_Range(const int& index) const {
+	return *hit_range[index];
+}
+
+void Move_Object::Set_Status(const int& status) {
+	this->status = status;
 }
 
 void Move_Object::Set_Direction(const int& direction) {
@@ -115,8 +137,14 @@ void Move_Object::Set_Ani_Count(const int& ani_count) {
 	animaition_count = ani_count;
 }
 
+void Move_Object::Set_Hit_Range(const int& index, const RECT hit_rect, const int& owner) {
+	hit_range[index] = Create_Class<Hitting_Range>();
+	Reset_Hitting_Range(*hit_range[index], hit_rect, owner);
+}
+
 void Reset_Move_Object(Move_Object& m_object, const int& x_pos, const int& y_pos, const int& width, const int& height) {
 	Reset_Object(m_object, x_pos, y_pos, width, height);
+	m_object.Set_Status(Player_Status::Stop);
 	m_object.Set_Direction(Object_Direction::Down);
 	m_object.Set_Ani_Count(0);
 }

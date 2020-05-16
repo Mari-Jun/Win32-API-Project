@@ -8,6 +8,10 @@ const int& Object_Info::Get_Hp() const {
 	return hp;
 }
 
+const int& Object_Info::Get_Attack() const {
+	return attack;
+}
+
 const int& Object_Info::Get_Defence() const {
 	return defence;
 }
@@ -20,6 +24,10 @@ void Object_Info::Set_Hp(const int& hp) {
 	this->hp = hp;
 }
 
+void Object_Info::Set_Attack(const int& attack) {
+	this->attack = attack;
+}
+
 void Object_Info::Set_Defence(const int& defence) {
 	this->defence = defence;
 }
@@ -28,10 +36,11 @@ void Object_Info::Set_Speed(const int& speed) {
 	this->speed = speed;
 }
 
-void Reset_Object_Info(Object_Info& o_info, const int& hp, const int& defence) {
+void Reset_Object_Info(Object_Info& o_info, const int& hp, const int& attack, const int& defence, const int& speed) {
 	o_info.Set_Hp(hp);
-	o_info.Set_Speed(8);
+	o_info.Set_Attack(attack);
 	o_info.Set_Defence(defence);
+	o_info.Set_Speed(speed);
 }
 
 
@@ -61,8 +70,8 @@ void Player_Info::Set_No_Damage(const bool& damage) {
 	no_damage = damage;
 }
 
-void Reset_Player_Info(Player_Info& p_info, const int& hp, const int& mp, const int& defence) {
-	Reset_Object_Info(p_info, hp, defence);
+void Reset_Player_Info(Player_Info& p_info, const int& hp, const int& mp, const int& attack, const int& defence, const int& speed) {
+	Reset_Object_Info(p_info, hp, attack, defence, speed);
 	p_info.Set_Level(1);
 	p_info.Set_Mp(mp);
 	p_info.Set_No_Damage(false);

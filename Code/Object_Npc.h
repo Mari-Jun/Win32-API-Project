@@ -1,6 +1,8 @@
 #pragma once
 #include "Object_Main.h"
 
+class Player;
+
 enum Npc_Name {
 	Elder
 };
@@ -19,4 +21,5 @@ private:
 };
 
 void Reset_Non_Move_Npc(Non_Move_Npc& nm_npc, const int& x_pos, const int& y_pos, HBITMAP bitmap);
+
 

@@ -4,7 +4,8 @@
 #include "Source.h"
 #include "Object_Player.h"
 #include "Object_Info.h"
-#include "Map_Village.h"
+
+class Map_Village;
 
 template <typename T_Map> 
 void Move_Player(Player& player, const T_Map& map) {
@@ -18,13 +19,14 @@ void Move_Player(Player& player, const T_Map& map) {
 
 
 	//이러면 안되는데..
-	if (KeyUp || KeyDown || KeyLeft || KeyRight) {
-		player.Set_Ani_Count(player.Get_Ani_Count() + 1);
-		player.Set_Status(Object_Status::Move);
-	}
-	else {
-		player.Set_Ani_Count(0);
-		player.Set_Status(Object_Status::Stop);
+	if (player.Get_Status() != Player_Status::Attack) {
+		if (KeyUp || KeyDown || KeyLeft || KeyRight) {
+			player.Set_Status(Player_Status::Move);
+		}
+		else {
+			player.Set_Ani_Count(0);
+			player.Set_Status(Player_Status::Stop);
+		}
 	}
 
 	if (KeyUp && KeyRight) {
@@ -65,25 +67,18 @@ void Move_Player(Player& player, const T_Map& map) {
 	}
 }
 
-template <typename T_Map>
-void Move_Object_Check(Move_Object& object, const T_Map& map, const int& move_x, const int& move_y) {
+template <typename M_Ob, typename T_Map>
+void Move_Object_Check(M_Ob& object, const T_Map& map, const int& move_x, const int& move_y) {
 	if (!Crash_Check_Map(object, map, move_x, move_y))
-		return;
-
-	if (!Crash_Check_Village_Map(object, map, move_x, move_y))
 		return;
 
 	object.Set_XPos(object.Get_XPos() + move_x);
 	object.Set_YPos(object.Get_YPos() + move_y);
 }
 
-template <typename T_Map>
-bool Crash_Check_Map(Move_Object& object, const T_Map& map, const int& move_x, const int& move_y) {
-	if (object.Get_XPos() + move_x >= map.Get_Map_Rect().left && object.Get_XPos() + object.Get_Width() + move_x <= map.Get_Map_Rect().right &&
-		object.Get_YPos() + move_y >= map.Get_Map_Rect().top && object.Get_YPos() + object.Get_Height() + move_y <= map.Get_Map_Rect().bottom)
-		return true;
-	return false;
-}
+template <>
+void Move_Object_Check(Player& m_object, const Map_Village& map_v, const int& move_x, const int& move_y);
 
-bool Crash_Check_Object(Move_Object& object, const Object& obj, const int& move_x, const int& move_y);
-bool Crash_Check_Village_Map(Move_Object& object, const Map_Village& map_v, const int& move_x, const int& move_y);
+bool Crash_Check_Map(const Move_Object& m_object, const Map& map, const int& move_x, const int& move_y);
+bool Crash_Check_Object(const Move_Object& m_object, const Object& obj, const int& move_x, const int& move_y);
+bool Crash_Check_Village_Map(const Move_Object& object, const Map_Village& map_v, const int& move_x, const int& move_y);
