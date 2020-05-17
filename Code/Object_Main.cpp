@@ -102,7 +102,7 @@ void Reset_Non_Move_Object(Non_Move_Object& nm_object, const int& x_pos, const i
 
 Move_Object::~Move_Object() {
 	for (int index = 0; index < 20; index++)
-		Delete_Class<Hitting_Range>(&hit_range[index]);
+		Delete_Class<Hitting_Range_Polygon>(&hit_range[index]);
 }
 
 const int& Move_Object::Get_Status() const {
@@ -117,11 +117,11 @@ const int& Move_Object::Get_Ani_Count() const {
 	return animaition_count;
 }
 
-const Hitting_Range& Move_Object::Get_Hit_Range_Const(const int& index) const {
+const Hitting_Range_Polygon& Move_Object::Get_Hit_Range_P_Const(const int& index) const {
 	return *hit_range[index];
 }
 
-Hitting_Range& Move_Object::Get_Hit_Range(const int& index) const {
+Hitting_Range_Polygon& Move_Object::Get_Hit_Range_P(const int& index) const {
 	return *hit_range[index];
 }
 
@@ -137,9 +137,13 @@ void Move_Object::Set_Ani_Count(const int& ani_count) {
 	animaition_count = ani_count;
 }
 
-void Move_Object::Set_Hit_Range(const int& index, const RECT hit_rect, const int& owner) {
-	hit_range[index] = Create_Class<Hitting_Range>();
-	Reset_Hitting_Range(*hit_range[index], hit_rect, owner);
+void Move_Object::Set_Hit_Range_Polygon(const int& index, const int& owner) {
+	hit_range[index] = Create_Class<Hitting_Range_Polygon>();
+	Reset_Hitting_Range(*hit_range[index], owner);
+}
+
+void Move_Object::Set_Hit_Range_Circle(const int& index, const int& owner) {
+
 }
 
 void Reset_Move_Object(Move_Object& m_object, const int& x_pos, const int& y_pos, const int& width, const int& height) {

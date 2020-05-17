@@ -1,23 +1,29 @@
 #include <Windows.h>
 #include "Hitting_Range.h"
 
-const RECT Hitting_Range::Get_Hit_Rect() const {
-	return hit_rect;
-}
 
 const int& Hitting_Range::Get_Owner() const {
 	return owner;
-}
-
-void Hitting_Range::Set_Hit_Rect(const RECT hit_rect) {
-	this->hit_rect = hit_rect;
 }
 
 void Hitting_Range::Set_Owner(const int& owner) {
 	this->owner = owner;
 }
 
-void Reset_Hitting_Range(Hitting_Range& hit_range, const RECT hit_rect, const int& owner) {
-	hit_range.Set_Hit_Rect(hit_rect);
+void Reset_Hitting_Range(Hitting_Range& hit_range, const int& owner) {
 	hit_range.Set_Owner(owner);
+}
+
+const POINT Hitting_Range_Polygon::Get_Pos(const int& index) const {
+	return pos[index];
+}
+
+void Hitting_Range_Polygon::Set_Pos(POINT p[4]) {
+	for (int index = 0; index < 4; index++)
+		pos[index] = p[index];
+}
+
+void Reset_Hitting_Range_Polygon(Hitting_Range_Polygon& hit_range_p, const int& onwer, POINT pos[4]) {
+	hit_range_p.Set_Pos(pos);
+	Reset_Hitting_Range(hit_range_p, onwer);
 }

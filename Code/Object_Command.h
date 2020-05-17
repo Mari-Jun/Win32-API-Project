@@ -1,6 +1,8 @@
 #pragma once
 #include "Object_Move.h"
 
+class Hitting_Range_Polygon;
+
 template <typename P_Class, typename T_Map>
 void Command_Player(P_Class& player, const T_Map& map) {
 
@@ -17,3 +19,4 @@ void Command_Player(P_Class& player, const T_Map& map) {
 
 void Attack_Player(Warrior& warrior);
 
+bool Crash_Attack_Polygon(Move_Object& m_objcet, Hitting_Range_Polygon& hit_range_p);

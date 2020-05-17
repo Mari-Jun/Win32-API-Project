@@ -16,7 +16,7 @@ void Attack_Player(Warrior& warrior) {
 		//공격의 Hitting_Point지점
 		if (warrior.Get_Ani_Count() == 9) {
 			for (int index = 0; index < 20; index++) {
-				if (&warrior.Get_Hit_Range_Const(index) == NULL) {
+				if (&warrior.Get_Hit_Range_P_Const(index) == NULL) {
 					break;
 				}
 			}
@@ -28,4 +28,8 @@ void Attack_Player(Warrior& warrior) {
 		}
 	}
 	
+}
+
+bool Crash_Attack_Polygon(Move_Object& m_objcet, Hitting_Range_Polygon& hit_range_p) {
+	return false;
 }
