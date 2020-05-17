@@ -5,6 +5,8 @@
 #include "Source.h"
 #include "Object_Command.h"
 #include "Object_Player.h"
+#include "Object_Main.h"
+#include "Object_Enemy.h"
 #include "Object_Player_Interaction.h"
 #include "Camera.h"
 #include "Map_Village.h"

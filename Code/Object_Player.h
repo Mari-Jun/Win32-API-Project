@@ -27,7 +27,7 @@ public:
 
 	const BITMAP Get_Motion_Size() const;
 	const HBITMAP Get_Stop_Motion(const int& direction) const;
-	const HBITMAP Get_Move_Motion(const int& direction, const int& index);
+	const HBITMAP Get_Move_Motion(const int& direction, const int& index) const;
 	const HBITMAP Get_Attack_Motion(const int& direction, const int& index) const;
 
 	void Set_Stop_Motion();
@@ -42,4 +42,4 @@ private:
 };
 
 void Reset_Warrior(Warrior& warrior);
-void Paint_Warrior(HDC hdc, HDC bitdc, Warrior& warrior);
+void Paint_Warrior(HDC hdc, HDC bitdc, const Warrior& warrior);

@@ -61,19 +61,24 @@ public:
 	const int& Get_Status() const;
 	const int& Get_Direction() const;
 	const int& Get_Ani_Count() const;
+	const int& Get_Hitting_Damage() const;
 	const Hitting_Range_Polygon& Get_Hit_Range_P_Const(const int& index) const;
 	Hitting_Range_Polygon& Get_Hit_Range_P(const int& index) const;
 
 	void Set_Status(const int& status);
 	void Set_Direction(const int& direction);
 	void Set_Ani_Count(const int& ani_count);
-	void Set_Hit_Range_Polygon(const int& index, const int& owner);
+	void Set_Hitting_Damage(const int& hit_dmg);
+	void Set_Hit_Range_Polygon(const int& index, const int& owner, const POINT pos[4]);
 	void Set_Hit_Range_Circle(const int& index, const int& owner);
+
+	void Delete_Hit_Range_Polygon(const int& index);
 
 private:
 	int status;
 	int direction;
 	int animaition_count;
+	int hitting_damage;
 	Hitting_Range_Polygon* hit_range[20];
 };
 

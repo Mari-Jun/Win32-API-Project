@@ -28,12 +28,20 @@ enum Command_Key {
 	Co_Interaction = 'f'
 };
 
+enum Hit_Onwer {
+	HO_Player, HO_Enemy
+};
+
 enum Object_Direction {
 	Right, UpRight, Up, UpLeft, Left, DownLeft, Down, DownRight
 };
 
 enum Player_Status {
 	Stop, Move, Run, Interaction, Attack
+};
+
+enum Enemy_Type {
+	E_Pratice
 };
 
 enum Timer_Name {

@@ -117,6 +117,10 @@ const int& Move_Object::Get_Ani_Count() const {
 	return animaition_count;
 }
 
+const int& Move_Object::Get_Hitting_Damage() const {
+	return hitting_damage;
+}
+
 const Hitting_Range_Polygon& Move_Object::Get_Hit_Range_P_Const(const int& index) const {
 	return *hit_range[index];
 }
@@ -137,13 +141,21 @@ void Move_Object::Set_Ani_Count(const int& ani_count) {
 	animaition_count = ani_count;
 }
 
-void Move_Object::Set_Hit_Range_Polygon(const int& index, const int& owner) {
+void Move_Object::Set_Hitting_Damage(const int& hit_dmg) {
+	hitting_damage = hit_dmg;
+}
+
+void Move_Object::Set_Hit_Range_Polygon(const int& index, const int& owner, const POINT pos[4]) {
 	hit_range[index] = Create_Class<Hitting_Range_Polygon>();
-	Reset_Hitting_Range(*hit_range[index], owner);
+	Reset_Hitting_Range_Polygon(*hit_range[index], owner, pos);
 }
 
 void Move_Object::Set_Hit_Range_Circle(const int& index, const int& owner) {
 
+}
+
+void Move_Object::Delete_Hit_Range_Polygon(const int& index) {
+	Delete_Class<Hitting_Range_Polygon>(&hit_range[index]);
 }
 
 void Reset_Move_Object(Move_Object& m_object, const int& x_pos, const int& y_pos, const int& width, const int& height) {
@@ -151,5 +163,6 @@ void Reset_Move_Object(Move_Object& m_object, const int& x_pos, const int& y_pos
 	m_object.Set_Status(Player_Status::Stop);
 	m_object.Set_Direction(Object_Direction::Down);
 	m_object.Set_Ani_Count(0);
+	m_object.Set_Hitting_Damage(-1);
 }
 

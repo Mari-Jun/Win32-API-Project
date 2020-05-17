@@ -7,6 +7,7 @@
 #include "Object_Info.h"
 #include "Object_Player.h"
 #include "Object_Npc.h"
+#include "Hitting_Range.h"
 
 /*Defualt Player*/
 
@@ -49,7 +50,7 @@ const BITMAP Warrior::Get_Motion_Size() const {
 	return motion_size;
 }
 
-const HBITMAP Warrior::Get_Move_Motion(const int& direction, const int& index) {
+const HBITMAP Warrior::Get_Move_Motion(const int& direction, const int& index) const {
 	return move_motion_bitmap[direction][index];
 }
 
@@ -99,7 +100,7 @@ void Reset_Warrior(Warrior& warrior) {
 	warrior.Set_Crash_Width(60);
 }
 
-void Paint_Warrior(HDC hdc, HDC bitdc, Warrior& warrior) {
+void Paint_Warrior(HDC hdc, HDC bitdc, const Warrior& warrior) {
 
 	switch (warrior.Get_Status())
 	{
@@ -118,5 +119,18 @@ void Paint_Warrior(HDC hdc, HDC bitdc, Warrior& warrior) {
 		break;
 	default:
 		break;
+	}
+
+	for (int index = 0; index < 20; index++) {
+		if (&warrior.Get_Hit_Range_P_Const(index) != NULL) {
+			POINT pos[4];
+			pos[0] = warrior.Get_Hit_Range_P_Const(index).Get_Pos(0);
+			pos[1] = warrior.Get_Hit_Range_P_Const(index).Get_Pos(1);
+			pos[2] = warrior.Get_Hit_Range_P_Const(index).Get_Pos(2);
+			pos[3] = warrior.Get_Hit_Range_P_Const(index).Get_Pos(3);
+
+			Polygon(hdc, pos, 4);
+		}
+		
 	}
 }
