@@ -5,14 +5,15 @@
 #include "Object_Npc.h"
 #include "Object_Player.h"
 
-static const double PIE = 3.141592;
-
+enum Hitting_Shape {
+	FRONT, ROUND
+};
 class Hitting_Range_Polygon;
 class Warrior;
 class Move_Object;
+class Player;
 class Practice_Enemy;
 class Map;
-class Player;
 class Object;
 class Map_Village;
 class Map_D;
@@ -24,6 +25,10 @@ bool Crash_Check_Object(const Move_Object& m_object, const Object& obj, const in
 bool Crash_Check_Enemy(const Move_Object& m_objcet, const Map_Village& map_v, const int& move_x, const int& move_y);
 bool Crash_Attack_Polygon(const Move_Object& attack_obj, const Move_Object& hit_object, const Hitting_Range_Polygon& hit_range_p);
 void Polygon_Damage_Enemy(Map_Village& map_v, const Move_Object& attack_obj, const Hitting_Range_Polygon& hit_range_p);
+
+
+void Create_Hitting_Polygon(const Move_Object& m_object, POINT* pos, const int& width_size, const int& height_size, const int& shape);
+
 
 template <typename P_Class, typename T_Map>
 void Command_Player(P_Class& player, T_Map& map) {
@@ -40,7 +45,7 @@ void Command_Player(P_Class& player, T_Map& map) {
 }
 
 template <typename T_Map>
-void Move_Player(Player& player, const T_Map& map) {
+void Move_Player(Move_Object& player, const T_Map& map) {
 	//나중에 충돌 체크 할일이 있을텐데, 그때는 모든 충돌이가능한 Object(맵, 적)에 대해서 검사를 한후 이동이 가능하게 해야합니다.
 
 	bool KeyUp = (GetAsyncKeyState(VK_UP) & 0x8000);
@@ -61,45 +66,45 @@ void Move_Player(Player& player, const T_Map& map) {
 	}
 
 	if (KeyUp && KeyRight) {
-		Move_Player_Check(player, map, 0, -1 * static_cast<int>(player.Get_Player_Info_Const().Get_Speed() / sqrt(2) + 0.5));
-		Move_Player_Check(player, map, static_cast<int>(player.Get_Player_Info_Const().Get_Speed() / sqrt(2) + 0.5), 0);
+		Move_Player_Check(player, map, 0, -1 * static_cast<int>(player.Get_Speed() / sqrt(2) + 0.5));
+		Move_Player_Check(player, map, static_cast<int>(player.Get_Speed() / sqrt(2) + 0.5), 0);
 		player.Set_Direction(Object_Direction::UpRight);
 	}
 	else if (KeyUp && KeyLeft) {
-		Move_Player_Check(player, map, 0, -1 * static_cast<int>(player.Get_Player_Info_Const().Get_Speed() / sqrt(2) + 0.5));
-		Move_Player_Check(player, map, -1 * static_cast<int>(player.Get_Player_Info_Const().Get_Speed() / sqrt(2) + 0.5), 0);
+		Move_Player_Check(player, map, 0, -1 * static_cast<int>(player.Get_Speed() / sqrt(2) + 0.5));
+		Move_Player_Check(player, map, -1 * static_cast<int>(player.Get_Speed() / sqrt(2) + 0.5), 0);
 		player.Set_Direction(Object_Direction::UpLeft);
 	}
 	else if (KeyDown && KeyRight) {
-		Move_Player_Check(player, map, 0, static_cast<int>(player.Get_Player_Info_Const().Get_Speed() / sqrt(2) + 0.5));
-		Move_Player_Check(player, map, static_cast<int>(player.Get_Player_Info_Const().Get_Speed() / sqrt(2) + 0.5), 0);
+		Move_Player_Check(player, map, 0, static_cast<int>(player.Get_Speed() / sqrt(2) + 0.5));
+		Move_Player_Check(player, map, static_cast<int>(player.Get_Speed() / sqrt(2) + 0.5), 0);
 		player.Set_Direction(Object_Direction::DownRight);
 	}
 	else if (KeyDown && KeyLeft) {
-		Move_Player_Check(player, map, 0, static_cast<int>(player.Get_Player_Info_Const().Get_Speed() / sqrt(2) + 0.5));
-		Move_Player_Check(player, map, -1 * static_cast<int>(player.Get_Player_Info_Const().Get_Speed() / sqrt(2) + 0.5), 0);
+		Move_Player_Check(player, map, 0, static_cast<int>(player.Get_Speed() / sqrt(2) + 0.5));
+		Move_Player_Check(player, map, -1 * static_cast<int>(player.Get_Speed() / sqrt(2) + 0.5), 0);
 		player.Set_Direction(Object_Direction::DownLeft);
 	}
 	else if (KeyUp && !KeyDown) {
-		Move_Player_Check(player, map, 0, -1 * player.Get_Player_Info_Const().Get_Speed());
+		Move_Player_Check(player, map, 0, -1 * player.Get_Speed());
 		player.Set_Direction(Object_Direction::Up);
 	}
 	else if (KeyDown && !KeyUp) {
-		Move_Player_Check(player, map, 0, player.Get_Player_Info_Const().Get_Speed());
+		Move_Player_Check(player, map, 0, player.Get_Speed());
 		player.Set_Direction(Object_Direction::Down);
 	}
 	else if (KeyRight && !KeyLeft) {
-		Move_Player_Check(player, map, player.Get_Player_Info_Const().Get_Speed(), 0);
+		Move_Player_Check(player, map, player.Get_Speed(), 0);
 		player.Set_Direction(Object_Direction::Right);
 	}
 	else if (KeyLeft && !KeyRight) {
-		Move_Player_Check(player, map, -1 * player.Get_Player_Info_Const().Get_Speed(), 0);
+		Move_Player_Check(player, map, -1 * player.Get_Speed(), 0);
 		player.Set_Direction(Object_Direction::Left);
 	}
 }
 
 template <typename T_Map>
-void Move_Player_Check(Player& player, const T_Map& map, const int& move_x, const int& move_y) {
+void Move_Player_Check(Move_Object& player, const T_Map& map, const int& move_x, const int& move_y) {
 	if (!Crash_Check_Map(player, map, move_x, move_y))
 		return;
 
@@ -141,11 +146,8 @@ void Attack_Player(Warrior& warrior, T_Map& map) {
 					//폴리곤 생성
 
 					POINT pos[4];
-					pos[0] = { warrior.Get_XPos() + warrior.Get_Crash_Width() / 2 - static_cast <int>(70 * sin(warrior.Get_Direction() * 45 * PIE / 180)) ,warrior.Get_YPos() + warrior.Get_Height() - warrior.Get_Crash_Height() / 2 - static_cast <int>(70 * cos(warrior.Get_Direction() * 45 * PIE / 180)) };
-					pos[1] = { warrior.Get_XPos() + warrior.Get_Crash_Width() / 2 + static_cast <int>(sqrt(9800) * cos((warrior.Get_Direction() + 1) * 45 * PIE / 180)), warrior.Get_YPos() + warrior.Get_Height() - warrior.Get_Crash_Height() / 2 - static_cast <int>(sqrt(9800) * sin((warrior.Get_Direction() + 1) * 45 * PIE / 180)) };
-					pos[2] = { warrior.Get_XPos() + warrior.Get_Crash_Width() / 2 + static_cast <int>(sqrt(9800) * sin((warrior.Get_Direction() + 1) * 45 * PIE / 180)), warrior.Get_YPos() + warrior.Get_Height() - warrior.Get_Crash_Height() / 2 + static_cast <int>(sqrt(9800) * cos((warrior.Get_Direction() + 1) * 45 * PIE / 180)) };
-					pos[3] = { warrior.Get_XPos() + warrior.Get_Crash_Width() / 2 + static_cast <int>(70 * sin(warrior.Get_Direction() * 45 * PIE / 180)),warrior.Get_YPos() + warrior.Get_Height() - warrior.Get_Crash_Height() / 2 + static_cast <int>(70 * cos(warrior.Get_Direction() * 45 * PIE / 180)) };
-
+					Create_Hitting_Polygon(warrior, pos, 70, 70, Hitting_Shape::FRONT);
+	
 					warrior.Set_Hit_Range_Polygon(index, HO_Player, pos);
 
 					//히팅!

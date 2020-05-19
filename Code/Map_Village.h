@@ -28,6 +28,8 @@ public:
 	virtual void Set_NM_Npc();
 	void Set_P_Enemy();
 	void Set_Texture();
+
+	void Kill_P_Enemy();
 	
 private:
 	Practice_Enemy* p_enemy;
@@ -38,3 +40,4 @@ void Reset_Village_Map(HDC hdc, Map_Village& map_v);
 void Paint_Village_Map_Texture(HDC hdc, HDC bitdc, const Map_Village& map_v);
 void Paint_Village_Map(HDC hdc, HDC bitdc, const Warrior& warrior, const Map_Village& map_v);
 
+void Enemy_Kill_Check(Map_Village& map_v);

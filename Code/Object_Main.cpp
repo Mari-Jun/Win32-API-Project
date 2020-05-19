@@ -1,4 +1,5 @@
 #include <windows.h>
+#include <tchar.h>
 #include "Source.h"
 #include "Object_Main.h"
 #include "Object_Info.h"
@@ -113,6 +114,10 @@ const int& Move_Object::Get_Direction() const {
 	return direction;
 }
 
+const int& Move_Object::Get_Speed() const {
+	return speed;
+}
+
 const int& Move_Object::Get_Ani_Count() const {
 	return animaition_count;
 }
@@ -129,12 +134,24 @@ Hitting_Range_Polygon& Move_Object::Get_Hit_Range_P(const int& index) const {
 	return *hit_range[index];
 }
 
+const Object_Info& Move_Object::Get_Object_Info_Const() const {
+	return *o_info;
+}
+
+Object_Info& Move_Object::Get_Object_Info() const {
+	return *o_info;
+}
+
 void Move_Object::Set_Status(const int& status) {
 	this->status = status;
 }
 
 void Move_Object::Set_Direction(const int& direction) {
 	this->direction = direction;
+}
+
+void Move_Object::Set_Speed(const int& speed) {
+	this->speed = speed;
 }
 
 void Move_Object::Set_Ani_Count(const int& ani_count) {
@@ -154,15 +171,42 @@ void Move_Object::Set_Hit_Range_Circle(const int& index, const int& owner) {
 
 }
 
+void Move_Object::Create_Object_Info() {
+	o_info = Create_Class<Object_Info>();
+}
+
 void Move_Object::Delete_Hit_Range_Polygon(const int& index) {
 	Delete_Class<Hitting_Range_Polygon>(&hit_range[index]);
 }
 
-void Reset_Move_Object(Move_Object& m_object, const int& x_pos, const int& y_pos, const int& width, const int& height) {
+void Reset_Move_Object(Move_Object& m_object, const int& x_pos, const int& y_pos, const int& width, const int& height, const int& speed) {
 	Reset_Object(m_object, x_pos, y_pos, width, height);
 	m_object.Set_Status(Player_Status::Stop);
 	m_object.Set_Direction(Object_Direction::Down);
 	m_object.Set_Ani_Count(0);
 	m_object.Set_Hitting_Damage(-1);
+	m_object.Set_Speed(speed);
+	m_object.Create_Object_Info();
+}
+
+void Paint_Hitting_Damage(HDC hdc, const Move_Object& m_object) {
+	if (m_object.Get_Hitting_Damage() == -1)
+		return;
+
+	SIZE damage_size;
+	TCHAR str[6];
+	wsprintf(str, _T("%d"), m_object.Get_Hitting_Damage());
+
+	GetTextExtentPoint(hdc, str, _tcslen(str), &damage_size);
+
+	SetBkMode(hdc, TRANSPARENT);
+	SetTextColor(hdc, RGB(204, 61, 61));
+
+	TextOut(hdc, m_object.Get_XPos() + m_object.Get_Crash_Width() / 2 - damage_size.cx / 2, m_object.Get_YPos() - damage_size.cy + 5, str, _tcslen(str));
+}
+
+void Calcul_Hitting_Damage(const Move_Object& attack_obj, Move_Object& hit_obj) {
+	hit_obj.Set_Hitting_Damage(attack_obj.Get_Object_Info_Const().Get_Attack() - hit_obj.Get_Object_Info_Const().Get_Defence() + rand() % attack_obj.Get_Object_Info_Const().Get_Attack());
+	hit_obj.Get_Object_Info().Set_Hp(hit_obj.Get_Object_Info_Const().Get_Hp() - hit_obj.Get_Hitting_Damage());
 }
 

@@ -1,6 +1,7 @@
 #pragma once
 #include <Windows.h>
 
+
 class Hitting_Range {
 public:
 	const int& Get_Owner() const;

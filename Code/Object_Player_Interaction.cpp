@@ -2,6 +2,7 @@
 #include <tchar.h>
 #include "Source.h"
 #include "Object_Npc.h"
+#include "Object_Main.h"
 #include "Object_Player.h"
 #include "Object_Player_Interaction.h"
 #include "Map_Village.h"
@@ -46,7 +47,7 @@ void Reset_Interaction_Box(Interaction_Box& it_box, RECT c_rect) {
 	it_box.Set_Message_Box(c_rect);
 }
 
-bool Paint_Interaction_Box(HDC hdc, HDC alphadc, HDC bitdc, RECT c_rect, Player& player, Interaction_Box& it_box) {
+bool Paint_Interaction_Box(HDC hdc, HDC alphadc, HDC bitdc, RECT c_rect, Move_Object& player, Interaction_Box& it_box) {
 	if (player.Get_Status() == Player_Status::Interaction) {
 		SelectObject(bitdc, it_box.Get_Message_Box());
 		BitBlt(alphadc, 0, 0, it_box.Get_Message_Box_Size().bmWidth, it_box.Get_Message_Box_Size().bmHeight, hdc, c_rect.left + 320, c_rect.bottom - 240, SRCCOPY);
@@ -59,7 +60,7 @@ bool Paint_Interaction_Box(HDC hdc, HDC alphadc, HDC bitdc, RECT c_rect, Player&
 }
 
 template<>
-void Interaction_Command(Player& player, Map_Village& map_v, Interaction_Box& it_box) {
+void Interaction_Command(Move_Object& player, Map_Village& map_v, Interaction_Box& it_box) {
 
 	//NPC와의 상호작용
 	if (player.Get_Status() != Player_Status::Interaction) {
@@ -92,7 +93,7 @@ void Interaction_Command(Player& player, Map_Village& map_v, Interaction_Box& it
 	}
 }
 
-bool Interaction_Range_Player_To_Npc(Player& player, const Non_Move_Npc& nm_npc) {
+bool Interaction_Range_Player_To_Npc(Move_Object& player, const Non_Move_Npc& nm_npc) {
 	if (nm_npc.Get_XPos() - 40 < player.Get_XPos() + player.Get_Crash_Width() && nm_npc.Get_XPos() + nm_npc.Get_Crash_Width() + 40 > player.Get_XPos() &&
 		nm_npc.Get_YPos() + nm_npc.Get_Height() - nm_npc.Get_Crash_Height() - 40 < player.Get_YPos() + player.Get_Height() &&
 		nm_npc.Get_YPos() + nm_npc.Get_Height() + 40 > player.Get_YPos() + player.Get_Height() - player.Get_Crash_Height())

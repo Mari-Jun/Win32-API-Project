@@ -1,6 +1,6 @@
 #pragma once
 
-class Player;
+class Move_Object;
 class Map;
 
 class Camera {
@@ -18,4 +18,4 @@ private:
 };
 
 void Reset_Camera(Camera& camera, RECT c_rect);
-void Move_Camera(Camera& camera, Player& player, Map& map, RECT c_rect);
+void Move_Camera(Camera& camera, Move_Object& player, Map& map, RECT c_rect);

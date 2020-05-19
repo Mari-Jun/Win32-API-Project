@@ -81,8 +81,20 @@ bool Crash_Attack_Polygon(const Move_Object& attack_obj, const Move_Object& hit_
 }
 
 void Polygon_Damage_Enemy(Map_Village& map_v, const Move_Object& attack_obj, const Hitting_Range_Polygon& hit_range_p) {
-	if (hit_range_p.Get_Owner() == HO_Player && &map_v.Get_P_Enemy_Const() != NULL && Crash_Attack_Polygon(attack_obj, map_v.Get_P_Enemy_Const(), hit_range_p)) {
-			MessageBeep(MB_OK);
+	if (hit_range_p.Get_Owner() == HO_Player && &map_v.Get_P_Enemy_Const() != NULL && Crash_Attack_Polygon(attack_obj, map_v.Get_P_Enemy_Const(), hit_range_p)) 
+		Calcul_Hitting_Damage(attack_obj, map_v.Get_P_Enemy());	
+}
+
+void Create_Hitting_Polygon(const Move_Object& m_object, POINT* pos, const int& width_size, const int& height_size, const int& shape) {
+	switch (shape)
+	{
+	case Hitting_Shape::FRONT:
+		pos[0] = { m_object.Get_XPos() + m_object.Get_Crash_Width() / 2 - static_cast <int>(width_size * sin(m_object.Get_Direction() * 45 * PIE / 180)) ,m_object.Get_YPos() + m_object.Get_Height() - m_object.Get_Crash_Height() / 2 - static_cast <int>(height_size * cos(m_object.Get_Direction() * 45 * PIE / 180)) };
+		pos[1] = { m_object.Get_XPos() + m_object.Get_Crash_Width() / 2 + static_cast <int>(sqrt(width_size * width_size + height_size * height_size) * cos((m_object.Get_Direction() + 1) * 45 * PIE / 180)), m_object.Get_YPos() + m_object.Get_Height() - m_object.Get_Crash_Height() / 2 - static_cast <int>(sqrt(width_size * width_size + height_size * height_size) * sin((m_object.Get_Direction() + 1) * 45 * PIE / 180)) };
+		pos[2] = { m_object.Get_XPos() + m_object.Get_Crash_Width() / 2 + static_cast <int>(sqrt(width_size * width_size + height_size * height_size) * sin((m_object.Get_Direction() + 1) * 45 * PIE / 180)), m_object.Get_YPos() + m_object.Get_Height() - m_object.Get_Crash_Height() / 2 + static_cast <int>(sqrt(width_size * width_size + height_size * height_size) * cos((m_object.Get_Direction() + 1) * 45 * PIE / 180)) };
+		pos[3] = { m_object.Get_XPos() + m_object.Get_Crash_Width() / 2 + static_cast <int>(width_size * sin(m_object.Get_Direction() * 45 * PIE / 180)),m_object.Get_YPos() + m_object.Get_Height() - m_object.Get_Crash_Height() / 2 + static_cast <int>(height_size * cos(m_object.Get_Direction() * 45 * PIE / 180)) };
+		break;
+	default:
+		break;
 	}
-	
 }

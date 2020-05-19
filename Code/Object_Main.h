@@ -2,6 +2,7 @@
 #include <Windows.h>
 
 class Map;
+class Object_Info;
 
 class Object {
 public:
@@ -60,26 +61,35 @@ public:
 
 	const int& Get_Status() const;
 	const int& Get_Direction() const;
+	const int& Get_Speed() const;
 	const int& Get_Ani_Count() const;
 	const int& Get_Hitting_Damage() const;
 	const Hitting_Range_Polygon& Get_Hit_Range_P_Const(const int& index) const;
 	Hitting_Range_Polygon& Get_Hit_Range_P(const int& index) const;
+	const Object_Info& Get_Object_Info_Const() const;
+	Object_Info& Get_Object_Info() const;
 
 	void Set_Status(const int& status);
 	void Set_Direction(const int& direction);
+	void Set_Speed(const int& speed);
 	void Set_Ani_Count(const int& ani_count);
 	void Set_Hitting_Damage(const int& hit_dmg);
 	void Set_Hit_Range_Polygon(const int& index, const int& owner, const POINT pos[4]);
 	void Set_Hit_Range_Circle(const int& index, const int& owner);
 
+	void Create_Object_Info();
 	void Delete_Hit_Range_Polygon(const int& index);
 
 private:
 	int status;
 	int direction;
+	int speed;
 	int animaition_count;
 	int hitting_damage;
 	Hitting_Range_Polygon* hit_range[20];
+	Object_Info* o_info;
 };
 
-void Reset_Move_Object(Move_Object& m_object, const int& x_pos, const int& y_pos, const int& width, const int& height);
+void Reset_Move_Object(Move_Object& m_object, const int& x_pos, const int& y_pos, const int& width, const int& height, const int& speed);
+void Paint_Hitting_Damage(HDC hdc, const Move_Object& m_object);
+void Calcul_Hitting_Damage(const Move_Object& attack_obj, Move_Object& hit_obj);

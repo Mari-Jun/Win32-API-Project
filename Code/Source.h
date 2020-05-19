@@ -1,6 +1,8 @@
 #pragma once
 #include <windows.h>
 
+static const double PIE = 3.141592;
+
 template <typename T>
 T* Create_Class() {
 	T* t = new T();
@@ -45,5 +47,5 @@ enum Enemy_Type {
 };
 
 enum Timer_Name {
-	Player_Move_Timer = 10, Player_Attack_Timer
+	Player_Timer = 10, Enemy_Timer = 11
 };

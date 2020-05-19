@@ -1,23 +1,7 @@
 #pragma once
 #include "Object_Main.h"
 
-class Object_Info;
-
-class Enemy : public Move_Object {
-public:
-	~Enemy();
-
-	const Object_Info& Get_Player_Info_Const() const;
-	Object_Info& Get_Enemy_Info() const;
-
-	void Create_Enemy_Info();
-private:
-	Object_Info* o_info;
-};
-
-void Reset_Enemy(Enemy& enemy, const int& hp, const int& attack, const int& defence, const int& speed);
-
-class Practice_Enemy : public Enemy {
+class Practice_Enemy : public Move_Object {
 public:
 	~Practice_Enemy();
 

@@ -5,11 +5,10 @@
 #include "Source.h"
 #include "Object_Command.h"
 #include "Object_Player.h"
-#include "Object_Main.h"
-#include "Object_Enemy.h"
 #include "Object_Player_Interaction.h"
 #include "Camera.h"
 #include "Map_Village.h"
+#include "Interface.h"
 
 #pragma comment(lib, "msimg32.lib")
 #pragma comment(lib,"fmodL_vc.lib")
@@ -66,6 +65,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 	//비트맵
 	static HBITMAP db_bitmap, db_alpha;
 
+	//데미지 폰트
+	static HFONT damage_font;
+
 	//클라이언트 사각형
 	static RECT c_rect;
 
@@ -75,11 +77,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 	//카메라 관련 객체
 	static Camera* camera;
 
-	//메세지 박스 관련 객체
+	//인터페이스 관련 객체
 	static Interaction_Box* it_box;
+	static Player_Interface* p_inter;
 
 	//맵 관련 객체
-	static Map_Village* map_v;
+	static Map_Village* map_v;	
 
 	switch (iMsg)
 	{
@@ -94,6 +97,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 		db_bitmap = CreateCompatibleBitmap(hdc, c_rect.right, c_rect.bottom);
 		db_alpha = CreateCompatibleBitmap(hdc, c_rect.right, c_rect.bottom);
 
+		damage_font = CreateFont(40, 20, 0, 0, FW_BOLD, FALSE, FALSE, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH, _T("휴먼매직체"));
+
 		//플레이어 관련
 		warrior = Create_Class<Warrior>();
 		Reset_Warrior(*warrior);
@@ -105,12 +110,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 		//인터페이스 관련
 		it_box = Create_Class<Interaction_Box>();
 		Reset_Interaction_Box(*it_box, c_rect);
+		p_inter = Create_Class<Player_Interface>();
+		Reset_Player_Interface(*p_inter);
 
 		//맵 관련
 		map_v = Create_Class<Map_Village>();
 		Reset_Village_Map(hdc, *map_v);
 
-		SetTimer(hwnd, Player_Move_Timer, 30, NULL);
+		SetTimer(hwnd, Player_Timer, 30, NULL);
+		SetTimer(hwnd, Enemy_Timer, 30, NULL);
 
 		ReleaseDC(hwnd, hdc);
 
@@ -135,11 +143,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 	case WM_TIMER:
 		switch (wParam)
 		{
-		case Player_Move_Timer:
+		case Player_Timer:
 			Command_Player<Warrior, Map_Village>(*warrior, *map_v);
 			Move_Camera(*camera, *warrior, *map_v, c_rect);
 			break;
-		case Player_Attack_Timer:
+		case Enemy_Timer:
+			Enemy_Kill_Check(*map_v);
 			break;
 		default:
 			break;
@@ -153,10 +162,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 
 		FillRect(memdc, &c_rect, WHITE_BRUSH);
 
+		SelectObject(gamedc, damage_font);
+
 		Paint_Village_Map(gamedc, bitdc, *warrior, *map_v);
 
 		BitBlt(memdc, 0, 0, c_rect.right, c_rect.bottom, gamedc, camera->Get_Cam_Left(), camera->Get_Cam_Top(), SRCCOPY);
-
+		
+		Paint_Player_Interface(memdc, bitdc, c_rect, *p_inter, *warrior);
+		
 		if (Paint_Interaction_Box(memdc, alphadc, bitdc, c_rect, *warrior, *it_box))
 			Show_Npc_Interaction<Map_Village>(memdc, *map_v, *it_box);
 

@@ -6,6 +6,7 @@
 #include "Object_Player.h"
 #include "Object_Npc.h"
 #include "Object_Enemy.h"
+#include "Object_Info.h"
 
 Map_Village::~Map_Village() {
 	for (int index = 0; index < 4; index++)
@@ -66,6 +67,9 @@ void Map_Village::Set_Texture() {
 	texture[VT::Grow2] = (HBITMAP)LoadImage(NULL, _T(".\\BitMap\\Map\\Village\\Grow2.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 }
 
+void Map_Village::Kill_P_Enemy() {
+	Delete_Class<Practice_Enemy>(&p_enemy);
+}
 
 
 void Reset_Village_Map(HDC hdc, Map_Village& map_v) {
@@ -148,4 +152,9 @@ void Paint_Village_Map(HDC hdc, HDC bitdc, const Warrior& warrior, const Map_Vil
 		if (&warrior != NULL && y_pos == warrior.Get_YPos() + warrior.Get_Height())
 			Paint_Warrior(hdc, bitdc, warrior);
 	}
+}
+
+void Enemy_Kill_Check(Map_Village& map_v) {
+	if (&map_v.Get_P_Enemy_Const() != NULL && map_v.Get_P_Enemy_Const().Get_Object_Info_Const().Get_Hp() < 0)
+		map_v.Kill_P_Enemy();
 }

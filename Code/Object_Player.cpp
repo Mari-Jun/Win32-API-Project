@@ -9,29 +9,6 @@
 #include "Object_Npc.h"
 #include "Hitting_Range.h"
 
-/*Defualt Player*/
-
-Player::~Player() {
-	Delete_Class<Player_Info>(&p_info);
-}
-
-const Player_Info& Player::Get_Player_Info_Const() const {
-	return *p_info;
-}
-
-Player_Info& Player::Get_Player_Info() const {
-	return *p_info;
-}
-
-void Player::Create_Player_Info() {
-	p_info = Create_Class<Player_Info>();
-}
-
-void Reset_Player(Player& player, const int& width, const int& height) {
-	Reset_Move_Object(player, 400, 500, width, height);
-	player.Create_Player_Info();
-}
-
 /*Warrior Player*/
 
 Warrior::~Warrior() {
@@ -92,11 +69,11 @@ void Reset_Warrior(Warrior& warrior) {
 	warrior.Set_Stop_Motion();
 	warrior.Set_Move_Motion();
 	warrior.Set_Attack_Motion();
-	Reset_Player(warrior, warrior.Get_Motion_Size().bmWidth, warrior.Get_Motion_Size().bmHeight);
-	Reset_Player_Info(warrior.Get_Player_Info(), 100, 100, 10, 0, 8);
+	Reset_Move_Object(warrior, 400, 500, warrior.Get_Motion_Size().bmWidth, warrior.Get_Motion_Size().bmHeight, 8);
+	Reset_Object_Info(warrior.Get_Object_Info(), 1, 100, 10, 0);
 
 	//지면 충돌 크기는 비트맵 객체마다 다 다르기때문에 일일히 객체가 생성때 설정을 해주어야한다.
-	warrior.Set_Crash_Height(30);
+	warrior.Set_Crash_Height(40);
 	warrior.Set_Crash_Width(60);
 }
 
