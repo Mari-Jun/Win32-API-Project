@@ -52,7 +52,6 @@ private:
 
 void Reset_Non_Move_Object(Non_Move_Object& nm_object, const int& x_pos, const int& y_pos, HBITMAP bitmap);
 
-
 class Hitting_Range_Polygon;
 
 class Move_Object : public Object {

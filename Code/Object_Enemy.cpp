@@ -31,14 +31,14 @@ void Practice_Enemy::Set_Stop_Motion() {
 void Reset_Practice_Enemy(Practice_Enemy& p_enemy) {
 	p_enemy.Set_Stop_Motion();
 	Reset_Move_Object(p_enemy, 1100, 400, p_enemy.Get_Bitmap_Size().bmWidth, p_enemy.Get_Bitmap_Size().bmHeight, 0);
-	Reset_Object_Info(p_enemy.Get_Object_Info(), 1, (1 << 30), 0, 0);
+	Reset_Object_Info(p_enemy.Get_Object_Info(), 1, (1 << 30), 0, 0, 0, 0);
 	p_enemy.Set_Crash_Width(60);
 	p_enemy.Set_Crash_Height(60);
 }
 
 void Paint_Practice_Enemy(HDC hdc, HDC bitdc, const Practice_Enemy& p_enemy) {
 	SelectObject(bitdc, p_enemy.Get_Stop_Motion_Bitmap(p_enemy.Get_Ani_Count()));
-	TransparentBlt(hdc, p_enemy.Get_XPos() - 10, p_enemy.Get_YPos(), p_enemy.Get_Width(), p_enemy.Get_Height(), bitdc, 0, 0, p_enemy.Get_Width(), p_enemy.Get_Height(), RGB(255, 255, 255));
+	TransparentBlt(hdc, p_enemy.Get_XPos() - 10, p_enemy.Get_YPos(), p_enemy.Get_Width(), p_enemy.Get_Height(), bitdc, 0, 0, p_enemy.Get_Width(), p_enemy.Get_Height(), RGB(150, 150, 150));
 	Paint_Hitting_Damage(hdc, p_enemy);
 	//Rectangle(hdc, p_enemy.Get_XPos(), p_enemy.Get_YPos() + p_enemy.Get_Height() - p_enemy.Get_Crash_Height(), p_enemy.Get_XPos() + p_enemy.Get_Crash_Width(), p_enemy.Get_YPos() + p_enemy.Get_Height());
 }

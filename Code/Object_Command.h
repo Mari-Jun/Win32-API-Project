@@ -9,7 +9,6 @@ enum Hitting_Shape {
 	FRONT, ROUND
 };
 class Hitting_Range_Polygon;
-class Warrior;
 class Move_Object;
 class Player;
 class Practice_Enemy;
@@ -21,7 +20,8 @@ class Map_D;
 
 bool Crash_Check_Map(const Move_Object& m_object, const Map& map, const int& move_x, const int& move_y);
 bool Crash_Check_Object(const Move_Object& m_object, const Object& obj, const int& move_x, const int& move_y);
-
+//만약 다른 맵에 NPC가 없을 경우 템플릿 해서 원본에는 그냥 return true만 하고 따로 특수화 하면 된다.
+bool Crash_Check_Npc(const Move_Object& m_objcet, const Map_Village& map_v, const int& move_x, const int& move_y);
 bool Crash_Check_Enemy(const Move_Object& m_objcet, const Map_Village& map_v, const int& move_x, const int& move_y);
 bool Crash_Attack_Polygon(const Move_Object& attack_obj, const Move_Object& hit_object, const Hitting_Range_Polygon& hit_range_p);
 void Polygon_Damage_Enemy(Map_Village& map_v, const Move_Object& attack_obj, const Hitting_Range_Polygon& hit_range_p);
@@ -30,10 +30,10 @@ void Polygon_Damage_Enemy(Map_Village& map_v, const Move_Object& attack_obj, con
 void Create_Hitting_Polygon(const Move_Object& m_object, POINT* pos, const int& width_size, const int& height_size, const int& shape);
 
 
-template <typename P_Class, typename T_Map>
-void Command_Player(P_Class& player, T_Map& map) {
+template <typename T_Map>
+void Command_Player(Player& player, T_Map& map) {
 
-	if (player.Get_Status() == Player_Status::Interaction)
+	if (player.Get_Status() == Player_Status::Interaction || player.Get_Status() == Player_Status::Inventory)
 		return;
 
 	if (player.Get_Status() != Player_Status::Stop)
@@ -115,10 +115,8 @@ void Move_Player_Check(Move_Object& player, const T_Map& map, const int& move_x,
 	}
 
 	//맵 Npc와의 충돌
-	for (int index = 0; index < 4; index++) {
-		if (&map.Get_NM_Npc_Const(index) != NULL && !Crash_Check_Object(player, map.Get_NM_Npc_Const(index), move_x, move_y))
-			return;
-	}
+	if (!Crash_Check_Npc(player, map, move_x, move_y))
+		return;
 
 	//적과의 충돌
 	if (!Crash_Check_Enemy(player, map, move_x, move_y))
@@ -129,40 +127,40 @@ void Move_Player_Check(Move_Object& player, const T_Map& map, const int& move_x,
 }
 
 template <typename T_Map>
-void Attack_Player(Warrior& warrior, T_Map& map) {
+void Attack_Player(Player& player, T_Map& map) {
 	bool attack = (GetAsyncKeyState(VK_LCONTROL) & 0x8000);
 
-	if (warrior.Get_Status() != Player_Status::Attack) {
+	if (player.Get_Status() != Player_Status::Attack) {
 		if (attack) {
-			warrior.Set_Status(Player_Status::Attack);
-			warrior.Set_Ani_Count(0);
+			player.Set_Status(Player_Status::Attack);
+			player.Set_Ani_Count(0);
 		}
 	}
 	else {
 		//공격의 Hitting_Point지점
-		if (warrior.Get_Ani_Count() == 9) {
+		if (player.Get_Ani_Count() == 9) {
 			for (int index = 0; index < 20; index++) {
-				if (&warrior.Get_Hit_Range_P_Const(index) == NULL) {
+				if (&player.Get_Hit_Range_P_Const(index) == NULL) {
 					//폴리곤 생성
 
 					POINT pos[4];
-					Create_Hitting_Polygon(warrior, pos, 70, 70, Hitting_Shape::FRONT);
+					Create_Hitting_Polygon(player, pos, 70, 70, Hitting_Shape::FRONT);
 	
-					warrior.Set_Hit_Range_Polygon(index, HO_Player, pos);
+					player.Set_Hit_Range_Polygon(index, HO_Player, pos);
 
 					//히팅!
-					Polygon_Damage_Enemy(map, warrior, warrior.Get_Hit_Range_P_Const(index));
+					Polygon_Damage_Enemy(map, player, player.Get_Hit_Range_P_Const(index));
 
 					//폴리곤 제거
-					warrior.Delete_Hit_Range_Polygon(index);
+					player.Delete_Hit_Range_Polygon(index);
 					break;
 				}
 			}
 		}
 
-		if (warrior.Get_Ani_Count() == 20) {
-			warrior.Set_Status(Player_Status::Stop);
-			warrior.Set_Ani_Count(0);
+		if (player.Get_Ani_Count() == 20) {
+			player.Set_Status(Player_Status::Stop);
+			player.Set_Ani_Count(0);
 		}
 	}
 }

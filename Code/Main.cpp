@@ -13,8 +13,8 @@
 #pragma comment(lib, "msimg32.lib")
 #pragma comment(lib,"fmodL_vc.lib")
 
-static const int WindowX = 1280 + GetSystemMetrics(SM_CXFRAME);
-static const int WindowY = 720 + GetSystemMetrics(SM_CYFRAME) + GetSystemMetrics(SM_CYCAPTION);
+static const int WindowX = 1280 + GetSystemMetrics(SM_CXFRAME << 2);
+static const int WindowY = 720 + GetSystemMetrics(SM_CYFRAME << 2) + GetSystemMetrics(SM_CYCAPTION);
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam);
 
@@ -72,7 +72,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 	static RECT c_rect;
 
 	//플레이어 관련 객체
-	static Warrior* warrior;
+	static Player* player;
 
 	//카메라 관련 객체
 	static Camera* camera;
@@ -100,8 +100,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 		damage_font = CreateFont(40, 20, 0, 0, FW_BOLD, FALSE, FALSE, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH, _T("휴먼매직체"));
 
 		//플레이어 관련
-		warrior = Create_Class<Warrior>();
-		Reset_Warrior(*warrior);
+		player = Create_Class<Player>();
+		Reset_Player(*player, Warrior);
 
 		//카메라 관련
 		camera = Create_Class<Camera>();
@@ -117,8 +117,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 		map_v = Create_Class<Map_Village>();
 		Reset_Village_Map(hdc, *map_v);
 
-		SetTimer(hwnd, Player_Timer, 30, NULL);
-		SetTimer(hwnd, Enemy_Timer, 30, NULL);
+		SetTimer(hwnd, Default_Timer, 30, NULL);
 
 		ReleaseDC(hwnd, hdc);
 
@@ -134,7 +133,24 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 		switch (wParam)
 		{
 		case Command_Key::Co_Interaction:
-			Interaction_Command(*warrior, *map_v, *it_box);
+			Interaction_Command(*player, *map_v, *it_box);
+			break;
+		case Command_Key::Co_Equipment:
+			Equipment_Command(*player);
+		default:
+			break;
+		}
+		break;
+	case WM_KEYDOWN:
+		switch (wParam)
+		{
+		case VK_LEFT:
+		case VK_RIGHT:
+		case VK_UP:
+		case VK_DOWN:
+		case VK_RETURN:
+			if(Chnage_Equipment(*player, wParam))
+				InvalidateRgn(hwnd, NULL, FALSE);
 			break;
 		default:
 			break;
@@ -143,12 +159,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 	case WM_TIMER:
 		switch (wParam)
 		{
-		case Player_Timer:
-			Command_Player<Warrior, Map_Village>(*warrior, *map_v);
-			Move_Camera(*camera, *warrior, *map_v, c_rect);
-			break;
-		case Enemy_Timer:
+		case Default_Timer:
+			//Player 관련
+			Command_Player<Map_Village>(*player, *map_v);
+			Move_Camera(*camera, *player, *map_v, c_rect);
+			//Enemy관련
 			Enemy_Kill_Check(*map_v);
+
+			//Npc관련
+			Animation_Play_Npc(*map_v);
 			break;
 		default:
 			break;
@@ -164,14 +183,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 
 		SelectObject(gamedc, damage_font);
 
-		Paint_Village_Map(gamedc, bitdc, *warrior, *map_v);
+		Paint_Village_Map(gamedc, bitdc, *player, *map_v);
 
 		BitBlt(memdc, 0, 0, c_rect.right, c_rect.bottom, gamedc, camera->Get_Cam_Left(), camera->Get_Cam_Top(), SRCCOPY);
+
+		Paint_Player_Interface(memdc, bitdc, c_rect, *p_inter, *player);
+		Paint_Player_Equipment(memdc, bitdc, *player);
 		
-		Paint_Player_Interface(memdc, bitdc, c_rect, *p_inter, *warrior);
-		
-		if (Paint_Interaction_Box(memdc, alphadc, bitdc, c_rect, *warrior, *it_box))
-			Show_Npc_Interaction<Map_Village>(memdc, *map_v, *it_box);
+		if (Paint_Interaction_Box(memdc, alphadc, bitdc, c_rect, *player, *it_box))
+			Show_Npc_Interaction(memdc, *map_v, *it_box);
 
 		BitBlt(hdc, 0, 0, c_rect.right, c_rect.bottom, memdc, 0, 0, SRCCOPY);
 		EndPaint(hwnd, &ps);

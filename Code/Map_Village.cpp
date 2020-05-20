@@ -11,6 +11,17 @@
 Map_Village::~Map_Village() {
 	for (int index = 0; index < 4; index++)
 		DeleteObject(texture[index]);
+	Delete_Class<Practice_Enemy>(&p_enemy);
+	for (int index = 0; index < 5; index++)
+		Delete_Class<Npc>(&npc[index]);
+}
+
+const Npc& Map_Village::Get_Npc_Const(const int& npc_type) const {
+	return *npc[npc_type];
+}
+
+Npc& Map_Village::Get_Npc(const int& npc_type) const {
+	return *npc[npc_type];
 }
 
 const Practice_Enemy& Map_Village::Get_P_Enemy_Const() const {
@@ -49,10 +60,21 @@ void Map_Village::Set_NM_Object() {
 	Get_NM_Object(VNM_OB::Wall1).Set_Crash_Height(Get_NM_Object(VNM_OB::Wall1).Get_Object_Image_Size().bmHeight);
 }
 
-void Map_Village::Set_NM_Npc() {
-	Create_NM_Npc(Npc_Name::Elder);
-	Reset_Non_Move_Npc(Get_NM_Npc(Npc_Name::Elder), 240, 1140, (HBITMAP)LoadImage(NULL, _T(".\\BitMap\\Npc\\Non_Move\\Elder.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
-	Get_NM_Npc(Npc_Name::Elder).Set_Crash_Height(30);
+void Map_Village::Set_Npc() {
+	npc[Npc_Name::ELDER] = Create_Class<Npc>();
+	Reset_Npc(Get_Npc(Npc_Name::ELDER), Npc_Name::ELDER, Get_NM_Object_Const(Village_NM_Object::House3).Get_XPos() + 260, 1140);
+
+	npc[Npc_Name::WEAPON_SHOP] = Create_Class<Npc>();
+	Reset_Npc(Get_Npc(Npc_Name::WEAPON_SHOP), Npc_Name::WEAPON_SHOP, Get_NM_Object_Const(Village_NM_Object::House2).Get_XPos() + 60, 1140);
+
+	npc[Npc_Name::ITEM_SHOP] = Create_Class<Npc>();
+	Reset_Npc(Get_Npc(Npc_Name::ITEM_SHOP), Npc_Name::ITEM_SHOP, Get_NM_Object_Const(Village_NM_Object::House1).Get_XPos() + 200, 420);
+
+	npc[Npc_Name::LEGEND] = Create_Class<Npc>();
+	Reset_Npc(Get_Npc(Npc_Name::LEGEND), Npc_Name::LEGEND, Get_NM_Object_Const(Village_NM_Object::House4).Get_XPos() + 140, 420);
+
+	npc[Npc_Name::SOLDIER] = Create_Class<Npc>();
+	Reset_Npc(Get_Npc(Npc_Name::SOLDIER), Npc_Name::SOLDIER, Get_Map_Rect().right - 100, 440);
 }
 
 void Map_Village::Set_P_Enemy() {
@@ -67,6 +89,7 @@ void Map_Village::Set_Texture() {
 	texture[VT::Grow2] = (HBITMAP)LoadImage(NULL, _T(".\\BitMap\\Map\\Village\\Grow2.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 }
 
+
 void Map_Village::Kill_P_Enemy() {
 	Delete_Class<Practice_Enemy>(&p_enemy);
 }
@@ -76,7 +99,7 @@ void Reset_Village_Map(HDC hdc, Map_Village& map_v) {
 	map_v.Set_Map_Rect(0, 0, 1760, 1600);
 	map_v.Set_Map_Size_Bit(hdc);
 	map_v.Set_NM_Object();
-	map_v.Set_NM_Npc();
+	map_v.Set_Npc();
 	map_v.Set_P_Enemy();
 	map_v.Set_Texture();
 }
@@ -125,7 +148,7 @@ void Paint_Village_Map_Texture(HDC hdc, HDC bitdc, const Map_Village& map_v) {
 	BitBlt(hdc, map_v.Get_Map_Rect().right - 200, 1200, 80, 80, bitdc, 0, 0, SRCCOPY);
 }
 
-void Paint_Village_Map(HDC hdc, HDC bitdc, const Warrior& warrior, const Map_Village& map_v) {
+void Paint_Village_Map(HDC hdc, HDC bitdc, const Player& player, const Map_Village& map_v) {
 	SelectObject(hdc, map_v.Get_Map_Size_Bitmap());
 	FillRect(hdc, &map_v.Get_Map_Rect(), WHITE_BRUSH);
 
@@ -136,21 +159,45 @@ void Paint_Village_Map(HDC hdc, HDC bitdc, const Warrior& warrior, const Map_Vil
 		for (int index = 0; index < 10; index++) {
 			if (&map_v.Get_NM_Object(index) != NULL && y_pos == map_v.Get_NM_Object(index).Get_YPos() + map_v.Get_NM_Object(index).Get_Height()) {
 				SelectObject(bitdc, map_v.Get_NM_Object(index).Get_Object_Bitmap());
-				TransparentBlt(hdc, map_v.Get_NM_Object(index).Get_XPos(), map_v.Get_NM_Object(index).Get_YPos(), map_v.Get_NM_Object(index).Get_Width(), map_v.Get_NM_Object(index).Get_Height(), bitdc, 0, 0, map_v.Get_NM_Object(index).Get_Width(), map_v.Get_NM_Object(index).Get_Height(), RGB(255, 255, 255));
-			}
-		}
-		for (int index = 0; index < 4; index++) {
-			if (&map_v.Get_NM_Npc_Const(index) != NULL && y_pos == map_v.Get_NM_Npc_Const(index).Get_YPos() + map_v.Get_NM_Npc_Const(index).Get_Height()) {
-				SelectObject(bitdc, map_v.Get_NM_Npc_Const(index).Get_Object_Bitmap());
-				TransparentBlt(hdc, map_v.Get_NM_Npc_Const(index).Get_XPos(), map_v.Get_NM_Npc_Const(index).Get_YPos(), map_v.Get_NM_Npc_Const(index).Get_Width(), map_v.Get_NM_Npc_Const(index).Get_Height(), bitdc, 0, 0, map_v.Get_NM_Npc_Const(index).Get_Width(), map_v.Get_NM_Npc_Const(index).Get_Height(), RGB(255, 255, 255));
+				TransparentBlt(hdc, map_v.Get_NM_Object(index).Get_XPos(), map_v.Get_NM_Object(index).Get_YPos(), map_v.Get_NM_Object(index).Get_Width(), map_v.Get_NM_Object(index).Get_Height(), bitdc, 0, 0, map_v.Get_NM_Object(index).Get_Width(), map_v.Get_NM_Object(index).Get_Height(), RGB(150, 150, 150));
 			}
 		}
 
+		//Npc그리기
+		for (int npc_type = Npc_Name::ELDER; npc_type <= Npc_Name::SOLDIER; npc_type++) 
+			if (&map_v.Get_Npc_Const(npc_type) != NULL && y_pos == map_v.Get_Npc_Const(npc_type).Get_YPos() + map_v.Get_Npc_Const(npc_type).Get_Height())
+				Paint_Npc(hdc, bitdc, map_v.Get_Npc_Const(npc_type));
+
+		//적 그리기
 		if (&map_v.Get_P_Enemy_Const() != NULL && y_pos == map_v.Get_P_Enemy_Const().Get_YPos() + map_v.Get_P_Enemy_Const().Get_Height()) 
 			Paint_Practice_Enemy(hdc,bitdc, map_v.Get_P_Enemy_Const());
 
-		if (&warrior != NULL && y_pos == warrior.Get_YPos() + warrior.Get_Height())
-			Paint_Warrior(hdc, bitdc, warrior);
+		if (&player != NULL && y_pos == player.Get_YPos() + player.Get_Height())
+			Paint_Player(hdc, bitdc, player);
+	}
+}
+
+//Paint부분도 Object자체로 돌려서 범위 체크하면 최대한 줄일 수 있다.
+
+void Animation_Play_Npc(Map_Village& map_v) {
+	for (int npc_type = Npc_Name::ELDER; npc_type <= Npc_Name::SOLDIER; npc_type++) {
+		map_v.Get_Npc(npc_type).Set_Ani_Count(map_v.Get_Npc_Const(npc_type).Get_Ani_Count() + 1);
+		switch (npc_type)
+		{
+		case Npc_Name::ELDER:
+		case Npc_Name::WEAPON_SHOP:
+			if (map_v.Get_Npc_Const(npc_type).Get_Ani_Count() == 24)
+				map_v.Get_Npc(npc_type).Set_Ani_Count(0);
+			break;
+		case Npc_Name::ITEM_SHOP:
+		case Npc_Name::LEGEND:
+		case Npc_Name::SOLDIER:
+			if (map_v.Get_Npc_Const(npc_type).Get_Ani_Count() == 32)
+				map_v.Get_Npc(npc_type).Set_Ani_Count(0);
+			break;
+		default:
+			break;
+		}
 	}
 }
 

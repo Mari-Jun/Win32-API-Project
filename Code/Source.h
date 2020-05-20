@@ -27,7 +27,7 @@ enum Map_Select {
 };
 
 enum Command_Key {
-	Co_Interaction = 'f'
+	Co_Interaction = 'f', Co_Equipment = 'c'
 };
 
 enum Hit_Onwer {
@@ -39,7 +39,11 @@ enum Object_Direction {
 };
 
 enum Player_Status {
-	Stop, Move, Run, Interaction, Attack
+	Stop, Move, Run, Interaction, Attack, Inventory,
+};
+
+enum Class_Type {
+	Warrior,
 };
 
 enum Enemy_Type {
@@ -47,5 +51,5 @@ enum Enemy_Type {
 };
 
 enum Timer_Name {
-	Player_Timer = 10, Enemy_Timer = 11
+	Default_Timer
 };

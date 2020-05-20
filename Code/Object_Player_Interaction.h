@@ -27,22 +27,13 @@ private:
 void Reset_Interaction_Box(Interaction_Box& it_box, RECT c_rect);
 bool Paint_Interaction_Box(HDC hdc, HDC alphadc, HDC bitdc, RECT c_rect, Move_Object& player, Interaction_Box& it_box);
 
-template <typename T_Map>
-void Interaction_Command(Move_Object& player, T_Map& map, Interaction_Box& it_box) {
 
-}
-
-template<>
 void Interaction_Command(Move_Object& player, Map_Village& map_v, Interaction_Box& it_box);
+bool Interaction_Range_Player_To_Npc(Move_Object& player, const Npc& npc);
 
-bool Interaction_Range_Player_To_Npc(Move_Object& player, const Non_Move_Npc& nm_npc);
-
-template <typename T_Map>
-void Show_Npc_Interaction(HDC hdc, T_Map& map, Interaction_Box& it_box) {
-
-}
-
-template<>
-void Show_Npc_Interaction(HDC hdc, Map_Village& map_v, Interaction_Box& it_box);
-
-void Show_Npc_Elder_Interaction(HDC hdc, Interaction_Box& it_box);
+void Show_Npc_Interaction(HDC hdc, const Map_Village& map_v, const Interaction_Box& it_box);
+void Show_Npc_Elder_Interaction(HDC hdc, const Npc& elder, const Interaction_Box& it_box);
+void Show_Npc_Weapon_Interaction(HDC hdc, const Npc& weapon, const Interaction_Box& it_box);
+void Show_Npc_Item_Interaction(HDC hdc, const Npc& item, const Interaction_Box& it_box);
+void Show_Npc_Legend_Interaction(HDC hdc, const Npc& Legend, const Interaction_Box& it_box);
+void Show_Npc_Soldier_Interaction(HDC hdc, const Npc& Soldier, const Interaction_Box& it_box);

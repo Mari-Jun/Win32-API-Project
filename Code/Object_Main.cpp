@@ -206,7 +206,7 @@ void Paint_Hitting_Damage(HDC hdc, const Move_Object& m_object) {
 }
 
 void Calcul_Hitting_Damage(const Move_Object& attack_obj, Move_Object& hit_obj) {
-	hit_obj.Set_Hitting_Damage(attack_obj.Get_Object_Info_Const().Get_Attack() - hit_obj.Get_Object_Info_Const().Get_Defence() + rand() % attack_obj.Get_Object_Info_Const().Get_Attack());
+	hit_obj.Set_Hitting_Damage(attack_obj.Get_Object_Info_Const().Get_Attack() - hit_obj.Get_Object_Info_Const().Get_Defence() + rand() % 10);
 	hit_obj.Get_Object_Info().Set_Hp(hit_obj.Get_Object_Info_Const().Get_Hp() - hit_obj.Get_Hitting_Damage());
 }
 

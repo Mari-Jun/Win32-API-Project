@@ -11,8 +11,8 @@
 
 
 bool Crash_Check_Map(const Move_Object& m_object, const Map& map, const int& move_x, const int& move_y) {
-	if (m_object.Get_XPos() + move_x >= map.Get_Map_Rect().left && m_object.Get_XPos() + m_object.Get_Width() + move_x <= map.Get_Map_Rect().right &&
-		m_object.Get_YPos() + move_y >= map.Get_Map_Rect().top && m_object.Get_YPos() + m_object.Get_Height() + move_y <= map.Get_Map_Rect().bottom)
+	if (m_object.Get_XPos() + move_x >= map.Get_Map_Rect().left && m_object.Get_XPos() + m_object.Get_Crash_Width() + move_x <= map.Get_Map_Rect().right &&
+		m_object.Get_YPos() + move_y >= map.Get_Map_Rect().top && m_object.Get_YPos() + m_object.Get_Height() - m_object.Get_Crash_Height() + move_y <= map.Get_Map_Rect().bottom)
 		return true;
 	return false;
 }
@@ -22,6 +22,15 @@ bool Crash_Check_Object(const Move_Object& m_object, const Object& obj, const in
 		m_object.Get_YPos() + m_object.Get_Height() + move_y > obj.Get_YPos() + obj.Get_Height() - obj.Get_Crash_Height() &&
 		m_object.Get_YPos() + m_object.Get_Height() - m_object.Get_Crash_Height() + move_y < obj.Get_YPos() + obj.Get_Height())
 		return false;
+	return true;
+}
+
+bool Crash_Check_Npc(const Move_Object& m_objcet, const Map_Village& map_v, const int& move_x, const int& move_y) {
+	for (int npc_type = Npc_Name::ELDER; npc_type <= Npc_Name::SOLDIER; npc_type++) {
+		if (&map_v.Get_Npc_Const(npc_type) != NULL && !Crash_Check_Object(m_objcet, map_v.Get_Npc_Const(npc_type), move_x, move_y))
+			return false;
+	}
+
 	return true;
 }
 
