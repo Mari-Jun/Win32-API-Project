@@ -50,6 +50,10 @@ enum Enemy_Type {
 	E_Pratice
 };
 
+enum Player_Item_Type {
+	Hp_Potion = 1, Mp_Potion, Panacea
+};
+
 enum Timer_Name {
 	Default_Timer
 };

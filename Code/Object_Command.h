@@ -36,8 +36,9 @@ void Command_Player(Player& player, T_Map& map) {
 	if (player.Get_Status() == Player_Status::Interaction || player.Get_Status() == Player_Status::Inventory)
 		return;
 
-	if (player.Get_Status() != Player_Status::Stop)
-		player.Set_Ani_Count(player.Get_Ani_Count() + 1);
+	player.Set_Ani_Count(player.Get_Ani_Count() + 1);
+	if (player.Get_Ani_Count() == 800)
+		player.Set_Ani_Count(0);
 
 	Attack_Player(player, map);
 
@@ -48,10 +49,10 @@ template <typename T_Map>
 void Move_Player(Move_Object& player, const T_Map& map) {
 	//나중에 충돌 체크 할일이 있을텐데, 그때는 모든 충돌이가능한 Object(맵, 적)에 대해서 검사를 한후 이동이 가능하게 해야합니다.
 
-	bool KeyUp = (GetAsyncKeyState(VK_UP) & 0x8000);
-	bool KeyDown = (GetAsyncKeyState(VK_DOWN) & 0x8000);
-	bool KeyLeft = (GetAsyncKeyState(VK_LEFT) & 0x8000);
-	bool KeyRight = (GetAsyncKeyState(VK_RIGHT) & 0x8000);
+	bool KeyUp = (GetAsyncKeyState(VK_UP) & 0x8001);
+	bool KeyDown = (GetAsyncKeyState(VK_DOWN) & 0x8001);
+	bool KeyLeft = (GetAsyncKeyState(VK_LEFT) & 0x8001);
+	bool KeyRight = (GetAsyncKeyState(VK_RIGHT) & 0x8001);
 
 
 	//이러면 안되는데..
@@ -59,10 +60,8 @@ void Move_Player(Move_Object& player, const T_Map& map) {
 		if (KeyUp || KeyDown || KeyLeft || KeyRight) {
 			player.Set_Status(Player_Status::Move);
 		}
-		else {
-			player.Set_Ani_Count(0);
+		else
 			player.Set_Status(Player_Status::Stop);
-		}
 	}
 
 	if (KeyUp && KeyRight) {

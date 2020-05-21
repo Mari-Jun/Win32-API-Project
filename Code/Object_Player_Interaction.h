@@ -1,7 +1,7 @@
 #pragma once
 #include <Windows.h>
 
-class Move_Object;
+class Player;
 class Non_Move_Npc;
 class Map_Village;
 
@@ -25,11 +25,11 @@ private:
 };
 
 void Reset_Interaction_Box(Interaction_Box& it_box, RECT c_rect);
-bool Paint_Interaction_Box(HDC hdc, HDC alphadc, HDC bitdc, RECT c_rect, Move_Object& player, Interaction_Box& it_box);
+bool Paint_Interaction_Box(HDC hdc, HDC alphadc, HDC bitdc, RECT c_rect, Player& player, Interaction_Box& it_box);
 
 
-void Interaction_Command(Move_Object& player, Map_Village& map_v, Interaction_Box& it_box);
-bool Interaction_Range_Player_To_Npc(Move_Object& player, const Npc& npc);
+void Interaction_Command(Player& player, Map_Village& map_v, Interaction_Box& it_box);
+bool Interaction_Range_Player_To_Npc(Player& player, const Npc& npc);
 
 void Show_Npc_Interaction(HDC hdc, const Map_Village& map_v, const Interaction_Box& it_box);
 void Show_Npc_Elder_Interaction(HDC hdc, const Npc& elder, const Interaction_Box& it_box);

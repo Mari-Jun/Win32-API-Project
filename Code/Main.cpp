@@ -137,6 +137,17 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 			break;
 		case Command_Key::Co_Equipment:
 			Equipment_Command(*player);
+			break;
+		case 'p':
+			//개발자 커맨드 //체력과 마나를 20%/10%감소시킵니다.
+			player->Get_Object_Info().Set_Hp(player->Get_Object_Info_Const().Get_Hp() - player->Get_Object_Info_Const().Get_Max_Hp() / 5);
+			player->Get_Object_Info().Set_Mp(player->Get_Object_Info_Const().Get_Mp() - player->Get_Object_Info_Const().Get_Max_Mp() / 10);
+			break;
+		case '1':
+		case '2':
+		case '3':
+			Use_Item_Command(*player, wParam - '0');
+			break;
 		default:
 			break;
 		}
