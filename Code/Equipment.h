@@ -33,93 +33,93 @@ enum Weapon_Type {
 
 class E_Helmet {
 public:
-	const int& Get_Mp() const;
-	const int& Get_Defence() const;
+	const int& Get_Mp(const int& helmet_type) const;
+	const int& Get_Defence(const int& helmet_type) const;
 
-	void Select_Helmet(const int& helmet_type);
+	void Set_Helmet();
 private:
-	int mp;
-	int defence;
+	int mp[10];
+	int defence[10];
 };
 
-void Reset_Helmet(E_Helmet& e_helmet, const int& helmet_type);
+void Reset_Helmet(E_Helmet& e_helmet);
 void Paint_Helmet_Info(HDC hdc, const E_Helmet& e_helmet, const POINT& pos, const int& helmet_type, const HFONT font);
-void Readjust_Info_By_Helmet(const E_Helmet& e_helmet, Object_Info& o_info, const bool& New);
+void Readjust_Info_By_Helmet(const E_Helmet& e_helmet, Object_Info& o_info, const int& helmet_type, const bool& New);
 
 class E_Armor {
 public:
-	const int& Get_Hp() const;
-	const int& Get_Defence() const;
+	const int& Get_Hp(const int& armor_type) const;
+	const int& Get_Defence(const int& armor_type) const;
 
-	void Select_Armor(const int& armor_type);
+	void Set_Armor();
 private:
-	int hp;
-	int defence;
+	int hp[10];
+	int defence[10];
 };
 
-void Reset_Armor(E_Armor& e_armor, const int& armor_type);
+void Reset_Armor(E_Armor& e_armor);
 void Paint_Armor_Info(HDC hdc, const E_Armor& e_armor, const POINT& pos, const int& armor_type, const HFONT font);
-void Readjust_Info_By_Armor(const E_Armor& e_armor, Object_Info& o_info, const bool& New);
+void Readjust_Info_By_Armor(const E_Armor& e_armor, Object_Info& o_info, const int& armor_type, const bool& New);
 
 class E_Pant {
 public:
-	const int& Get_Hp() const;
-	const int& Get_Defence() const;
+	const int& Get_Hp(const int& pant_type) const;
+	const int& Get_Defence(const int& pant_type) const;
 
-	void Select_Pant(const int& pant_type);
+	void Set_Pant();
 private:
-	int hp;
-	int defence;
+	int hp[10];
+	int defence[10];
 };
 
-void Reset_Pant(E_Pant& e_pant, const int& pant_type);
+void Reset_Pant(E_Pant& e_pant);
 void Paint_Pant_Info(HDC hdc, const E_Pant& e_pant, const POINT& pos, const int& pant_type, const HFONT font);
-void Readjust_Info_By_Pant(const E_Pant& e_pant, Object_Info& o_info, const bool& New);
+void Readjust_Info_By_Pant(const E_Pant& e_pant, Object_Info& o_info, const int& pant_type, const bool& New);
 
 class E_Glove {
 public:
-	const int& Get_Attack() const;
-	const int& Get_Fatal() const;
+	const int& Get_Attack(const int& glove_type) const;
+	const int& Get_Fatal(const int& glove_type) const;
 
-	void Select_Glove(const int& glove_type);
+	void Set_Glove();
 private:
-	int attack;
-	int fatal;
+	int attack[10];
+	int fatal[10];
 };
 
-void Reset_Glove(E_Glove& e_glove, const int& glove_type);
+void Reset_Glove(E_Glove& e_glove);
 void Paint_Glove_Info(HDC hdc, const E_Glove& e_glove, const POINT& pos, const int& glove_type, const HFONT font);
-void Readjust_Info_By_Glove(const E_Glove& e_glove, Object_Info& o_info, const bool& New);
+void Readjust_Info_By_Glove(const E_Glove& e_glove, Object_Info& o_info, const int& glove_type, const bool& New);
 
 class E_Shoe {
 public:
-	const int& Get_Hp() const;
-	const int& Get_Mp() const;
+	const int& Get_Hp(const int& shoe_type) const;
+	const int& Get_Mp(const int& shoe_type) const;
 
-	void Select_Shoe(const int& shoe_type);
+	void Set_Shoe();
 private:
-	int hp;
-	int mp;
+	int hp[10];
+	int mp[10];
 };
 
-void Reset_Shoe(E_Shoe& e_shoe, const int& shoe_type);
+void Reset_Shoe(E_Shoe& e_shoe);
 void Paint_Shoe_Info(HDC hdc, const E_Shoe& e_shoe, const POINT& pos, const int& shoe_type, const HFONT font);
-void Readjust_Info_By_Shoe(const E_Shoe& e_shoe, Object_Info& o_info, const bool& New);
+void Readjust_Info_By_Shoe(const E_Shoe& e_shoe, Object_Info& o_info, const int& shoe_type, const bool& New);
 
 class E_Weapon {
 public:
-	const int& Get_Attack() const;
-	const int& Get_Fatal() const;
+	const int& Get_Attack(const int& weapon_type) const;
+	const int& Get_Fatal(const int& weapon_type) const;
 
-	void Select_Weapon(const int& class_type, const int& weapon_type);
+	void Set_Weapon(const int& class_type);
 private:
-	int attack;
-	int fatal;
+	int attack[10];
+	int fatal[10];
 };
 
-void Reset_Weapon(E_Weapon& e_weapon, const int& class_type, const int& weapon_type);
+void Reset_Weapon(E_Weapon& e_weapon, const int& class_type);
 void Paint_Weapon_Info(HDC hdc, const E_Weapon& e_weapon, const POINT& pos, const int& weapon_type, const HFONT font);
-void Readjust_Info_By_Weapon(const E_Weapon& e_weapon, Object_Info& o_info, const bool& New);
+void Readjust_Info_By_Weapon(const E_Weapon& e_weapon, Object_Info& o_info, const int& weapon_type, const bool& New);
 
 class Player_Equipment {
 public:
@@ -138,23 +138,26 @@ public:
 	E_Shoe& Get_Shoe() const;
 	const E_Weapon& Get_Weapon_Const() const;
 	E_Weapon& Get_Weapon() const;
+	const int& Get_Gold() const;
 
 	const int& Get_Type_Select() const;
 	const int& Get_Equipment_Detail_Select(const int& e_type) const;
 	const bool& Is_Chnage_Select() const;
 	const bool& Is_Own(const int& e_type, const int& d_select) const;
 
-	const HBITMAP Get_Equipment_Interface_Bitmap() const;
-	const BITMAP Get_Equipment_Interface_Bitmap_Size() const;
-	const HBITMAP Get_Equipment_Bitmap(const int& e_type, const int& d_select) const;
-	const HBITMAP Get_Equipment_Select_Bitmap(const int& index) const;
-	const BITMAP Get_Equipment_Bitmap_Size() const;
+	const HBITMAP& Get_Equipment_Interface_Bitmap() const;
+	const BITMAP& Get_Equipment_Interface_Bitmap_Size() const;
+	const HBITMAP& Get_Equipment_Bitmap(const int& e_type, const int& d_select) const;
+	const HBITMAP& Get_Equipment_Select_Bitmap(const int& index) const;
+	const BITMAP& Get_Equipment_Bitmap_Size() const;
 
 	const HFONT Get_Font(const int& index) const;
 
 	void Create_Equipment();
-	
+
 	void Set_Pos(const POINT& pos);
+	void Set_Gold(const int& gold);
+	
 	void Set_Type_Select(const int& e_type);
 	void Set_Equipment_Detail_Select(const int& e_type, const int& d_select);
 	void Set_Change_Select(const bool& change_select);
@@ -171,11 +174,13 @@ private:
 	E_Glove* glove;
 	E_Shoe* shoe;
 	E_Weapon* weapon;
+	int gold;
 
 	int equipment_type_select;
 	int equipment_detail_select[10];
 	bool equipment_change_select;
 	bool own[10][10];
+
 
 	HBITMAP equipment_interface_bitmap;
 	BITMAP equipment_interface_bitmap_size;
@@ -189,6 +194,6 @@ private:
 };
 
 void Reset_Player_Equipment(Player_Equipment& p_equip, Object_Info& o_info);
-void Paint_Player_Equipment(HDC hdc, HDC bitdc, const Player_Equipment& p_equip, const Object_Info& o_info, const int& gold);
+void Paint_Player_Equipment(HDC hdc, HDC bitdc, const Player_Equipment& p_equip, const Object_Info& o_info);
 void Change_Equipment_Type_Select(Player_Equipment& p_equip, WPARAM wParam);
 void Change_Select_Equipment_Detail(Player_Equipment& p_equip, Object_Info& o_info, WPARAM wParam);

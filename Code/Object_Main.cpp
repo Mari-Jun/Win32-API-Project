@@ -82,11 +82,11 @@ Non_Move_Object::~Non_Move_Object() {
 	DeleteObject(object_image_bitmap);
 }
 
-const HBITMAP Non_Move_Object::Get_Object_Bitmap() const {
+const HBITMAP& Non_Move_Object::Get_Object_Bitmap() const {
 	return object_image_bitmap;
 }
 
-const BITMAP Non_Move_Object::Get_Object_Image_Size() const {
+const BITMAP& Non_Move_Object::Get_Object_Image_Size() const {
 	return object_image_size;
 }
 
@@ -205,8 +205,9 @@ void Paint_Hitting_Damage(HDC hdc, const Move_Object& m_object) {
 	TextOut(hdc, m_object.Get_XPos() + m_object.Get_Crash_Width() / 2 - damage_size.cx / 2, m_object.Get_YPos() - damage_size.cy + 5, str, _tcslen(str));
 }
 
-void Calcul_Hitting_Damage(const Move_Object& attack_obj, Move_Object& hit_obj) {
-	hit_obj.Set_Hitting_Damage(attack_obj.Get_Object_Info_Const().Get_Attack() - hit_obj.Get_Object_Info_Const().Get_Defence() + rand() % 10);
+void Calcul_Hitting_Damage(const Move_Object& attack_obj, Move_Object& hit_obj, const int& hit_dmg) {
+	hit_obj.Set_Hitting_Damage(hit_dmg - hit_obj.Get_Object_Info_Const().Get_Defence() + rand() % 10);
+	//이거는 기본공격이고
 	hit_obj.Get_Object_Info().Set_Hp(hit_obj.Get_Object_Info_Const().Get_Hp() - hit_obj.Get_Hitting_Damage());
 }
 

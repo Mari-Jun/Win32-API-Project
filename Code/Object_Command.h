@@ -24,7 +24,7 @@ bool Crash_Check_Object(const Move_Object& m_object, const Object& obj, const in
 bool Crash_Check_Npc(const Move_Object& m_objcet, const Map_Village& map_v, const int& move_x, const int& move_y);
 bool Crash_Check_Enemy(const Move_Object& m_objcet, const Map_Village& map_v, const int& move_x, const int& move_y);
 bool Crash_Attack_Polygon(const Move_Object& attack_obj, const Move_Object& hit_object, const Hitting_Range_Polygon& hit_range_p);
-void Polygon_Damage_Enemy(Map_Village& map_v, const Move_Object& attack_obj, const Hitting_Range_Polygon& hit_range_p);
+void Polygon_Damage_Enemy(Map_Village& map_v, const Move_Object& attack_obj, const Hitting_Range_Polygon& hit_range_p, const int& hit_dmg);
 
 
 void Create_Hitting_Polygon(const Move_Object& m_object, POINT* pos, const int& width_size, const int& height_size, const int& shape);
@@ -33,7 +33,7 @@ void Create_Hitting_Polygon(const Move_Object& m_object, POINT* pos, const int& 
 template <typename T_Map>
 void Command_Player(Player& player, T_Map& map) {
 
-	if (player.Get_Status() == Player_Status::Interaction || player.Get_Status() == Player_Status::Inventory)
+	if (player.Get_Status() == Player_Status::Interaction || player.Get_Status() == Player_Status::Inventory || player.Get_Status() == Player_Status::Shopping)
 		return;
 
 	player.Set_Ani_Count(player.Get_Ani_Count() + 1);
@@ -148,7 +148,9 @@ void Attack_Player(Player& player, T_Map& map) {
 					player.Set_Hit_Range_Polygon(index, HO_Player, pos);
 
 					//히팅!
-					Polygon_Damage_Enemy(map, player, player.Get_Hit_Range_P_Const(index));
+
+					Polygon_Damage_Enemy(map, player, player.Get_Hit_Range_P_Const(index), player.Get_Object_Info_Const().Get_Attack());
+					//마지막 인자부분이 우리가 설정해주어야 할 배수이다. 즉 이건 기본공격이므로 배수가 안들어갔다. 100%의 공격임.
 
 					//폴리곤 제거
 					player.Delete_Hit_Range_Polygon(index);

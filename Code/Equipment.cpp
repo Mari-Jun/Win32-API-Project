@@ -6,44 +6,34 @@
 
 /*equipment helmet*/
 
-const int& E_Helmet::Get_Mp() const {
-	return mp;
+const int& E_Helmet::Get_Mp(const int& helmet_type) const {
+	return mp[helmet_type];
 }
 
-const int& E_Helmet::Get_Defence() const {
-	return defence;
+const int& E_Helmet::Get_Defence(const int& helmet_type) const {
+	return defence[helmet_type];
 }
 
-void E_Helmet::Select_Helmet(const int& helmet_type) {
-	switch (helmet_type)
-	{
-	case Helmet_Type::DEFUALT_HELMET:
-		mp = 25;
-		defence = 2;
-		break;
-	case Helmet_Type::SHOP_HELMET1:
-		mp = 50;
-		defence = 4;
-		break;
-	case Helmet_Type::SHOP_HELMET2:
-		mp = 75;
-		defence = 7;
-		break;
-	case Helmet_Type::SHOP_HELMET3:
-		mp = 100;
-		defence = 11;
-		break;
-	case Helmet_Type::SHOP_HELMET4:
-		mp = 125;
-		defence = 16;
-		break;
-	default:
-		break;
-	}
+void E_Helmet::Set_Helmet() {
+	
+	mp[Helmet_Type::DEFUALT_HELMET] = 25;
+	defence[Helmet_Type::DEFUALT_HELMET] = 2;
+
+	mp[Helmet_Type::SHOP_HELMET1] = 50;
+	defence[Helmet_Type::SHOP_HELMET1] = 4;
+
+	mp[Helmet_Type::SHOP_HELMET2] = 100;
+	defence[Helmet_Type::SHOP_HELMET2] = 11;
+
+	mp[Helmet_Type::SHOP_HELMET3] = 150;
+	defence[Helmet_Type::SHOP_HELMET3] = 20;
+
+	mp[Helmet_Type::SHOP_HELMET4] = 200;
+	defence[Helmet_Type::SHOP_HELMET4] = 25;
 }
 
-void Reset_Helmet(E_Helmet& e_helmet, const int& helmet_type) {
-	e_helmet.Select_Helmet(helmet_type);
+void Reset_Helmet(E_Helmet& e_helmet) {
+	e_helmet.Set_Helmet();
 }
 
 void Paint_Helmet_Info(HDC hdc, const E_Helmet& helmet, const POINT& pos, const int& helmet_type, const HFONT font) {
@@ -69,58 +59,47 @@ void Paint_Helmet_Info(HDC hdc, const E_Helmet& helmet, const POINT& pos, const 
 	}
 	TCHAR text[20];
 	SelectObject(hdc, font);
-	wsprintf(text, _T("마나 + %d"), helmet.Get_Mp());
+	wsprintf(text, _T("마나 + %d"), helmet.Get_Mp(helmet_type));
 	TextOut(hdc, pos.x, pos.y + 80, text, _tcslen(text));
-	wsprintf(text, _T("방어력 + %d"), helmet.Get_Defence());
+	wsprintf(text, _T("방어력 + %d"), helmet.Get_Defence(helmet_type));
 	TextOut(hdc, pos.x, pos.y + 130, text, _tcslen(text));
 }
 
-void Readjust_Info_By_Helmet(const E_Helmet& e_helmet, Object_Info& o_info, const bool& New) {
-	o_info.Set_Max_Mp(o_info.Get_Max_Mp() + (New ? e_helmet.Get_Mp() : -e_helmet.Get_Mp()));
-	o_info.Set_Mp(o_info.Get_Mp() + (New ? e_helmet.Get_Mp() : -e_helmet.Get_Mp()));
-	o_info.Set_Defence(o_info.Get_Defence() + (New ? e_helmet.Get_Defence() : -e_helmet.Get_Defence()));
+void Readjust_Info_By_Helmet(const E_Helmet& e_helmet, Object_Info& o_info, const int& helmet_type, const bool& New) {
+	o_info.Set_Max_Mp(o_info.Get_Max_Mp() + (New ? e_helmet.Get_Mp(helmet_type) : -e_helmet.Get_Mp(helmet_type)));
+	o_info.Set_Mp(o_info.Get_Mp() + (New ? e_helmet.Get_Mp(helmet_type) : -e_helmet.Get_Mp(helmet_type)));
+	o_info.Set_Defence(o_info.Get_Defence() + (New ? e_helmet.Get_Defence(helmet_type) : -e_helmet.Get_Defence(helmet_type)));
 }
 
 /*equipment armor*/
 
-const int& E_Armor::Get_Hp() const {
-	return hp;
+const int& E_Armor::Get_Hp(const int& armor_type) const {
+	return hp[armor_type];
 }
 
-const int& E_Armor::Get_Defence() const {
-	return defence;
+const int& E_Armor::Get_Defence(const int& armor_type) const {
+	return defence[armor_type];
 }
 
-void E_Armor::Select_Armor(const int& armor_type) {
-	switch (armor_type)
-	{
-	case Armor_Type::DEFUALT_ARMOR:
-		hp = 15;
-		defence = 10;
-		break;
-	case Armor_Type::SHOP_ARMOR1:
-		hp = 33;
-		defence = 20;
-		break;
-	case Armor_Type::SHOP_ARMOR2:
-		hp = 66;
-		defence = 30;
-		break;
-	case Armor_Type::SHOP_ARMOR3:
-		hp = 102;
-		defence = 40;
-		break;
-	case Armor_Type::SHOP_ARMOR4:
-		hp = 158;
-		defence = 50;
-		break;
-	default:
-		break;
-	}
+void E_Armor::Set_Armor() {
+	hp[Armor_Type::DEFUALT_ARMOR] = 15;
+	defence[Armor_Type::DEFUALT_ARMOR] = 10;
+
+	hp[Armor_Type::SHOP_ARMOR1] = 33;
+	defence[Armor_Type::SHOP_ARMOR1] = 20;
+
+	hp[Armor_Type::SHOP_ARMOR2] = 102;
+	defence[Armor_Type::SHOP_ARMOR2] = 40;
+
+	hp[Armor_Type::SHOP_ARMOR3] = 196;
+	defence[Armor_Type::SHOP_ARMOR3] = 60;
+
+	hp[Armor_Type::SHOP_ARMOR4] = 300;
+	defence[Armor_Type::SHOP_ARMOR4] = 70;
 }
 
-void Reset_Armor(E_Armor& e_armor, const int& armor_type) {
-	e_armor.Select_Armor(armor_type);
+void Reset_Armor(E_Armor& e_armor) {
+	e_armor.Set_Armor();
 }
 
 void Paint_Armor_Info(HDC hdc, const E_Armor& e_armor, const POINT& pos, const int& armor_type, const HFONT font) {
@@ -146,58 +125,47 @@ void Paint_Armor_Info(HDC hdc, const E_Armor& e_armor, const POINT& pos, const i
 	}
 	TCHAR text[20];
 	SelectObject(hdc, font);
-	wsprintf(text, _T("채력 + %d"), e_armor.Get_Hp());
+	wsprintf(text, _T("채력 + %d"), e_armor.Get_Hp(armor_type));
 	TextOut(hdc, pos.x, pos.y + 80, text, _tcslen(text));
-	wsprintf(text, _T("방어력 + %d"), e_armor.Get_Defence());
+	wsprintf(text, _T("방어력 + %d"), e_armor.Get_Defence(armor_type));
 	TextOut(hdc, pos.x, pos.y + 130, text, _tcslen(text));
 }
 
-void Readjust_Info_By_Armor(const E_Armor& e_armor, Object_Info& o_info, const bool& New) {
-	o_info.Set_Max_Hp(o_info.Get_Max_Hp() + (New ? e_armor.Get_Hp() : -e_armor.Get_Hp()));
-	o_info.Set_Hp(o_info.Get_Hp() + (New ? e_armor.Get_Hp() : -e_armor.Get_Hp()));
-	o_info.Set_Defence(o_info.Get_Defence() + (New ? e_armor.Get_Defence() : -e_armor.Get_Defence()));
+void Readjust_Info_By_Armor(const E_Armor& e_armor, Object_Info& o_info, const int& armor_type, const bool& New) {
+	o_info.Set_Max_Hp(o_info.Get_Max_Hp() + (New ? e_armor.Get_Hp(armor_type) : -e_armor.Get_Hp(armor_type)));
+	o_info.Set_Hp(o_info.Get_Hp() + (New ? e_armor.Get_Hp(armor_type) : -e_armor.Get_Hp(armor_type)));
+	o_info.Set_Defence(o_info.Get_Defence() + (New ? e_armor.Get_Defence(armor_type) : -e_armor.Get_Defence(armor_type)));
 }
 
 /*equipment pant*/
 
-const int& E_Pant::Get_Hp() const {
-	return hp;
+const int& E_Pant::Get_Hp(const int& pant_type) const {
+	return hp[pant_type];
 }
 
-const int& E_Pant::Get_Defence() const {
-	return defence;
+const int& E_Pant::Get_Defence(const int& pant_type) const {
+	return defence[pant_type];
 }
 
-void E_Pant::Select_Pant(const int& pant_type) {
-	switch (pant_type)
-	{
-	case Pant_Type::DEFUALT_PANT:
-		hp = 30;
-		defence = 5;
-		break;
-	case Pant_Type::SHOP_PANT1:
-		hp = 58;
-		defence = 10;
-		break;
-	case Pant_Type::SHOP_PANT2:
-		hp = 96;
-		defence = 17;
-		break;
-	case Pant_Type::SHOP_PANT3:
-		hp = 144;
-		defence = 24;
-		break;
-	case Pant_Type::SHOP_PANT4:
-		hp = 208;
-		defence = 30;
-		break;
-	default:
-		break;
-	}
+void E_Pant::Set_Pant() {
+	hp[Pant_Type::DEFUALT_PANT] = 30;
+	defence[Pant_Type::DEFUALT_PANT] = 5;
+
+	hp[Pant_Type::SHOP_PANT1] = 58;
+	defence[Pant_Type::SHOP_PANT1] = 10;
+
+	hp[Pant_Type::SHOP_PANT2] = 144;
+	defence[Pant_Type::SHOP_PANT2] = 24;
+
+	hp[Pant_Type::SHOP_PANT3] = 250;
+	defence[Pant_Type::SHOP_PANT3] = 40;
+
+	hp[Pant_Type::SHOP_PANT4] = 350;
+	defence[Pant_Type::SHOP_PANT4] = 50;
 }
 
-void Reset_Pant(E_Pant& e_pant, const int& pant_type) {
-	e_pant.Select_Pant(pant_type);
+void Reset_Pant(E_Pant& e_pant) {
+	e_pant.Set_Pant();
 }
 
 void Paint_Pant_Info(HDC hdc, const E_Pant& e_pant, const POINT& pos, const int& pant_type, const HFONT font) {
@@ -223,58 +191,47 @@ void Paint_Pant_Info(HDC hdc, const E_Pant& e_pant, const POINT& pos, const int&
 	}
 	TCHAR text[20];
 	SelectObject(hdc, font);
-	wsprintf(text, _T("채력 + %d"), e_pant.Get_Hp());
+	wsprintf(text, _T("채력 + %d"), e_pant.Get_Hp(pant_type));
 	TextOut(hdc, pos.x, pos.y + 80, text, _tcslen(text));
-	wsprintf(text, _T("방어력 + %d"), e_pant.Get_Defence());
+	wsprintf(text, _T("방어력 + %d"), e_pant.Get_Defence(pant_type));
 	TextOut(hdc, pos.x, pos.y + 130, text, _tcslen(text));
 }
 
-void Readjust_Info_By_Pant(const E_Pant& e_pant, Object_Info& o_info, const bool& New) {
-	o_info.Set_Max_Hp(o_info.Get_Max_Hp() + (New ? e_pant.Get_Hp() : -e_pant.Get_Hp()));
-	o_info.Set_Hp(o_info.Get_Hp() + (New ? e_pant.Get_Hp() : -e_pant.Get_Hp()));
-	o_info.Set_Defence(o_info.Get_Defence() + (New ? e_pant.Get_Defence() : -e_pant.Get_Defence()));
+void Readjust_Info_By_Pant(const E_Pant& e_pant, Object_Info& o_info, const int& pant_type, const bool& New) {
+	o_info.Set_Max_Hp(o_info.Get_Max_Hp() + (New ? e_pant.Get_Hp(pant_type) : -e_pant.Get_Hp(pant_type)));
+	o_info.Set_Hp(o_info.Get_Hp() + (New ? e_pant.Get_Hp(pant_type) : -e_pant.Get_Hp(pant_type)));
+	o_info.Set_Defence(o_info.Get_Defence() + (New ? e_pant.Get_Defence(pant_type) : -e_pant.Get_Defence(pant_type)));
 }
 
 /*equipment glove*/
 
-const int& E_Glove::Get_Attack() const {
-	return attack;
+const int& E_Glove::Get_Attack(const int& glove_type) const {
+	return attack[glove_type];
 }
 
-const int& E_Glove::Get_Fatal() const {
-	return fatal;
+const int& E_Glove::Get_Fatal(const int& glove_type) const {
+	return fatal[glove_type];
 }
 
-void E_Glove::Select_Glove(const int& glove_type) {
-	switch (glove_type)
-	{
-	case Glove_Type::DEFUALT_GLOVE:
-		attack = 5;
-		fatal = 1;
-		break;
-	case Glove_Type::SHOP_GLOVE1:
-		attack = 8;
-		fatal = 2;
-		break;
-	case Glove_Type::SHOP_GLOVE2:
-		attack = 12;
-		fatal = 3;
-		break;
-	case Glove_Type::SHOP_GLOVE3:
-		attack = 16;
-		fatal = 4;
-		break;
-	case Glove_Type::SHOP_GLOVE4:
-		attack = 20;
-		fatal = 5;
-		break;
-	default:
-		break;
-	}
+void E_Glove::Set_Glove() {
+	attack[Glove_Type::DEFUALT_GLOVE] = 5;
+	fatal[Glove_Type::DEFUALT_GLOVE] = 1;
+
+	attack[Glove_Type::SHOP_GLOVE1] = 8;
+	fatal[Glove_Type::SHOP_GLOVE1] = 2;
+
+	attack[Glove_Type::SHOP_GLOVE2] = 16;
+	fatal[Glove_Type::SHOP_GLOVE2] = 4;
+
+	attack[Glove_Type::SHOP_GLOVE3] = 24;
+	fatal[Glove_Type::SHOP_GLOVE3] = 6;
+
+	attack[Glove_Type::SHOP_GLOVE4] = 28;
+	fatal[Glove_Type::SHOP_GLOVE4] = 7;
 }
 
-void Reset_Glove(E_Glove& e_glove, const int& glove_type) {
-	e_glove.Select_Glove(glove_type);
+void Reset_Glove(E_Glove& e_glove) {
+	e_glove.Set_Glove();
 }
 
 void Paint_Glove_Info(HDC hdc, const E_Glove& e_glove, const POINT& pos, const int& glove_type, const HFONT font) {
@@ -300,56 +257,45 @@ void Paint_Glove_Info(HDC hdc, const E_Glove& e_glove, const POINT& pos, const i
 	}
 	TCHAR text[20];
 	SelectObject(hdc, font);
-	wsprintf(text, _T("공격력 + %d"), e_glove.Get_Attack());
+	wsprintf(text, _T("공격력 + %d"), e_glove.Get_Attack(glove_type));
 	TextOut(hdc, pos.x, pos.y + 80, text, _tcslen(text));
-	wsprintf(text, _T("치명타 확률 + %d"), e_glove.Get_Fatal());
+	wsprintf(text, _T("치명타 확률 + %d"), e_glove.Get_Fatal(glove_type));
 	TextOut(hdc, pos.x, pos.y + 130, text, _tcslen(text));
 }
 
-void Readjust_Info_By_Glove(const E_Glove& e_glove, Object_Info& o_info, const bool& New) {
-	o_info.Set_Attack(o_info.Get_Attack() + (New ? e_glove.Get_Attack() : -e_glove.Get_Attack()));
-	o_info.Set_Fatal(o_info.Get_Fatal() + (New ? e_glove.Get_Fatal() : -e_glove.Get_Fatal()));
+void Readjust_Info_By_Glove(const E_Glove& e_glove, Object_Info& o_info, const int& glove_type, const bool& New) {
+	o_info.Set_Attack(o_info.Get_Attack() + (New ? e_glove.Get_Attack(glove_type) : -e_glove.Get_Attack(glove_type)));
+	o_info.Set_Fatal(o_info.Get_Fatal() + (New ? e_glove.Get_Fatal(glove_type) : -e_glove.Get_Fatal(glove_type)));
 }
 
 /*equipment shoe*/
-const int& E_Shoe::Get_Hp() const {
-	return hp;
+const int& E_Shoe::Get_Hp(const int& shoe_type) const {
+	return hp[shoe_type];
 }
 
-const int& E_Shoe::Get_Mp() const {
-	return mp;
+const int& E_Shoe::Get_Mp(const int& shoe_type) const {
+	return mp[shoe_type];
 }
 
-void E_Shoe::Select_Shoe(const int& shoe_type) {
-	switch (shoe_type)
-	{
-	case Shoe_Type::DEFUALT_SHOE:
-		hp = 5;
-		mp = 5;
-		break;
-	case Shoe_Type::SHOP_SHOE1:
-		hp = 15;
-		mp = 12;
-		break;
-	case Shoe_Type::SHOP_SHOE2:
-		hp = 30;
-		mp = 20;
-		break;
-	case Shoe_Type::SHOP_SHOE3:
-		hp = 44;
-		mp = 28;
-		break;
-	case Shoe_Type::SHOP_SHOE4:
-		hp = 60;
-		mp = 40;
-		break;
-	default:
-		break;
-	}
+void E_Shoe::Set_Shoe() {
+	hp[Shoe_Type::DEFUALT_SHOE] = 10;
+	mp[Shoe_Type::DEFUALT_SHOE] = 10;
+
+	hp[Shoe_Type::SHOP_SHOE1] = 20;
+	mp[Shoe_Type::SHOP_SHOE1] = 20;
+
+	hp[Shoe_Type::SHOP_SHOE2] = 40;
+	mp[Shoe_Type::SHOP_SHOE2] = 40;
+
+	hp[Shoe_Type::SHOP_SHOE3] = 60;
+	mp[Shoe_Type::SHOP_SHOE3] = 60;
+
+	hp[Shoe_Type::SHOP_SHOE4] = 70;
+	mp[Shoe_Type::SHOP_SHOE4] = 70;
 }
 
-void Reset_Shoe(E_Shoe& e_shoe, const int& shoe_type) {
-	e_shoe.Select_Shoe(shoe_type);
+void Reset_Shoe(E_Shoe& e_shoe) {
+	e_shoe.Set_Shoe();
 }
 
 void Paint_Shoe_Info(HDC hdc, const E_Shoe& e_shoe, const POINT& pos, const int& shoe_type, const HFONT font) {
@@ -375,66 +321,55 @@ void Paint_Shoe_Info(HDC hdc, const E_Shoe& e_shoe, const POINT& pos, const int&
 	}
 	TCHAR text[20];
 	SelectObject(hdc, font);
-	wsprintf(text, _T("체력 + %d"), e_shoe.Get_Hp());
+	wsprintf(text, _T("체력 + %d"), e_shoe.Get_Hp(shoe_type));
 	TextOut(hdc, pos.x, pos.y + 80, text, _tcslen(text));
-	wsprintf(text, _T("마나 + %d"), e_shoe.Get_Mp());
+	wsprintf(text, _T("마나 + %d"), e_shoe.Get_Mp(shoe_type));
 	TextOut(hdc, pos.x, pos.y + 130, text, _tcslen(text));
 }
 
-void Readjust_Info_By_Shoe(const E_Shoe& e_shoe, Object_Info& o_info, const bool& New) {
-	o_info.Set_Max_Hp(o_info.Get_Max_Hp() + (New ? e_shoe.Get_Hp() : -e_shoe.Get_Hp()));
-	o_info.Set_Hp(o_info.Get_Hp() + (New ? e_shoe.Get_Hp() : -e_shoe.Get_Hp()));
-	o_info.Set_Max_Mp(o_info.Get_Max_Mp() + (New ? e_shoe.Get_Mp() : -e_shoe.Get_Mp()));
-	o_info.Set_Mp(o_info.Get_Mp() + (New ? e_shoe.Get_Mp() : -e_shoe.Get_Mp()));
+void Readjust_Info_By_Shoe(const E_Shoe& e_shoe, Object_Info& o_info, const int& shoe_type, const bool& New) {
+	o_info.Set_Max_Hp(o_info.Get_Max_Hp() + (New ? e_shoe.Get_Hp(shoe_type) : -e_shoe.Get_Hp(shoe_type)));
+	o_info.Set_Hp(o_info.Get_Hp() + (New ? e_shoe.Get_Hp(shoe_type) : -e_shoe.Get_Hp(shoe_type)));
+	o_info.Set_Max_Mp(o_info.Get_Max_Mp() + (New ? e_shoe.Get_Mp(shoe_type) : -e_shoe.Get_Mp(shoe_type)));
+	o_info.Set_Mp(o_info.Get_Mp() + (New ? e_shoe.Get_Mp(shoe_type) : -e_shoe.Get_Mp(shoe_type)));
 }
 
 /*equipment weapon*/
 
-const int& E_Weapon::Get_Attack() const {
-	return attack;
+const int& E_Weapon::Get_Attack(const int& weapon_type) const {
+	return attack[weapon_type];
 }
 
-const int& E_Weapon::Get_Fatal() const {
-	return fatal;
+const int& E_Weapon::Get_Fatal(const int& weapon_type) const {
+	return fatal[weapon_type];
 }
 
-void E_Weapon::Select_Weapon(const int& class_type, const int& weapon_type) {
+void E_Weapon::Set_Weapon(const int& class_type) {
 	switch (class_type)
 	{
 	case Class_Type::Warrior:
-		switch (weapon_type)
-		{
-		case Weapon_Type::DEFUALT_WEAPON:
-			attack = 10;
-			fatal = 3;
-			break;
-		case Weapon_Type::SHOP_WEAPON1:
-			attack = 20;
-			fatal = 5;
-			break;
-		case Weapon_Type::SHOP_WEAPON2:
-			attack = 33;
-			fatal = 8;
-			break;
-		case Weapon_Type::SHOP_WEAPON3:
-			attack = 47;
-			fatal = 10;
-			break;
-		case Weapon_Type::SHOP_WEAPON4:
-			attack = 60;
-			fatal = 12;
-			break;
-		default:
-			break;
-		}
+		attack[Weapon_Type::DEFUALT_WEAPON] = 20;
+		fatal[Weapon_Type::DEFUALT_WEAPON] = 3;
+
+		attack[Weapon_Type::SHOP_WEAPON1] = 35;
+		fatal[Weapon_Type::SHOP_WEAPON1] = 5;
+
+		attack[Weapon_Type::SHOP_WEAPON2] = 64;
+		fatal[Weapon_Type::SHOP_WEAPON2] = 10;
+
+		attack[Weapon_Type::SHOP_WEAPON3] = 100;
+		fatal[Weapon_Type::SHOP_WEAPON3] = 15;
+
+		attack[Weapon_Type::SHOP_WEAPON4] = 125;
+		fatal[Weapon_Type::SHOP_WEAPON4] = 20;
 		break;
 	default:
 		break;
 	}
 }
 
-void Reset_Weapon(E_Weapon& e_weapon, const int& class_type, const int& weapon_type) {
-	e_weapon.Select_Weapon(class_type, weapon_type);
+void Reset_Weapon(E_Weapon& e_weapon, const int& class_type) {
+	e_weapon.Set_Weapon(class_type);
 }
 
 void Paint_Weapon_Info(HDC hdc, const E_Weapon& e_weapon, const POINT& pos, const int& weapon_type, const HFONT font) {
@@ -460,15 +395,15 @@ void Paint_Weapon_Info(HDC hdc, const E_Weapon& e_weapon, const POINT& pos, cons
 	}
 	TCHAR text[20];
 	SelectObject(hdc, font);
-	wsprintf(text, _T("공격력 + %d"), e_weapon.Get_Attack());
+	wsprintf(text, _T("공격력 + %d"), e_weapon.Get_Attack(weapon_type));
 	TextOut(hdc, pos.x, pos.y + 80, text, _tcslen(text));
-	wsprintf(text, _T("치명타 확률 + %d"), e_weapon.Get_Fatal());
+	wsprintf(text, _T("치명타 확률 + %d"), e_weapon.Get_Fatal(weapon_type));
 	TextOut(hdc, pos.x, pos.y + 130, text, _tcslen(text));
 }
 
-void Readjust_Info_By_Weapon(const E_Weapon& e_weapon, Object_Info& o_info, const bool& New) {
-	o_info.Set_Attack(o_info.Get_Attack() + (New ? e_weapon.Get_Attack() : -e_weapon.Get_Attack()));
-	o_info.Set_Fatal(o_info.Get_Fatal() + (New ? e_weapon.Get_Fatal() : -e_weapon.Get_Fatal()));
+void Readjust_Info_By_Weapon(const E_Weapon& e_weapon, Object_Info& o_info, const int& weapon_type, const bool& New) {
+	o_info.Set_Attack(o_info.Get_Attack() + (New ? e_weapon.Get_Attack(weapon_type) : -e_weapon.Get_Attack(weapon_type)));
+	o_info.Set_Fatal(o_info.Get_Fatal() + (New ? e_weapon.Get_Fatal(weapon_type) : -e_weapon.Get_Fatal(weapon_type)));
 }
 
 /*player equipment*/
@@ -484,6 +419,10 @@ Player_Equipment::~Player_Equipment() {
 	for (int e_type = Equipment_Type::T_HELMET; e_type <= Equipment_Type::T_WEAPON; e_type++)
 		for (int i = 0; i < 10; i++)
 			DeleteObject(equipment_bitmap[e_type][i]);
+	DeleteObject(equipment_select_bitmap[0]);
+	DeleteObject(equipment_select_bitmap[1]);
+	for (int index = 0; index < 3; index++)
+		DeleteObject(equip_font[index]);
 }
 
 const POINT& Player_Equipment::Get_Pos() const {
@@ -538,6 +477,10 @@ E_Weapon& Player_Equipment::Get_Weapon() const {
 	return *weapon;
 }
 
+const int& Player_Equipment::Get_Gold() const {
+	return gold;
+}
+
 const int& Player_Equipment::Get_Type_Select() const {
 	return equipment_type_select;
 }
@@ -554,23 +497,23 @@ const bool& Player_Equipment::Is_Own(const int& e_type, const int& d_select) con
 	return own[e_type][d_select];
 }
 
-const HBITMAP Player_Equipment::Get_Equipment_Interface_Bitmap() const {
+const HBITMAP& Player_Equipment::Get_Equipment_Interface_Bitmap() const {
 	return equipment_interface_bitmap;
 }
 
-const BITMAP Player_Equipment::Get_Equipment_Interface_Bitmap_Size() const {
+const BITMAP& Player_Equipment::Get_Equipment_Interface_Bitmap_Size() const {
 	return equipment_interface_bitmap_size;
 }
 
-const HBITMAP Player_Equipment::Get_Equipment_Bitmap(const int& e_type, const int& d_select) const {
+const HBITMAP& Player_Equipment::Get_Equipment_Bitmap(const int& e_type, const int& d_select) const {
 	return equipment_bitmap[e_type][d_select];
 }
 
-const HBITMAP Player_Equipment::Get_Equipment_Select_Bitmap(const int& index) const {
+const HBITMAP& Player_Equipment::Get_Equipment_Select_Bitmap(const int& index) const {
 	return equipment_select_bitmap[index];
 }
 
-const BITMAP Player_Equipment::Get_Equipment_Bitmap_Size() const {
+const BITMAP& Player_Equipment::Get_Equipment_Bitmap_Size() const {
 	return equipment_bitmap_size;
 }
 
@@ -589,6 +532,10 @@ void Player_Equipment::Create_Equipment() {
 
 void Player_Equipment::Set_Pos(const POINT& pos) {
 	this->pos = pos;
+}
+
+void Player_Equipment::Set_Gold(const int& gold) {
+	this->gold = gold;
 }
 
 void Player_Equipment::Set_Type_Select(const int& e_type) {
@@ -656,6 +603,7 @@ void Player_Equipment::Set_Font() {
 void Reset_Player_Equipment(Player_Equipment& p_equip, Object_Info& o_info) {
 	p_equip.Create_Equipment();
 	p_equip.Set_Pos({ 60,60 });
+	p_equip.Set_Gold(10000);
 	p_equip.Set_Type_Select(Equipment_Type::T_HELMET);
 	for (int e_type = Equipment_Type::T_HELMET; e_type <= Equipment_Type::T_WEAPON; e_type++) {
 		p_equip.Set_Equipment_Detail_Select(e_type, 0);
@@ -666,22 +614,22 @@ void Reset_Player_Equipment(Player_Equipment& p_equip, Object_Info& o_info) {
 	p_equip.Set_Font();
 
 	//기본 장비의 능력치를 Object_Info에 갱신시킨다.
-	Reset_Helmet(p_equip.Get_Helmet(), p_equip.Get_Equipment_Detail_Select(Equipment_Type::T_HELMET));
-	Readjust_Info_By_Helmet(p_equip.Get_Helmet_Const(), o_info, true);
-	Reset_Armor(p_equip.Get_Armor(), p_equip.Get_Equipment_Detail_Select(Equipment_Type::T_ARMOR));
-	Readjust_Info_By_Armor(p_equip.Get_Armor_Const(), o_info, true);
-	Reset_Pant(p_equip.Get_Pant(), p_equip.Get_Equipment_Detail_Select(Equipment_Type::T_PANT));
-	Readjust_Info_By_Pant(p_equip.Get_Pant_Const(), o_info, true);
-	Reset_Glove(p_equip.Get_Glove(), p_equip.Get_Equipment_Detail_Select(Equipment_Type::T_GLOVE));
-	Readjust_Info_By_Glove(p_equip.Get_Glove_Const(), o_info, true);
-	Reset_Shoe(p_equip.Get_Shoe(), p_equip.Get_Equipment_Detail_Select(Equipment_Type::T_SHOE));
-	Readjust_Info_By_Shoe(p_equip.Get_Shoe_Const(), o_info, true);
-	Reset_Weapon(p_equip.Get_Weapon(), Class_Type::Warrior, p_equip.Get_Equipment_Detail_Select(Equipment_Type::T_WEAPON));
-	Readjust_Info_By_Weapon(p_equip.Get_Weapon_Const(), o_info, true);
+	Reset_Helmet(p_equip.Get_Helmet());
+	Readjust_Info_By_Helmet(p_equip.Get_Helmet_Const(), o_info, Helmet_Type::DEFUALT_HELMET, true);
+	Reset_Armor(p_equip.Get_Armor());
+	Readjust_Info_By_Armor(p_equip.Get_Armor_Const(), o_info, Armor_Type::DEFUALT_ARMOR, true);
+	Reset_Pant(p_equip.Get_Pant());
+	Readjust_Info_By_Pant(p_equip.Get_Pant_Const(), o_info, Pant_Type::DEFUALT_PANT, true);
+	Reset_Glove(p_equip.Get_Glove());
+	Readjust_Info_By_Glove(p_equip.Get_Glove_Const(), o_info, Glove_Type::DEFUALT_GLOVE, true);
+	Reset_Shoe(p_equip.Get_Shoe());
+	Readjust_Info_By_Shoe(p_equip.Get_Shoe_Const(), o_info, Shoe_Type::DEFUALT_SHOE, true);
+	Reset_Weapon(p_equip.Get_Weapon(), Class_Type::Warrior);
+	Readjust_Info_By_Weapon(p_equip.Get_Weapon_Const(), o_info, Weapon_Type::DEFUALT_WEAPON, true);
 	
 }
 
-void Paint_Player_Equipment(HDC hdc, HDC bitdc, const Player_Equipment& p_equip, const Object_Info& o_info, const int& gold) {
+void Paint_Player_Equipment(HDC hdc, HDC bitdc, const Player_Equipment& p_equip, const Object_Info& o_info) {
 	SelectObject(bitdc, p_equip.Get_Equipment_Interface_Bitmap());
 	TransparentBlt(hdc, p_equip.Get_Pos().x, p_equip.Get_Pos().y, p_equip.Get_Equipment_Interface_Bitmap_Size().bmWidth, p_equip.Get_Equipment_Interface_Bitmap_Size().bmHeight,
 		bitdc, 0, 0, p_equip.Get_Equipment_Interface_Bitmap_Size().bmWidth, p_equip.Get_Equipment_Interface_Bitmap_Size().bmHeight, RGB(255, 255, 255));
@@ -700,7 +648,6 @@ void Paint_Player_Equipment(HDC hdc, HDC bitdc, const Player_Equipment& p_equip,
 
 	SetBkMode(hdc, TRANSPARENT);
 	//선택한 장비의 정보를 출력합니다.
-	//상점에서도 구현될 내용이니 따로 함수를 만들어야한다.
 	SelectObject(hdc, p_equip.Get_Font(0));
 	switch (p_equip.Get_Type_Select())
 	{
@@ -740,7 +687,7 @@ void Paint_Player_Equipment(HDC hdc, HDC bitdc, const Player_Equipment& p_equip,
 	TextOut(hdc, p_equip.Get_Pos().x + 262, p_equip.Get_Pos().y + 450, text, _tcslen(text));
 	wsprintf(text, _T("MP : %4d/%d"), o_info.Get_Mp(), o_info.Get_Max_Mp());
 	TextOut(hdc, p_equip.Get_Pos().x + 381, p_equip.Get_Pos().y + 450, text, _tcslen(text));
-	wsprintf(text, _T("Gold : %d"), gold);
+	wsprintf(text, _T("Gold : %d"), p_equip.Get_Gold());
 	TextOut(hdc, p_equip.Get_Pos().x + 25, p_equip.Get_Pos().y + 490, text, _tcslen(text));
 	wsprintf(text, _T("ATK : %d"), o_info.Get_Attack());
 	TextOut(hdc, p_equip.Get_Pos().x + 143, p_equip.Get_Pos().y + 490, text, _tcslen(text));
@@ -778,11 +725,15 @@ void Change_Equipment_Type_Select(Player_Equipment& p_equip, WPARAM wParam) {
 }
 
 void Change_Select_Equipment_Detail(Player_Equipment& p_equip, Object_Info& o_info, WPARAM wParam) {
+	
+	int before_select;
+
 	switch (wParam)
 	{
-		//나중에 OWN도 추가 해서 구현
 	case VK_LEFT:
 	case VK_RIGHT:
+		before_select = p_equip.Get_Equipment_Detail_Select(p_equip.Get_Type_Select());
+
 		if (wParam == VK_LEFT) {
 			if (p_equip.Get_Equipment_Detail_Select(p_equip.Get_Type_Select()) > 0) {
 				for (int index = p_equip.Get_Equipment_Detail_Select(p_equip.Get_Type_Select()) - 1; index >= 0; index--) {
@@ -809,40 +760,32 @@ void Change_Select_Equipment_Detail(Player_Equipment& p_equip, Object_Info& o_in
 		switch (p_equip.Get_Type_Select())
 		{
 		case Equipment_Type::T_HELMET:
-			Readjust_Info_By_Helmet(p_equip.Get_Helmet_Const(), o_info, false);
-			Reset_Helmet(p_equip.Get_Helmet(), p_equip.Get_Equipment_Detail_Select(p_equip.Get_Type_Select()));
-			Readjust_Info_By_Helmet(p_equip.Get_Helmet_Const(), o_info, true);
+			Readjust_Info_By_Helmet(p_equip.Get_Helmet_Const(), o_info, before_select, false);
+			Readjust_Info_By_Helmet(p_equip.Get_Helmet_Const(), o_info, p_equip.Get_Equipment_Detail_Select(p_equip.Get_Type_Select()), true);
 			break;
 		case Equipment_Type::T_ARMOR:
-			Readjust_Info_By_Armor(p_equip.Get_Armor_Const(), o_info, false);
-			Reset_Armor(p_equip.Get_Armor(), p_equip.Get_Equipment_Detail_Select(p_equip.Get_Type_Select()));
-			Readjust_Info_By_Armor(p_equip.Get_Armor_Const(), o_info, true);
+			Readjust_Info_By_Armor(p_equip.Get_Armor_Const(), o_info, before_select, false);
+			Readjust_Info_By_Armor(p_equip.Get_Armor_Const(), o_info, p_equip.Get_Equipment_Detail_Select(p_equip.Get_Type_Select()), true);
 			break;
 		case Equipment_Type::T_PANT:
-			Readjust_Info_By_Pant(p_equip.Get_Pant_Const(), o_info, false);
-			Reset_Pant(p_equip.Get_Pant(), p_equip.Get_Equipment_Detail_Select(p_equip.Get_Type_Select()));
-			Readjust_Info_By_Pant(p_equip.Get_Pant_Const(), o_info, true);
+			Readjust_Info_By_Pant(p_equip.Get_Pant_Const(), o_info, before_select, false);
+			Readjust_Info_By_Pant(p_equip.Get_Pant_Const(), o_info, p_equip.Get_Equipment_Detail_Select(p_equip.Get_Type_Select()), true);
 			break;
 		case Equipment_Type::T_GLOVE:
-			Readjust_Info_By_Glove(p_equip.Get_Glove_Const(), o_info, false);
-			Reset_Glove(p_equip.Get_Glove(), p_equip.Get_Equipment_Detail_Select(p_equip.Get_Type_Select()));
-			Readjust_Info_By_Glove(p_equip.Get_Glove_Const(), o_info, true);
+			Readjust_Info_By_Glove(p_equip.Get_Glove_Const(), o_info, before_select, false);
+			Readjust_Info_By_Glove(p_equip.Get_Glove_Const(), o_info, p_equip.Get_Equipment_Detail_Select(p_equip.Get_Type_Select()), true);
 			break;
 		case Equipment_Type::T_SHOE:
-			Readjust_Info_By_Shoe(p_equip.Get_Shoe_Const(), o_info, false);
-			Reset_Shoe(p_equip.Get_Shoe(), p_equip.Get_Equipment_Detail_Select(p_equip.Get_Type_Select()));
-			Readjust_Info_By_Shoe(p_equip.Get_Shoe_Const(), o_info, true);
+			Readjust_Info_By_Shoe(p_equip.Get_Shoe_Const(), o_info, before_select, false);
+			Readjust_Info_By_Shoe(p_equip.Get_Shoe_Const(), o_info, p_equip.Get_Equipment_Detail_Select(p_equip.Get_Type_Select()), true);
 			break;
 		case Equipment_Type::T_WEAPON:
-			Readjust_Info_By_Weapon(p_equip.Get_Weapon_Const(), o_info, false);
-			Reset_Weapon(p_equip.Get_Weapon(), Class_Type::Warrior, p_equip.Get_Equipment_Detail_Select(p_equip.Get_Type_Select()));
-			Readjust_Info_By_Weapon(p_equip.Get_Weapon_Const(), o_info, true);
+			Readjust_Info_By_Weapon(p_equip.Get_Weapon_Const(), o_info, before_select, false);
+			Readjust_Info_By_Weapon(p_equip.Get_Weapon_Const(), o_info, p_equip.Get_Equipment_Detail_Select(p_equip.Get_Type_Select()), true);
 			break;
 		default:
 			break;
 		}
-	
-	
 	
 		break;
 	case VK_RETURN:

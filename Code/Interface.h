@@ -23,7 +23,7 @@ private:
 	BITMAP hp_bitmap_size;
 	HBITMAP mp_bitmap;
 	BITMAP mp_bitmap_size;
-	HBITMAP command_bitmap[8];
+	HBITMAP command_bitmap[7];
 	BITMAP command_bitmap_size;
 };
 

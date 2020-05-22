@@ -41,8 +41,8 @@ class Non_Move_Object : public Object {
 public:
 	~Non_Move_Object();
 
-	const HBITMAP Get_Object_Bitmap() const;
-	const BITMAP Get_Object_Image_Size() const;
+	const HBITMAP& Get_Object_Bitmap() const;
+	const BITMAP& Get_Object_Image_Size() const;
 
 	void Set_Object_Bitmap(HBITMAP bitmap);
 private:
@@ -91,4 +91,4 @@ private:
 
 void Reset_Move_Object(Move_Object& m_object, const int& x_pos, const int& y_pos, const int& width, const int& height, const int& speed);
 void Paint_Hitting_Damage(HDC hdc, const Move_Object& m_object);
-void Calcul_Hitting_Damage(const Move_Object& attack_obj, Move_Object& hit_obj);
+void Calcul_Hitting_Damage(const Move_Object& attack_obj, Move_Object& hit_obj, const int& hit_dmg);

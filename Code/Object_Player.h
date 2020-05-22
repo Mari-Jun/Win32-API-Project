@@ -10,19 +10,17 @@ public:
 	~Player();
 
 	const int& Get_Class_Type() const;
-	const int& Get_Gold() const;
 	const Player_Equipment& Get_Player_Equipment_Const() const;
 	Player_Equipment& Get_Player_Equipment() const;
 	const Player_Item& Get_Player_Item_Const() const;
 	Player_Item& Get_Player_Item() const;
 	
-	const BITMAP Get_Motion_Size() const;
-	const HBITMAP Get_Stop_Motion(const int& direction, const int& index) const;
-	const HBITMAP Get_Move_Motion(const int& direction, const int& index) const;
-	const HBITMAP Get_Attack_Motion(const int& direction, const int& index) const;
+	const BITMAP& Get_Motion_Size() const;
+	const HBITMAP& Get_Stop_Motion(const int& direction, const int& index) const;
+	const HBITMAP& Get_Move_Motion(const int& direction, const int& index) const;
+	const HBITMAP& Get_Attack_Motion(const int& direction, const int& index) const;
 
 	void Set_Class_Type(const int& class_type);
-	void Set_Gold(const int& gold);
 	void Set_Motion_Bitmap();
 
 	void Create_Player_Equipment();
@@ -30,7 +28,6 @@ public:
 
 private:
 	int class_type;
-	int gold;
 	Player_Equipment* p_equip;
 	Player_Item* p_item;
 	BITMAP motion_size;

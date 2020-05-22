@@ -31,10 +31,6 @@ const int& Player::Get_Class_Type() const {
 	return class_type;
 }
 
-const int& Player::Get_Gold() const {
-	return gold;
-}
-
 const Player_Equipment& Player::Get_Player_Equipment_Const() const {
 	return *p_equip;
 }
@@ -51,28 +47,24 @@ Player_Item& Player::Get_Player_Item() const {
 	return *p_item;
 }
 
-const BITMAP Player::Get_Motion_Size() const {
+const BITMAP& Player::Get_Motion_Size() const {
 	return motion_size;
 }
 
-const HBITMAP Player::Get_Stop_Motion(const int& direction, const int& index) const {
+const HBITMAP& Player::Get_Stop_Motion(const int& direction, const int& index) const {
 	return stop_motion_bitmap[direction][index];
 }
 
-const HBITMAP Player::Get_Move_Motion(const int& direction, const int& index) const {
+const HBITMAP& Player::Get_Move_Motion(const int& direction, const int& index) const {
 	return move_motion_bitmap[direction][index];
 }
 
-const HBITMAP Player::Get_Attack_Motion(const int& direction, const int& index) const {
+const HBITMAP& Player::Get_Attack_Motion(const int& direction, const int& index) const {
 	return attack_motion_bitmap[direction][index];
 }
 
 void Player::Set_Class_Type(const int& class_type) {
 	this->class_type = class_type;
-}
-
-void Player::Set_Gold(const int& gold) {
-	this->gold = gold;
 }
 
 void Player::Set_Motion_Bitmap() {
@@ -120,7 +112,6 @@ void Reset_Player(Player& player, const int& class_type) {
 	Reset_Move_Object(player, 400, 500, player.Get_Motion_Size().bmWidth, player.Get_Motion_Size().bmHeight, 8);
 	Reset_Object_Info(player.Get_Object_Info(), 1, 100, 100, 10, 0, 0);
 	player.Set_Class_Type(class_type);
-	player.Set_Gold(10000);
 	player.Create_Player_Equipment();
 	player.Create_Player_Item();
 
@@ -136,6 +127,7 @@ void Paint_Player(HDC hdc, HDC bitdc, const Player& player) {
 	case Player_Status::Stop:
 	case Player_Status::Interaction:
 	case Player_Status::Inventory:
+	case Player_Status::Shopping:
 		SelectObject(bitdc, player.Get_Stop_Motion(player.Get_Direction(), player.Get_Ani_Count() / 2 % 8));
 		TransparentBlt(hdc, player.Get_XPos() - 45, player.Get_YPos(), player.Get_Motion_Size().bmWidth, player.Get_Motion_Size().bmHeight, bitdc, 0, 0, player.Get_Motion_Size().bmWidth, player.Get_Motion_Size().bmHeight, RGB(255, 255, 255));
 		break;
@@ -168,21 +160,22 @@ void Paint_Player(HDC hdc, HDC bitdc, const Player& player) {
 
 void Paint_Player_Equipment(HDC hdc, HDC bitdc, const Player& player) {
 	if (player.Get_Status() == Player_Status::Inventory)
-		Paint_Player_Equipment(hdc, bitdc, player.Get_Player_Equipment_Const(), player.Get_Object_Info_Const(), player.Get_Gold());
+		Paint_Player_Equipment(hdc, bitdc, player.Get_Player_Equipment_Const(), player.Get_Object_Info_Const());
 }
 
 void Equipment_Command(Player& player) {
 
-	//장비창(인벤토리) 열기
-	if (player.Get_Status() != Player_Status::Inventory) {
-		player.Set_Status(Player_Status::Inventory);
+	if (player.Get_Status() != Player_Status::Interaction && player.Get_Status() != Player_Status::Shopping) {
+		//장비창(인벤토리) 열기
+		if (player.Get_Status() != Player_Status::Inventory) {
+			player.Set_Status(Player_Status::Inventory);
+		}
+		//장비창(인벤토리) 닫기
+		else {
+			if (!player.Get_Player_Equipment_Const().Is_Chnage_Select())
+				player.Set_Status(Player_Status::Stop);
+		}
 	}
-	//장비창(인벤토리) 닫기
-	else {
-		if(!player.Get_Player_Equipment_Const().Is_Chnage_Select())
-			player.Set_Status(Player_Status::Stop);
-	}
-
 }
 
 bool Chnage_Equipment(Player& player, WPARAM wParam) {
@@ -196,6 +189,7 @@ bool Chnage_Equipment(Player& player, WPARAM wParam) {
 	}
 	return false;
 }
+
 void Use_Item_Command(Player& player, WPARAM wParam) {
 	if (player.Get_Status() != Player_Status::Inventory && player.Get_Status() != Player_Status::Interaction) {
 		//캐릭터 정보창, 상호작용중이 아닐경우만 작동합니다.

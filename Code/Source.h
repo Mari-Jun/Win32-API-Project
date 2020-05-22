@@ -39,7 +39,7 @@ enum Object_Direction {
 };
 
 enum Player_Status {
-	Stop, Move, Run, Interaction, Attack, Inventory,
+	Stop, Move, Run, Interaction, Attack, Inventory, Shopping
 };
 
 enum Class_Type {
@@ -52,6 +52,14 @@ enum Enemy_Type {
 
 enum Player_Item_Type {
 	Hp_Potion = 1, Mp_Potion, Panacea
+};
+
+enum Shop_Type {
+	Equipment_Type, Accessory_Type
+};
+
+enum Dialog_Type {
+	Shop_Type, Quest_Type, No_Money_Type
 };
 
 enum Timer_Name {

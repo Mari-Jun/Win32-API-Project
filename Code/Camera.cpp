@@ -16,11 +16,9 @@ void Camera::Set_Cam_Top(const int& top) {
 	cam_top = top;
 }
 
-
 void Camera::Set_Cam_Left(const int& left) {
 	cam_left = left;
 }
-
 
 void Reset_Camera(Camera& camera, RECT c_rect) {
 	camera.Set_Cam_Top(c_rect.top);

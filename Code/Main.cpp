@@ -59,11 +59,11 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 }
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
-	static HDC hdc, memdc, gamedc, bitdc, interfacedc, alphadc;
+	static HDC hdc, memdc, gamedc, bitdc, alphadc, interfacedc;
 	PAINTSTRUCT ps;
 
 	//비트맵
-	static HBITMAP db_bitmap, db_alpha;
+	static HBITMAP db_bitmap, db_bitmap2;
 
 	//데미지 폰트
 	static HFONT damage_font;
@@ -95,7 +95,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 		bitdc = CreateCompatibleDC(hdc);
 		alphadc = CreateCompatibleDC(hdc);
 		db_bitmap = CreateCompatibleBitmap(hdc, c_rect.right, c_rect.bottom);
-		db_alpha = CreateCompatibleBitmap(hdc, c_rect.right, c_rect.bottom);
+		db_bitmap2 = CreateCompatibleBitmap(hdc, c_rect.right, c_rect.bottom);
 
 		damage_font = CreateFont(40, 20, 0, 0, FW_BOLD, FALSE, FALSE, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH, _T("휴먼매직체"));
 
@@ -117,7 +117,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 		map_v = Create_Class<Map_Village>();
 		Reset_Village_Map(hdc, *map_v);
 
-		SetTimer(hwnd, Default_Timer, 30, NULL);
+		SetTimer(hwnd, Default_Timer, 10, NULL);
 
 		ReleaseDC(hwnd, hdc);
 
@@ -162,6 +162,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 		case VK_RETURN:
 			if(Chnage_Equipment(*player, wParam))
 				InvalidateRgn(hwnd, NULL, FALSE);
+			if (Shop_Select_Item(*player, *map_v, *it_box, wParam))
+				InvalidateRgn(hwnd, NULL, FALSE);
 			break;
 		default:
 			break;
@@ -188,7 +190,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 	case WM_PAINT:
 		hdc = BeginPaint(hwnd, &ps);
 		SelectObject(memdc, db_bitmap);
-		SelectObject(alphadc, db_alpha);
+		SelectObject(alphadc, db_bitmap2);
 
 		FillRect(memdc, &c_rect, WHITE_BRUSH);
 
@@ -202,7 +204,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 		Paint_Player_Equipment(memdc, bitdc, *player);
 		
 		if (Paint_Interaction_Box(memdc, alphadc, bitdc, c_rect, *player, *it_box))
-			Show_Npc_Interaction(memdc, *map_v, *it_box);
+			Show_Npc_Interaction(memdc, bitdc, *player, *map_v, *it_box);
 
 		BitBlt(hdc, 0, 0, c_rect.right, c_rect.bottom, memdc, 0, 0, SRCCOPY);
 		EndPaint(hwnd, &ps);

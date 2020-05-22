@@ -7,6 +7,8 @@
 #include "Object_Npc.h"
 #include "Object_Enemy.h"
 #include "Object_Info.h"
+#include "Object_Player_Interaction.h"
+#include "Shop.h"
 
 Map_Village::~Map_Village() {
 	for (int index = 0; index < 4; index++)
@@ -14,6 +16,7 @@ Map_Village::~Map_Village() {
 	Delete_Class<Practice_Enemy>(&p_enemy);
 	for (int index = 0; index < 5; index++)
 		Delete_Class<Npc>(&npc[index]);
+	Delete_Class<Shop>(&shop);
 }
 
 const Npc& Map_Village::Get_Npc_Const(const int& npc_type) const {
@@ -22,6 +25,14 @@ const Npc& Map_Village::Get_Npc_Const(const int& npc_type) const {
 
 Npc& Map_Village::Get_Npc(const int& npc_type) const {
 	return *npc[npc_type];
+}
+
+const Shop& Map_Village::Get_Shop_Const() const {
+	return *shop;
+}
+
+Shop& Map_Village::Get_Shop() const {
+	return *shop;
 }
 
 const Practice_Enemy& Map_Village::Get_P_Enemy_Const() const {
@@ -33,7 +44,7 @@ Practice_Enemy& Map_Village::Get_P_Enemy() const {
 }
 
 
-const HBITMAP Map_Village::Get_Texture(const int& index) const {
+const HBITMAP& Map_Village::Get_Texture(const int& index) const {
 	return texture[index];
 }
 
@@ -89,6 +100,14 @@ void Map_Village::Set_Texture() {
 	texture[VT::Grow2] = (HBITMAP)LoadImage(NULL, _T(".\\BitMap\\Map\\Village\\Grow2.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 }
 
+void Map_Village::Create_Shop(const int& shop_type, const RECT& it_rect) {
+	shop = Create_Class<Shop>();
+	Reset_Shop(*shop, it_rect, shop_type);
+}
+
+void Map_Village::Destroy_Shop() {
+	Delete_Class<Shop>(&shop);
+}
 
 void Map_Village::Kill_P_Enemy() {
 	Delete_Class<Practice_Enemy>(&p_enemy);
@@ -204,4 +223,41 @@ void Animation_Play_Npc(Map_Village& map_v) {
 void Enemy_Kill_Check(Map_Village& map_v) {
 	if (&map_v.Get_P_Enemy_Const() != NULL && map_v.Get_P_Enemy_Const().Get_Object_Info_Const().Get_Hp() < 0)
 		map_v.Kill_P_Enemy();
+}
+
+bool Shop_Select_Item(Player& player, Map_Village& map_v, Interaction_Box& it_box, const WPARAM wParam) {
+	if (player.Get_Status() == Player_Status::Shopping && &map_v.Get_Shop_Const() != NULL) {
+		if (it_box.Get_Dialog_Status() == 0) {
+			if (Change_Select_Item(map_v.Get_Shop(), wParam))
+				it_box.Set_Dialog_Status(it_box.Get_Dialog_Status() + 1);
+		}
+		else {
+			switch (Select_Dialog_Ok(it_box,wParam))
+			{
+			case 0:
+				//취소을 선택한 경우
+				it_box.Set_Dialog_Status(0);
+				break;
+			case 1:
+				//확인을 선택한 경우
+				if (!Buy_Equipment_Shop(player.Get_Player_Equipment(), map_v.Get_Shop())) {
+					if (it_box.Get_Dialog_Status() == 1)
+						it_box.Set_Dialog_Status(it_box.Get_Dialog_Status() + 1);
+					else {
+						it_box.Set_Select_Ok(false);
+						it_box.Set_Dialog_Status(0);
+					}
+				}
+				else {
+					it_box.Set_Select_Ok(false);
+					it_box.Set_Dialog_Status(0);
+				}
+				break;
+			default:
+				break;
+			}
+		}
+		return true;
+	}
+	return false;
 }

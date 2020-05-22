@@ -48,7 +48,7 @@ void Player_Interface::Set_Bitmap() {
 	mp_bitmap = (HBITMAP)LoadImage(NULL, _T(".\\BitMap\\Interface\\Player\\Mp.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 	GetObject(mp_bitmap, sizeof(BITMAP), &mp_bitmap_size);
 
-	for (int index = 0; index < 8; index++) {
+	for (int index = 0; index < 7; index++) {
 		TCHAR str[40];
 		wsprintf(str, _T(".\\BitMap\\Interface\\Player\\Command%d.bmp"), index + 1);
 		command_bitmap[index] = (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
@@ -89,8 +89,8 @@ void Paint_Player_Interface(HDC hdc, HDC bitdc, const RECT c_rect, const Player_
 		SelectObject(bitdc, p_inter.Get_Command_Bitmap(index));
 		TransparentBlt(hdc, c_rect.right - 406 + index * 57, c_rect.bottom - 117, p_inter.Get_Command_Bitmap_Size().bmWidth, p_inter.Get_Command_Bitmap_Size().bmHeight, bitdc, 0, 0, p_inter.Get_Command_Bitmap_Size().bmWidth, p_inter.Get_Command_Bitmap_Size().bmHeight, RGB(17, 33, 42));
 	}
-	for (int index = 3; index < 8; index++) {
+	for (int index = 3; index < 7; index++) {
 		SelectObject(bitdc, p_inter.Get_Command_Bitmap(index));
-		TransparentBlt(hdc, c_rect.right - 517 + (index - 3) * 56, c_rect.bottom - 60, p_inter.Get_Command_Bitmap_Size().bmWidth, p_inter.Get_Command_Bitmap_Size().bmHeight, bitdc, 0, 0, p_inter.Get_Command_Bitmap_Size().bmWidth, p_inter.Get_Command_Bitmap_Size().bmHeight, RGB(17, 33, 42));
+		TransparentBlt(hdc, c_rect.right - 460 + (index - 3) * 56, c_rect.bottom - 60, p_inter.Get_Command_Bitmap_Size().bmWidth, p_inter.Get_Command_Bitmap_Size().bmHeight, bitdc, 0, 0, p_inter.Get_Command_Bitmap_Size().bmWidth, p_inter.Get_Command_Bitmap_Size().bmHeight, RGB(17, 33, 42));
 	}
 }

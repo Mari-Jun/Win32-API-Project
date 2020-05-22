@@ -89,9 +89,9 @@ bool Crash_Attack_Polygon(const Move_Object& attack_obj, const Move_Object& hit_
 	return true;
 }
 
-void Polygon_Damage_Enemy(Map_Village& map_v, const Move_Object& attack_obj, const Hitting_Range_Polygon& hit_range_p) {
+void Polygon_Damage_Enemy(Map_Village& map_v, const Move_Object& attack_obj, const Hitting_Range_Polygon& hit_range_p, const int& hit_dmg) {
 	if (hit_range_p.Get_Owner() == HO_Player && &map_v.Get_P_Enemy_Const() != NULL && Crash_Attack_Polygon(attack_obj, map_v.Get_P_Enemy_Const(), hit_range_p)) 
-		Calcul_Hitting_Damage(attack_obj, map_v.Get_P_Enemy());	
+		Calcul_Hitting_Damage(attack_obj, map_v.Get_P_Enemy(), hit_dmg);	
 }
 
 void Create_Hitting_Polygon(const Move_Object& m_object, POINT* pos, const int& width_size, const int& height_size, const int& shape) {
