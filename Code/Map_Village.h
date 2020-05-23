@@ -14,7 +14,7 @@ typedef enum Village_Texture {
 }VT;
 
 typedef enum Village_NM_Object {
-	House1, House2, House3, House4, Lake, Wall1
+	House1, House2, House3, House4, House5, Wall1
 }VNM_OB;
 
 class Map_Village : public Map {
@@ -30,6 +30,8 @@ public:
 	const HBITMAP& Get_Texture(const int& index) const;
 	
 	virtual void Set_NM_Object();
+	virtual void Set_Portal();
+
 	void Set_Npc();
 	void Set_P_Enemy();
 	void Set_Texture();
@@ -41,7 +43,7 @@ public:
 	
 private:
 	Practice_Enemy* p_enemy;
-	Npc* npc[5];
+	Npc* npc[6];
 	Shop* shop;
 	HBITMAP texture[4];
 };

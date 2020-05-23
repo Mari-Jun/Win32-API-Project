@@ -96,7 +96,8 @@ void Non_Move_Object::Set_Object_Bitmap(HBITMAP bitmap) {
 }
 
 void Reset_Non_Move_Object(Non_Move_Object& nm_object, const int& x_pos, const int& y_pos, HBITMAP bitmap) {
-	nm_object.Set_Object_Bitmap(bitmap);
+	if (nm_object.Get_Object_Bitmap() == NULL)
+		nm_object.Set_Object_Bitmap(bitmap);
 	nm_object.Set_Crash_Width(nm_object.Get_Object_Image_Size().bmWidth);
 	Reset_Object(nm_object, x_pos, y_pos, nm_object.Get_Object_Image_Size().bmWidth, nm_object.Get_Object_Image_Size().bmHeight);
 }
@@ -207,7 +208,7 @@ void Paint_Hitting_Damage(HDC hdc, const Move_Object& m_object) {
 
 void Calcul_Hitting_Damage(const Move_Object& attack_obj, Move_Object& hit_obj, const int& hit_dmg) {
 	hit_obj.Set_Hitting_Damage(hit_dmg - hit_obj.Get_Object_Info_Const().Get_Defence() + rand() % 10);
-	//이거는 기본공격이고
+	//치명타 넣어야함
 	hit_obj.Get_Object_Info().Set_Hp(hit_obj.Get_Object_Info_Const().Get_Hp() - hit_obj.Get_Hitting_Damage());
 }
 

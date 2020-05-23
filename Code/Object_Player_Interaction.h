@@ -4,6 +4,7 @@
 class Player;
 class Non_Move_Npc;
 class Map_Village;
+class Progress;
 
 class Interaction_Box {
 public:
@@ -45,11 +46,12 @@ void Reset_Interaction_Box(Interaction_Box& it_box, RECT c_rect);
 bool Paint_Interaction_Box(HDC hdc, HDC bit2dc, HDC bitdc, RECT c_rect, Player& player, Interaction_Box& it_box);
 
 
-void Interaction_Command(Player& player, Map_Village& map_v, Interaction_Box& it_box);
+void Interaction_Command(Player& player, Map_Village& map_v, Interaction_Box& it_box, Progress& progress);
 bool Interaction_Range_Player_To_Npc(Player& player, const Npc& npc);
 
 void Show_Npc_Interaction(HDC hdc, HDC bitdc, const Player& player, const Map_Village& map_v, const Interaction_Box& it_box);
 void Show_Npc_Elder_Interaction(HDC hdc, const Npc& elder, const Interaction_Box& it_box);
+void Show_Npc_Equipment_Interaction(HDC hdc, const Npc& equip, const Interaction_Box& it_box);
 void Show_Npc_Weapon_Interaction(HDC hdc, const Npc& weapon, const Interaction_Box& it_box);
 void Show_Npc_Item_Interaction(HDC hdc, const Npc& item, const Interaction_Box& it_box);
 void Show_Npc_Legend_Interaction(HDC hdc, const Npc& Legend, const Interaction_Box& it_box);
@@ -57,3 +59,4 @@ void Show_Npc_Soldier_Interaction(HDC hdc, const Npc& Soldier, const Interaction
 
 void Show_Dialog_Box(HDC hdc, HDC bitdc, const Interaction_Box& it_box, const int& dialog_type);
 const int Select_Dialog_Ok(Interaction_Box& it_box, const WPARAM wParam);
+bool Interaction_Dialog_Select(Player& player, Map_Village& map_v, Interaction_Box& it_box, const WPARAM wParam);

@@ -4,7 +4,7 @@
 class Object_Info;
 
 enum Equipment_Type {
-	T_HELMET, T_ARMOR, T_PANT, T_GLOVE, T_SHOE, T_WEAPON, T_AMULET, T_RING, T_CLOAK, T_BOOK
+	T_HELMET, T_ARMOR, T_PANT, T_GLOVE, T_SHOE, T_WEAPON, T_AMULET, T_RING, T_BOOK, T_CLOAK
 };
 
 enum Helmet_Type {
@@ -29,6 +29,22 @@ enum Shoe_Type {
 
 enum Weapon_Type {
 	DEFUALT_WEAPON, SHOP_WEAPON1, SHOP_WEAPON2, SHOP_WEAPON3, SHOP_WEAPON4
+};
+
+enum Amulet_Type {
+	DEFUALT_AMULET, SHOP_AMULET1, SHOP_AMULET2, SHOP_AMULET3, SHOP_AMULET4
+};
+
+enum Ring_Type {
+	DEFUALT_RING, SHOP_RING1, SHOP_RING2, SHOP_RING3, SHOP_RING4
+};
+
+enum Book_Type {
+	DEFUALT_BOOK, SHOP_BOOK1, SHOP_BOOK2, SHOP_BOOK3, SHOP_BOOK4
+};
+
+enum Cloak_Type {
+	DEFUALT_CLOAK, GRAY_CLOAK, BLUE_CLOAK, RED_CLOAK
 };
 
 class E_Helmet {
@@ -121,6 +137,60 @@ void Reset_Weapon(E_Weapon& e_weapon, const int& class_type);
 void Paint_Weapon_Info(HDC hdc, const E_Weapon& e_weapon, const POINT& pos, const int& weapon_type, const HFONT font);
 void Readjust_Info_By_Weapon(const E_Weapon& e_weapon, Object_Info& o_info, const int& weapon_type, const bool& New);
 
+class E_Amulet {
+public:
+	const int& Get_Hp(const int& amulet_type) const;
+
+	void Set_Amulet();
+private:
+	int hp[10];
+};
+
+void Reset_Amulet(E_Amulet& e_amulet);
+void Paint_Amulet_Info(HDC hdc, const E_Amulet& e_amulet, const POINT& pos, const int& amulet_type, const HFONT font);
+void Readjust_Info_By_Amulet(const E_Amulet& e_amulet, Object_Info& o_info, const int& amulet_type, const bool& New);
+
+class E_Ring {
+public:
+	const int& Get_Fatal(const int& ring_type) const;
+
+	void Set_Ring();
+private:
+	int fatal[10];
+};
+
+void Reset_Ring(E_Ring& e_ring);
+void Paint_Ring_Info(HDC hdc, const E_Ring& e_ring, const POINT& pos, const int& ring_type, const HFONT font);
+void Readjust_Info_By_Ring(const E_Ring& e_ring, Object_Info& o_info, const int& ring_type, const bool& New);
+
+class E_Book {
+public:
+	const int& Get_Mp(const int& book_type) const;
+
+	void Set_Book();
+private:
+	int mp[10];
+};
+
+void Reset_Book(E_Book& e_book);
+void Paint_Book_Info(HDC hdc, const E_Book& e_book, const POINT& pos, const int& book_type, const HFONT font);
+void Readjust_Info_By_Book(const E_Book& e_book, Object_Info& o_info, const int& book_type, const bool& New);
+
+class E_Cloak {
+public:
+	const int& Get_Attack(const int& cloak_type) const;
+
+	void Set_Cloak();
+private:
+	int attack[4];
+};
+
+void Reset_Cloak(E_Cloak& e_cloak);
+void Paint_Cloak_Info(HDC hdc, const E_Cloak& e_cloak, const POINT& pos, const int& cloak_type, const HFONT font);
+void Readjust_Info_By_Cloak(const E_Cloak& e_cloak, Object_Info& o_info, const int& cloak_type, const bool& New);
+
+
+
 class Player_Equipment {
 public:
 	~Player_Equipment();
@@ -138,6 +208,14 @@ public:
 	E_Shoe& Get_Shoe() const;
 	const E_Weapon& Get_Weapon_Const() const;
 	E_Weapon& Get_Weapon() const;
+	const E_Amulet& Get_Amulet_Const() const;
+	E_Amulet& Get_Amulet() const;
+	const E_Ring& Get_Ring_Const() const;
+	E_Ring& Get_Ring() const;
+	const E_Book& Get_Book_Const() const;
+	E_Book& Get_Book() const;
+	const E_Cloak& Get_Cloak_Const() const;
+	E_Cloak& Get_Cloak() const;
 	const int& Get_Gold() const;
 
 	const int& Get_Type_Select() const;
@@ -174,6 +252,10 @@ private:
 	E_Glove* glove;
 	E_Shoe* shoe;
 	E_Weapon* weapon;
+	E_Amulet* amulet;
+	E_Ring* ring;
+	E_Book* book;
+	E_Cloak* cloak;
 	int gold;
 
 	int equipment_type_select;

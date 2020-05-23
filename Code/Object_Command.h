@@ -1,6 +1,7 @@
 #pragma once
 #include "Source.h"
 #include <math.h>
+#include "Game_Progress.h"
 #include "Object_Info.h"
 #include "Object_Npc.h"
 #include "Object_Player.h"
@@ -8,6 +9,7 @@
 enum Hitting_Shape {
 	FRONT, ROUND
 };
+class Progress;
 class Hitting_Range_Polygon;
 class Move_Object;
 class Player;
@@ -16,6 +18,7 @@ class Map;
 class Object;
 class Map_Village;
 class Map_D;
+
 
 
 bool Crash_Check_Map(const Move_Object& m_object, const Map& map, const int& move_x, const int& move_y);
@@ -31,9 +34,10 @@ void Create_Hitting_Polygon(const Move_Object& m_object, POINT* pos, const int& 
 
 
 template <typename T_Map>
-void Command_Player(Player& player, T_Map& map) {
+void Command_Player(Player& player, T_Map& map, Progress& progress) {
 
-	if (player.Get_Status() == Player_Status::Interaction || player.Get_Status() == Player_Status::Inventory || player.Get_Status() == Player_Status::Shopping)
+	if (player.Get_Status() == Player_Status::Interaction || player.Get_Status() == Player_Status::Inventory || player.Get_Status() == Player_Status::Shopping ||
+		player.Get_Status() == Player_Status::Map_Selecting)
 		return;
 
 	player.Set_Ani_Count(player.Get_Ani_Count() + 1);
@@ -42,11 +46,11 @@ void Command_Player(Player& player, T_Map& map) {
 
 	Attack_Player(player, map);
 
-	Move_Player(player, map);
+	Move_Player(player, map, progress);
 }
 
 template <typename T_Map>
-void Move_Player(Move_Object& player, const T_Map& map) {
+void Move_Player(Move_Object& player, const T_Map& map, Progress& progress) {
 	//나중에 충돌 체크 할일이 있을텐데, 그때는 모든 충돌이가능한 Object(맵, 적)에 대해서 검사를 한후 이동이 가능하게 해야합니다.
 
 	bool KeyUp = (GetAsyncKeyState(VK_UP) & 0x8001);
@@ -65,53 +69,66 @@ void Move_Player(Move_Object& player, const T_Map& map) {
 	}
 
 	if (KeyUp && KeyRight) {
-		Move_Player_Check(player, map, 0, -1 * static_cast<int>(player.Get_Speed() / sqrt(2) + 0.5));
-		Move_Player_Check(player, map, static_cast<int>(player.Get_Speed() / sqrt(2) + 0.5), 0);
+		Move_Player_Check(player, map, progress, 0, -1 * static_cast<int>(player.Get_Speed() / sqrt(2) + 0.5));
+		Move_Player_Check(player, map, progress, static_cast<int>(player.Get_Speed() / sqrt(2) + 0.5), 0);
 		player.Set_Direction(Object_Direction::UpRight);
 	}
 	else if (KeyUp && KeyLeft) {
-		Move_Player_Check(player, map, 0, -1 * static_cast<int>(player.Get_Speed() / sqrt(2) + 0.5));
-		Move_Player_Check(player, map, -1 * static_cast<int>(player.Get_Speed() / sqrt(2) + 0.5), 0);
+		Move_Player_Check(player, map, progress, 0, -1 * static_cast<int>(player.Get_Speed() / sqrt(2) + 0.5));
+		Move_Player_Check(player, map, progress, -1 * static_cast<int>(player.Get_Speed() / sqrt(2) + 0.5), 0);
 		player.Set_Direction(Object_Direction::UpLeft);
 	}
 	else if (KeyDown && KeyRight) {
-		Move_Player_Check(player, map, 0, static_cast<int>(player.Get_Speed() / sqrt(2) + 0.5));
-		Move_Player_Check(player, map, static_cast<int>(player.Get_Speed() / sqrt(2) + 0.5), 0);
+		Move_Player_Check(player, map, progress, 0, static_cast<int>(player.Get_Speed() / sqrt(2) + 0.5));
+		Move_Player_Check(player, map, progress, static_cast<int>(player.Get_Speed() / sqrt(2) + 0.5), 0);
 		player.Set_Direction(Object_Direction::DownRight);
 	}
 	else if (KeyDown && KeyLeft) {
-		Move_Player_Check(player, map, 0, static_cast<int>(player.Get_Speed() / sqrt(2) + 0.5));
-		Move_Player_Check(player, map, -1 * static_cast<int>(player.Get_Speed() / sqrt(2) + 0.5), 0);
+		Move_Player_Check(player, map, progress, 0, static_cast<int>(player.Get_Speed() / sqrt(2) + 0.5));
+		Move_Player_Check(player, map, progress, -1 * static_cast<int>(player.Get_Speed() / sqrt(2) + 0.5), 0);
 		player.Set_Direction(Object_Direction::DownLeft);
 	}
 	else if (KeyUp && !KeyDown) {
-		Move_Player_Check(player, map, 0, -1 * player.Get_Speed());
+		Move_Player_Check(player, map, progress, 0, -1 * player.Get_Speed());
 		player.Set_Direction(Object_Direction::Up);
 	}
 	else if (KeyDown && !KeyUp) {
-		Move_Player_Check(player, map, 0, player.Get_Speed());
+		Move_Player_Check(player, map, progress, 0, player.Get_Speed());
 		player.Set_Direction(Object_Direction::Down);
 	}
 	else if (KeyRight && !KeyLeft) {
-		Move_Player_Check(player, map, player.Get_Speed(), 0);
+		Move_Player_Check(player, map, progress, player.Get_Speed(), 0);
 		player.Set_Direction(Object_Direction::Right);
 	}
 	else if (KeyLeft && !KeyRight) {
-		Move_Player_Check(player, map, -1 * player.Get_Speed(), 0);
+		Move_Player_Check(player, map, progress, -1 * player.Get_Speed(), 0);
 		player.Set_Direction(Object_Direction::Left);
 	}
 }
 
+//템플릿 특수화 해야한다.
 template <typename T_Map>
-void Move_Player_Check(Move_Object& player, const T_Map& map, const int& move_x, const int& move_y) {
+void Move_Player_Check(Move_Object& player, const T_Map& map, Progress& progress, const int& move_x, const int& move_y) {
 	if (!Crash_Check_Map(player, map, move_x, move_y))
 		return;
 
 	//맵 오브젝트와의 충돌
-	for (int index = 0; index < 10; index++) {
+	for (int index = 0; index < 30; index++) {
 		if (&map.Get_NM_Object_Const(index) != NULL && !Crash_Check_Object(player, map.Get_NM_Object_Const(index), move_x, move_y))
 			return;
 	}
+
+	//맵 포탈과의 충돌
+	if (&map.Get_Portal_Const() != NULL && !Crash_Check_Object(player, map.Get_Portal_Const(), move_x, move_y)) {
+		//포탈과 충돌 했을 경우 던전 선택을 해야합니다.
+		//퀘스트 안받았을 경우는 포탈 못탑니다. 일단 주석처리 해놓겠습니다. 나중에 주석 풀어주세요.
+		//if (progress.Get_Quest_Num() != Quest_Name::No_Quest) {
+			progress.Set_Map_Select(true);
+			player.Set_Status(Player_Status::Map_Selecting);
+		//}
+		return;
+	}
+		
 
 	//맵 Npc와의 충돌
 	if (!Crash_Check_Npc(player, map, move_x, move_y))

@@ -109,7 +109,7 @@ void Player::Create_Player_Item() {
 void Reset_Player(Player& player, const int& class_type) {
 
 	player.Set_Motion_Bitmap();
-	Reset_Move_Object(player, 400, 500, player.Get_Motion_Size().bmWidth, player.Get_Motion_Size().bmHeight, 8);
+	Reset_Move_Object(player, 400, 500, player.Get_Motion_Size().bmWidth, player.Get_Motion_Size().bmHeight, 6);
 	Reset_Object_Info(player.Get_Object_Info(), 1, 100, 100, 10, 0, 0);
 	player.Set_Class_Type(class_type);
 	player.Create_Player_Equipment();
@@ -128,6 +128,7 @@ void Paint_Player(HDC hdc, HDC bitdc, const Player& player) {
 	case Player_Status::Interaction:
 	case Player_Status::Inventory:
 	case Player_Status::Shopping:
+	case Player_Status::Map_Selecting:
 		SelectObject(bitdc, player.Get_Stop_Motion(player.Get_Direction(), player.Get_Ani_Count() / 2 % 8));
 		TransparentBlt(hdc, player.Get_XPos() - 45, player.Get_YPos(), player.Get_Motion_Size().bmWidth, player.Get_Motion_Size().bmHeight, bitdc, 0, 0, player.Get_Motion_Size().bmWidth, player.Get_Motion_Size().bmHeight, RGB(255, 255, 255));
 		break;
@@ -165,7 +166,7 @@ void Paint_Player_Equipment(HDC hdc, HDC bitdc, const Player& player) {
 
 void Equipment_Command(Player& player) {
 
-	if (player.Get_Status() != Player_Status::Interaction && player.Get_Status() != Player_Status::Shopping) {
+	if (player.Get_Status() != Player_Status::Interaction && player.Get_Status() != Player_Status::Shopping && player.Get_Status() != Player_Status::Map_Selecting) {
 		//장비창(인벤토리) 열기
 		if (player.Get_Status() != Player_Status::Inventory) {
 			player.Set_Status(Player_Status::Inventory);

@@ -14,7 +14,7 @@ Map_Village::~Map_Village() {
 	for (int index = 0; index < 4; index++)
 		DeleteObject(texture[index]);
 	Delete_Class<Practice_Enemy>(&p_enemy);
-	for (int index = 0; index < 5; index++)
+	for (int index = 0; index < 6; index++)
 		Delete_Class<Npc>(&npc[index]);
 	Delete_Class<Shop>(&shop);
 }
@@ -50,33 +50,41 @@ const HBITMAP& Map_Village::Get_Texture(const int& index) const {
 
 void Map_Village::Set_NM_Object() {
 
-	for (int index = VNM_OB::House1; index <= VNM_OB::House4; index++)
+	for (int index = VNM_OB::House1; index <= VNM_OB::House5; index++)
 		Create_NM_Object(index);
 		
 	Reset_Non_Move_Object(Get_NM_Object(VNM_OB::House1), 560, 0, (HBITMAP)LoadImage(NULL, _T(".\\BitMap\\Map\\Village\\House1.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
-	Get_NM_Object(VNM_OB::House1).Set_Crash_Height(Get_NM_Object(VNM_OB::House1).Get_Object_Image_Size().bmHeight);
+	Get_NM_Object(VNM_OB::House1).Set_Crash_Height(Get_NM_Object(VNM_OB::House1).Get_Object_Image_Size().bmHeight - 160);
 	Reset_Non_Move_Object(Get_NM_Object(VNM_OB::House2), Get_Map_Rect().right - 320, 720, (HBITMAP)LoadImage(NULL, _T(".\\BitMap\\Map\\Village\\House2.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
 	Get_NM_Object(VNM_OB::House2).Set_Crash_Height(Get_NM_Object(VNM_OB::House2).Get_Object_Image_Size().bmHeight - 160);
 	Reset_Non_Move_Object(Get_NM_Object(VNM_OB::House3), 0, 720, (HBITMAP)LoadImage(NULL, _T(".\\BitMap\\Map\\Village\\House3.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
 	Get_NM_Object(VNM_OB::House3).Set_Crash_Height(Get_NM_Object(VNM_OB::House3).Get_Object_Image_Size().bmHeight - 160);
 	Reset_Non_Move_Object(Get_NM_Object(VNM_OB::House4), 0, 0, (HBITMAP)LoadImage(NULL, _T(".\\BitMap\\Map\\Village\\House4.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
 	Get_NM_Object(VNM_OB::House4).Set_Crash_Height(Get_NM_Object(VNM_OB::House4).Get_Object_Image_Size().bmHeight - 160);
-
-	Create_NM_Object(VNM_OB::Lake);
-	Reset_Non_Move_Object(Get_NM_Object(VNM_OB::Lake), 720, 800, (HBITMAP)LoadImage(NULL, _T(".\\BitMap\\Map\\Village\\Lake.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
-	Get_NM_Object(VNM_OB::Lake).Set_Crash_Height(Get_NM_Object(VNM_OB::Lake).Get_Object_Image_Size().bmHeight);
+	Reset_Non_Move_Object(Get_NM_Object(VNM_OB::House5), 720, 720, (HBITMAP)LoadImage(NULL, _T(".\\BitMap\\Map\\Village\\House5.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
+	Get_NM_Object(VNM_OB::House5).Set_Crash_Height(Get_NM_Object(VNM_OB::House5).Get_Object_Image_Size().bmHeight - 160);
 
 	Create_NM_Object(VNM_OB::Wall1);
 	Reset_Non_Move_Object(Get_NM_Object(VNM_OB::Wall1), 0, Get_Map_Rect().bottom - 160, (HBITMAP)LoadImage(NULL, _T(".\\BitMap\\Map\\Village\\Ground_Wall.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
 	Get_NM_Object(VNM_OB::Wall1).Set_Crash_Height(Get_NM_Object(VNM_OB::Wall1).Get_Object_Image_Size().bmHeight);
 }
 
+ void Map_Village::Set_Portal() {
+	 //위치 잡기
+	 Create_Portal();
+	 Reset_Non_Move_Object(Get_Portal(), Get_Map_Rect().right - Get_Portal_Const().Get_Object_Image_Size().bmWidth, 560, NULL);
+	 Get_Portal().Set_Crash_Height(Get_Portal_Const().Get_Object_Image_Size().bmHeight - 100);
+}
+
 void Map_Village::Set_Npc() {
 	npc[Npc_Name::ELDER] = Create_Class<Npc>();
 	Reset_Npc(Get_Npc(Npc_Name::ELDER), Npc_Name::ELDER, Get_NM_Object_Const(Village_NM_Object::House3).Get_XPos() + 260, 1140);
 
+	npc[Npc_Name::EQUIPMENT_SHOP] = Create_Class<Npc>();
+	Reset_Npc(Get_Npc(Npc_Name::EQUIPMENT_SHOP), Npc_Name::EQUIPMENT_SHOP, Get_NM_Object_Const(Village_NM_Object::House2).Get_XPos() + 60, 1140);
+
 	npc[Npc_Name::WEAPON_SHOP] = Create_Class<Npc>();
-	Reset_Npc(Get_Npc(Npc_Name::WEAPON_SHOP), Npc_Name::WEAPON_SHOP, Get_NM_Object_Const(Village_NM_Object::House2).Get_XPos() + 60, 1140);
+	Reset_Npc(Get_Npc(Npc_Name::WEAPON_SHOP), Npc_Name::WEAPON_SHOP, Get_NM_Object_Const(Village_NM_Object::House5).Get_XPos() + 200, 1140);
 
 	npc[Npc_Name::ITEM_SHOP] = Create_Class<Npc>();
 	Reset_Npc(Get_Npc(Npc_Name::ITEM_SHOP), Npc_Name::ITEM_SHOP, Get_NM_Object_Const(Village_NM_Object::House1).Get_XPos() + 200, 420);
@@ -85,7 +93,7 @@ void Map_Village::Set_Npc() {
 	Reset_Npc(Get_Npc(Npc_Name::LEGEND), Npc_Name::LEGEND, Get_NM_Object_Const(Village_NM_Object::House4).Get_XPos() + 140, 420);
 
 	npc[Npc_Name::SOLDIER] = Create_Class<Npc>();
-	Reset_Npc(Get_Npc(Npc_Name::SOLDIER), Npc_Name::SOLDIER, Get_Map_Rect().right - 100, 440);
+	Reset_Npc(Get_Npc(Npc_Name::SOLDIER), Npc_Name::SOLDIER, Get_Map_Rect().right - 200, 440);
 }
 
 void Map_Village::Set_P_Enemy() {
@@ -113,11 +121,11 @@ void Map_Village::Kill_P_Enemy() {
 	Delete_Class<Practice_Enemy>(&p_enemy);
 }
 
-
 void Reset_Village_Map(HDC hdc, Map_Village& map_v) {
 	map_v.Set_Map_Rect(0, 0, 1760, 1600);
 	map_v.Set_Map_Size_Bit(hdc);
 	map_v.Set_NM_Object();
+	map_v.Set_Portal();
 	map_v.Set_Npc();
 	map_v.Set_P_Enemy();
 	map_v.Set_Texture();
@@ -188,8 +196,12 @@ void Paint_Village_Map(HDC hdc, HDC bitdc, const Player& player, const Map_Villa
 				Paint_Npc(hdc, bitdc, map_v.Get_Npc_Const(npc_type));
 
 		//적 그리기
-		if (&map_v.Get_P_Enemy_Const() != NULL && y_pos == map_v.Get_P_Enemy_Const().Get_YPos() + map_v.Get_P_Enemy_Const().Get_Height()) 
-			Paint_Practice_Enemy(hdc,bitdc, map_v.Get_P_Enemy_Const());
+		if (&map_v.Get_P_Enemy_Const() != NULL && y_pos == map_v.Get_P_Enemy_Const().Get_YPos() + map_v.Get_P_Enemy_Const().Get_Height())
+			Paint_Practice_Enemy(hdc, bitdc, map_v.Get_P_Enemy_Const());
+
+		//포탈 그리기
+		if (&map_v.Get_Portal_Const() != NULL && y_pos == map_v.Get_Portal_Const().Get_YPos() + map_v.Get_Portal_Const().Get_Height())
+			Paint_Portal(hdc, bitdc, map_v.Get_Portal_Const());
 
 		if (&player != NULL && y_pos == player.Get_YPos() + player.Get_Height())
 			Paint_Player(hdc, bitdc, player);
@@ -204,10 +216,11 @@ void Animation_Play_Npc(Map_Village& map_v) {
 		switch (npc_type)
 		{
 		case Npc_Name::ELDER:
-		case Npc_Name::WEAPON_SHOP:
+		case Npc_Name::EQUIPMENT_SHOP:
 			if (map_v.Get_Npc_Const(npc_type).Get_Ani_Count() == 24)
 				map_v.Get_Npc(npc_type).Set_Ani_Count(0);
 			break;
+		case Npc_Name::WEAPON_SHOP:
 		case Npc_Name::ITEM_SHOP:
 		case Npc_Name::LEGEND:
 		case Npc_Name::SOLDIER:

@@ -3,6 +3,7 @@
 #include <fmod.h>
 #include "resource.h"
 #include "Source.h"
+#include "Game_Progress.h"
 #include "Object_Command.h"
 #include "Object_Player.h"
 #include "Object_Player_Interaction.h"
@@ -71,6 +72,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 	//클라이언트 사각형
 	static RECT c_rect;
 
+	//게임 진행 객체
+	static Progress* progress;
+
 	//플레이어 관련 객체
 	static Player* player;
 
@@ -98,6 +102,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 		db_bitmap2 = CreateCompatibleBitmap(hdc, c_rect.right, c_rect.bottom);
 
 		damage_font = CreateFont(40, 20, 0, 0, FW_BOLD, FALSE, FALSE, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH, _T("휴먼매직체"));
+
+		//게임 진행 관련
+		progress = Create_Class<Progress>();
+		Reset_Progress(*progress, Class_Type::Warrior);
 
 		//플레이어 관련
 		player = Create_Class<Player>();
@@ -130,10 +138,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 		((MINMAXINFO*)lParam)->ptMaxTrackSize.y = WindowY;
 		break;
 	case WM_CHAR:
+	case WM_KEYDOWN:
 		switch (wParam)
-		{
+		{	
 		case Command_Key::Co_Interaction:
-			Interaction_Command(*player, *map_v, *it_box);
+			Interaction_Command(*player, *map_v, *it_box, *progress);
 			break;
 		case Command_Key::Co_Equipment:
 			Equipment_Command(*player);
@@ -148,44 +157,35 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 		case '3':
 			Use_Item_Command(*player, wParam - '0');
 			break;
+		
 		default:
 			break;
 		}
-		break;
-	case WM_KEYDOWN:
-		switch (wParam)
-		{
-		case VK_LEFT:
-		case VK_RIGHT:
-		case VK_UP:
-		case VK_DOWN:
-		case VK_RETURN:
-			if(Chnage_Equipment(*player, wParam))
-				InvalidateRgn(hwnd, NULL, FALSE);
-			if (Shop_Select_Item(*player, *map_v, *it_box, wParam))
-				InvalidateRgn(hwnd, NULL, FALSE);
-			break;
-		default:
-			break;
-		}
+		if (Chnage_Equipment(*player, wParam))
+			InvalidateRgn(hwnd, NULL, FALSE);
+		if (Shop_Select_Item(*player, *map_v, *it_box, wParam))
+			InvalidateRgn(hwnd, NULL, FALSE);
+		if (Interaction_Dialog_Select(*player, *map_v, *it_box, wParam))
+			InvalidateRgn(hwnd, NULL, FALSE);
+		if (Change_Map_Select(*progress, *player, wParam))
+			InvalidateRgn(hwnd, NULL, FALSE);
 		break;
 	case WM_TIMER:
 		switch (wParam)
 		{
 		case Default_Timer:
 			//Player 관련
-			Command_Player<Map_Village>(*player, *map_v);
+			Command_Player<Map_Village>(*player, *map_v, *progress);
 			Move_Camera(*camera, *player, *map_v, c_rect);
 			//Enemy관련
 			Enemy_Kill_Check(*map_v);
-
 			//Npc관련
 			Animation_Play_Npc(*map_v);
 			break;
 		default:
 			break;
 		}
-		InvalidateRgn(hwnd, NULL, FALSE);
+		InvalidateRgn(hwnd, NULL, FALSE);		
 		break;
 	case WM_PAINT:
 		hdc = BeginPaint(hwnd, &ps);
@@ -196,7 +196,17 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 
 		SelectObject(gamedc, damage_font);
 
-		Paint_Village_Map(gamedc, bitdc, *player, *map_v);
+		switch (progress->Get_Map_Type())
+		{
+		case Map_Type::Village1:
+			Paint_Village_Map(gamedc, bitdc, *player, *map_v);
+			break;
+		case Map_Type::Dungeon1:
+			exit(0);
+			break;
+		default:
+			break;
+		}
 
 		BitBlt(memdc, 0, 0, c_rect.right, c_rect.bottom, gamedc, camera->Get_Cam_Left(), camera->Get_Cam_Top(), SRCCOPY);
 
@@ -205,6 +215,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 		
 		if (Paint_Interaction_Box(memdc, alphadc, bitdc, c_rect, *player, *it_box))
 			Show_Npc_Interaction(memdc, bitdc, *player, *map_v, *it_box);
+
+		Paint_Map_Select(memdc, bitdc, *progress, c_rect);
 
 		BitBlt(hdc, 0, 0, c_rect.right, c_rect.bottom, memdc, 0, 0, SRCCOPY);
 		EndPaint(hwnd, &ps);

@@ -116,6 +116,25 @@ void Shop::Set_Item_Price() {
 
 		break;
 	case Shop_Type::Accessory_Type:
+		item_price[Equipment_Type::T_WEAPON - Equipment_Type::T_WEAPON][Weapon_Type::SHOP_WEAPON1 - 1] = 200;
+		item_price[Equipment_Type::T_WEAPON - Equipment_Type::T_WEAPON][Weapon_Type::SHOP_WEAPON2 - 1] = 600;
+		item_price[Equipment_Type::T_WEAPON - Equipment_Type::T_WEAPON][Weapon_Type::SHOP_WEAPON3 - 1] = 1800;
+		item_price[Equipment_Type::T_WEAPON - Equipment_Type::T_WEAPON][Weapon_Type::SHOP_WEAPON4 - 1] = 2200;
+
+		item_price[Equipment_Type::T_AMULET - Equipment_Type::T_WEAPON][Amulet_Type::SHOP_AMULET1 - 1] = 150;
+		item_price[Equipment_Type::T_AMULET - Equipment_Type::T_WEAPON][Amulet_Type::SHOP_AMULET2 - 1] = 515;
+		item_price[Equipment_Type::T_AMULET - Equipment_Type::T_WEAPON][Amulet_Type::SHOP_AMULET3 - 1] = 1750;
+		item_price[Equipment_Type::T_AMULET - Equipment_Type::T_WEAPON][Amulet_Type::SHOP_AMULET4 - 1] = 2100;
+
+		item_price[Equipment_Type::T_RING - Equipment_Type::T_WEAPON][Ring_Type::SHOP_RING1 - 1] = 195;
+		item_price[Equipment_Type::T_RING - Equipment_Type::T_WEAPON][Ring_Type::SHOP_RING2 - 1] = 575;
+		item_price[Equipment_Type::T_RING - Equipment_Type::T_WEAPON][Ring_Type::SHOP_RING3 - 1] = 1777;
+		item_price[Equipment_Type::T_RING - Equipment_Type::T_WEAPON][Ring_Type::SHOP_RING4 - 1] = 2168;
+
+		item_price[Equipment_Type::T_BOOK - Equipment_Type::T_WEAPON][Book_Type::SHOP_BOOK1 - 1] = 125;
+		item_price[Equipment_Type::T_BOOK - Equipment_Type::T_WEAPON][Book_Type::SHOP_BOOK2 - 1] = 500;
+		item_price[Equipment_Type::T_BOOK - Equipment_Type::T_WEAPON][Book_Type::SHOP_BOOK3 - 1] = 1744;
+		item_price[Equipment_Type::T_BOOK - Equipment_Type::T_WEAPON][Book_Type::SHOP_BOOK4 - 1] = 2099;
 		break;
 	default:
 		break;
@@ -153,6 +172,13 @@ void Paint_Shop(HDC hdc, HDC bitdc, const Player_Equipment& p_equip, const Shop&
 		}
 		break;
 	case Shop_Type::Accessory_Type:
+		for (int e_type = Equipment_Type::T_WEAPON; e_type <= Equipment_Type::T_BOOK; e_type++) {
+			for (int index = 0; index < 4; index++) {
+				SelectObject(bitdc, shop.Get_Shop_Item_Bitmap(e_type - Equipment_Type::T_WEAPON, index));
+				TransparentBlt(hdc, shop.Get_Pos().x + 18 + 43 * (e_type - Equipment_Type::T_WEAPON), shop.Get_Pos().y + 246 + 43 * index, shop.Get_Select_Bitmap_Size().bmWidth, shop.Get_Select_Bitmap_Size().bmHeight,
+					bitdc, 0, 0, shop.Get_Select_Bitmap_Size().bmWidth, shop.Get_Select_Bitmap_Size().bmHeight, RGB(0, 0, 0));
+			}
+		}
 		break;
 	default:
 		break;
@@ -192,6 +218,23 @@ void Paint_Shop(HDC hdc, HDC bitdc, const Player_Equipment& p_equip, const Shop&
 		}
 		break;
 	case Shop_Type::Accessory_Type:
+		switch (shop.Get_Select_Item() % 5)
+		{
+		case Equipment_Type::T_WEAPON - Equipment_Type::T_WEAPON:
+			Paint_Weapon_Info(hdc, p_equip.Get_Weapon_Const(), { shop.Get_Pos().x + 40, shop.Get_Pos().y + 40 }, shop.Get_Select_Item() / 5 + 1, p_equip.Get_Font(1));
+			break;
+		case Equipment_Type::T_AMULET - Equipment_Type::T_WEAPON:
+			Paint_Amulet_Info(hdc, p_equip.Get_Amulet_Const(), { shop.Get_Pos().x + 40, shop.Get_Pos().y + 40 }, shop.Get_Select_Item() / 5 + 1, p_equip.Get_Font(1));
+			break;
+		case Equipment_Type::T_RING - Equipment_Type::T_WEAPON:
+			Paint_Ring_Info(hdc, p_equip.Get_Ring_Const(), { shop.Get_Pos().x + 40, shop.Get_Pos().y + 40 }, shop.Get_Select_Item() / 5 + 1, p_equip.Get_Font(1));
+			break;
+		case Equipment_Type::T_BOOK - Equipment_Type::T_WEAPON:
+			Paint_Book_Info(hdc, p_equip.Get_Book_Const(), { shop.Get_Pos().x + 40, shop.Get_Pos().y + 40 }, shop.Get_Select_Item() / 5 + 1, p_equip.Get_Font(1));
+			break;
+		default:
+			break;
+		}
 		break;
 	default:
 		break;
@@ -207,26 +250,58 @@ void Paint_Shop(HDC hdc, HDC bitdc, const Player_Equipment& p_equip, const Shop&
 }
 
 const bool Change_Select_Item(Shop& shop, const WPARAM wParam) {
-	switch (wParam)
+	switch (shop.Get_Shop_Type())
 	{
-	case VK_LEFT:
-		if (shop.Get_Select_Item() % 5 > 0)
-			shop.Set_Select_Item(shop.Get_Select_Item() - 1);
+	case Shop_Type::Equipment_Type:
+		switch (wParam)
+		{
+		case VK_LEFT:
+			if (shop.Get_Select_Item() % 5 > 0)
+				shop.Set_Select_Item(shop.Get_Select_Item() - 1);
+			break;
+		case VK_RIGHT:
+			if (shop.Get_Select_Item() % 5 < 4)
+				shop.Set_Select_Item(shop.Get_Select_Item() + 1);
+			break;
+		case VK_UP:
+			if (shop.Get_Select_Item() / 5 > 0)
+				shop.Set_Select_Item(shop.Get_Select_Item() - 5);
+			break;
+		case VK_DOWN:
+			if (shop.Get_Select_Item() / 5 < 3)
+				shop.Set_Select_Item(shop.Get_Select_Item() + 5);
+			break;
+		case VK_RETURN:
+			return true;
+		default:
+			break;
+		}
 		break;
-	case VK_RIGHT:
-		if (shop.Get_Select_Item() % 5 < 4)
-			shop.Set_Select_Item(shop.Get_Select_Item() + 1);
+	case Shop_Type::Accessory_Type:
+		switch (wParam)
+		{
+		case VK_LEFT:
+			if (shop.Get_Select_Item() % 5 > 0)
+				shop.Set_Select_Item(shop.Get_Select_Item() - 1);
+			break;
+		case VK_RIGHT:
+			if (shop.Get_Select_Item() % 5 < 3)
+				shop.Set_Select_Item(shop.Get_Select_Item() + 1);
+			break;
+		case VK_UP:
+			if (shop.Get_Select_Item() / 4 > 0)
+				shop.Set_Select_Item(shop.Get_Select_Item() - 5);
+			break;
+		case VK_DOWN:
+			if (shop.Get_Select_Item() / 5 < 3)
+				shop.Set_Select_Item(shop.Get_Select_Item() + 5);
+			break;
+		case VK_RETURN:
+			return true;
+		default:
+			break;
+		}
 		break;
-	case VK_UP:
-		if (shop.Get_Select_Item() / 5 > 0)
-			shop.Set_Select_Item(shop.Get_Select_Item() - 5);
-		break;
-	case VK_DOWN:
-		if (shop.Get_Select_Item() / 5 < 3)
-			shop.Set_Select_Item(shop.Get_Select_Item() + 5);
-		break;
-	case VK_RETURN:
-		return true;
 	default:
 		break;
 	}
@@ -234,10 +309,24 @@ const bool Change_Select_Item(Shop& shop, const WPARAM wParam) {
 }
 
 const bool Buy_Equipment_Shop(Player_Equipment& p_equip, Shop& shop) {
-	if (p_equip.Get_Gold() >= shop.Get_Item_Price(shop.Get_Select_Item() % 5, shop.Get_Select_Item() / 5)) {
-		p_equip.Set_Own(shop.Get_Select_Item() % 5, shop.Get_Select_Item() / 5 + 1);
-		p_equip.Set_Gold(p_equip.Get_Gold() - shop.Get_Item_Price(shop.Get_Select_Item() % 5, shop.Get_Select_Item() / 5));
-		return true;
+	switch (shop.Get_Shop_Type())
+	{
+	case Shop_Type::Equipment_Type:
+		if (p_equip.Get_Gold() >= shop.Get_Item_Price(shop.Get_Select_Item() % 5, shop.Get_Select_Item() / 5)) {
+			p_equip.Set_Own(shop.Get_Select_Item() % 5, shop.Get_Select_Item() / 5 + 1);
+			p_equip.Set_Gold(p_equip.Get_Gold() - shop.Get_Item_Price(shop.Get_Select_Item() % 5, shop.Get_Select_Item() / 5));
+			return true;
+		}
+		break;
+	case Shop_Type::Accessory_Type:
+		if (p_equip.Get_Gold() >= shop.Get_Item_Price(shop.Get_Select_Item() % 5, shop.Get_Select_Item() / 5)) {
+			p_equip.Set_Own(shop.Get_Select_Item() % 5 + Equipment_Type::T_WEAPON, shop.Get_Select_Item() / 5 + 1);
+			p_equip.Set_Gold(p_equip.Get_Gold() - shop.Get_Item_Price(shop.Get_Select_Item() % 5, shop.Get_Select_Item() / 5));
+			return true;
+		}
+		break;
+	default:
+		break;
 	}
 	return false;	
 }

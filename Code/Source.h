@@ -22,8 +22,8 @@ enum Player_Select {
 	Class_Warrior
 };
 
-enum Map_Select {
-	Village1
+enum Map_Type {
+	Village1, Dungeon1, Dungeon2, Dungeon3, Dungeon4
 };
 
 enum Command_Key {
@@ -39,7 +39,7 @@ enum Object_Direction {
 };
 
 enum Player_Status {
-	Stop, Move, Run, Interaction, Attack, Inventory, Shopping
+	Stop, Move, Run, Interaction, Attack, Inventory, Shopping, Map_Selecting
 };
 
 enum Class_Type {
@@ -61,6 +61,12 @@ enum Shop_Type {
 enum Dialog_Type {
 	Shop_Type, Quest_Type, No_Money_Type
 };
+
+enum Quest_Name {
+	No_Quest, Main_Quest1, Main_Quest2, Main_Quest3, Main_Quest4, Main_Quest5,
+	Main_Quest6, Main_Quest7, Main_Quest8
+};
+
 
 enum Timer_Name {
 	Default_Timer
