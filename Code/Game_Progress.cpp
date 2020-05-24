@@ -97,10 +97,10 @@ void Paint_Map_Select(HDC hdc, HDC bitdc, const Progress& progress, const RECT c
 
 }
 
-bool Change_Map_Select(Progress& progress, Player& player, const WPARAM wParam) {
+int Change_Map_Select(Progress& progress, Player& player, const WPARAM wParam) {
 
 	if (!progress.Is_Map_Select())
-		return false;
+		return -1;
 
 	switch (wParam)
 	{
@@ -116,7 +116,7 @@ bool Change_Map_Select(Progress& progress, Player& player, const WPARAM wParam) 
 		progress.Set_Map_Select(false);
 		player.Set_Status(Player_Status::Stop);
 		progress.Set_Map_Type(progress.Get_Select_Map_Type());
-		break;
+		return progress.Get_Map_Type();
 	case VK_ESCAPE:
 		progress.Set_Map_Select(false);
 		player.Set_Status(Player_Status::Stop);
@@ -124,6 +124,5 @@ bool Change_Map_Select(Progress& progress, Player& player, const WPARAM wParam) 
 	default:
 		break;
 	}
-
-	return true;
+	return 0;
 }

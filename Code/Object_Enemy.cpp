@@ -5,40 +5,112 @@
 #include "Object_Info.h"
 #include "Object_Enemy.h"
 
-
-Practice_Enemy::~Practice_Enemy() {
-	for (int index = 0; index < 4; index++)
-		DeleteObject(stop_motion_bitmap[index]);
-}
-
-const BITMAP Practice_Enemy::Get_Bitmap_Size() const {
-	return bitmap_size;
-}
-
-const HBITMAP Practice_Enemy::Get_Stop_Motion_Bitmap(const int& index) const {
-	return stop_motion_bitmap[index];
-}
-
-void Practice_Enemy::Set_Stop_Motion() {
-	for (int index = 0; index < 4; index++) {
-		wchar_t str[100];
-		wsprintf(str, _T(".\\BitMap\\Monster\\Practice\\Practice_Move%d.bmp"), index + 1);
-		stop_motion_bitmap[index] = (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+Enemy::~Enemy() {
+	for (int direction = Object_Direction::Right; direction <= Object_Direction::DownRight; direction++) {
+		for (int index = 0; index < 10; index++) {
+			DeleteObject(stop_motion_bitmap[direction][index]);
+			DeleteObject(move_motion_bitmap[direction][index]);
+		}
+		for (int index = 0; index < 20; index++) {
+			DeleteObject(attack_motion_bitmap[direction][index]);
+			DeleteObject(skill_motion1_bitmap[direction][index]);
+		}
 	}
-	GetObject(stop_motion_bitmap[0], sizeof(BITMAP), &bitmap_size);
 }
 
-void Reset_Practice_Enemy(Practice_Enemy& p_enemy) {
-	p_enemy.Set_Stop_Motion();
-	Reset_Move_Object(p_enemy, 1100, 400, p_enemy.Get_Bitmap_Size().bmWidth, p_enemy.Get_Bitmap_Size().bmHeight, 0);
-	Reset_Object_Info(p_enemy.Get_Object_Info(), 1, (1 << 30), 0, 0, 0, 0);
-	p_enemy.Set_Crash_Width(60);
-	p_enemy.Set_Crash_Height(60);
+
+const int& Enemy::Get_Enemy_Type() const {
+	return enemy_type;
 }
 
-void Paint_Practice_Enemy(HDC hdc, HDC bitdc, const Practice_Enemy& p_enemy) {
-	SelectObject(bitdc, p_enemy.Get_Stop_Motion_Bitmap(p_enemy.Get_Ani_Count()));
-	TransparentBlt(hdc, p_enemy.Get_XPos() - 10, p_enemy.Get_YPos(), p_enemy.Get_Width(), p_enemy.Get_Height(), bitdc, 0, 0, p_enemy.Get_Width(), p_enemy.Get_Height(), RGB(150, 150, 150));
-	Paint_Hitting_Damage(hdc, p_enemy);
-	//Rectangle(hdc, p_enemy.Get_XPos(), p_enemy.Get_YPos() + p_enemy.Get_Height() - p_enemy.Get_Crash_Height(), p_enemy.Get_XPos() + p_enemy.Get_Crash_Width(), p_enemy.Get_YPos() + p_enemy.Get_Height());
+const BITMAP& Enemy::Get_Motion_Size() const {
+	return motion_size;
+}
+
+const HBITMAP& Enemy::Get_Stop_Motion(const int& direction, const int& index) const {
+	return stop_motion_bitmap[direction][index];
+}
+
+const HBITMAP& Enemy::Get_Move_Motion(const int& direction, const int& index) const {
+	return move_motion_bitmap[direction][index];
+}
+
+const HBITMAP& Enemy::Get_Attack_Motion(const int& direction, const int& index) const {
+	return attack_motion_bitmap[direction][index];
+}
+
+const HBITMAP& Enemy::Get_Skill_Motion1(const int& direction, const int& index) const {
+	return skill_motion1_bitmap[direction][index];
+}
+
+
+void Enemy::Set_Enemy_Type(const int& enemy_type) {
+	this->enemy_type = enemy_type;
+}
+
+void Enemy::Set_Motion_Bitmap() {
+	switch (Get_Enemy_Type())
+	{
+	case Enemy_Type::Bird:
+		for (int direction = Object_Direction::Right; direction <= Object_Direction::DownRight; direction++) {
+			for (int index = 0; index < 8; index++) {
+				wchar_t str[50];
+				wsprintf(str, _T(".\\BitMap\\Monster\\M1\\Move\\Bird_Move%d.bmp"), direction * 8 + index + 1);
+				//가만히 있을 경우, 움직이는 경우의 모션이 같다.
+				stop_motion_bitmap[direction][index] = (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+				move_motion_bitmap[direction][index] = (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+				wsprintf(str, _T(".\\BitMap\\Monster\\M1\\Move\\Bird_Attack%d.bmp"), direction * 8 + index + 1);
+				attack_motion_bitmap[direction][index] = (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+			}
+		}
+		GetObject(stop_motion_bitmap[0][0], sizeof(BITMAP), &motion_size);
+		break;
+	default:
+		break;
+	}
+}
+
+void Reset_Enemy(Enemy& enemy, const int& enemy_type) {
+	enemy.Set_Enemy_Type(enemy_type);
+	enemy.Set_Motion_Bitmap();
+
+	switch (enemy_type)
+	{
+	case Enemy_Type::Bird:
+		enemy.Create_Object_Info();
+		Reset_Object_Info(enemy.Get_Object_Info(), 1, 200, 0, 30, 5, 0);
+		enemy.Set_Crash_Width(80);
+		enemy.Set_Crash_Height(80);
+		break;
+	default:
+		break;
+	}
+}
+
+void Paint_Enemy(HDC hdc, HDC bitdc, const Enemy& enemy) {
+	switch (enemy.Get_Enemy_Type())
+	{
+	case Enemy_Type::Bird:
+		switch (enemy.Get_Status())
+		{
+		case Enemy_Status::E_Stop:
+			SelectObject(bitdc, enemy.Get_Stop_Motion(enemy.Get_Direction(), enemy.Get_Ani_Count() / 2 % 8));
+			break;
+		case Enemy_Status::E_Move:
+			SelectObject(bitdc, enemy.Get_Move_Motion(enemy.Get_Direction(), enemy.Get_Ani_Count() / 2 % 8));
+			break;
+		case Enemy_Status::E_Attack:
+			SelectObject(bitdc, enemy.Get_Attack_Motion(enemy.Get_Direction(), enemy.Get_Ani_Count() / 2 % 8));
+			break;
+		default:
+			break;
+		}
+		TransparentBlt(hdc, enemy.Get_XPos() - 10, enemy.Get_YPos(), enemy.Get_Width(), enemy.Get_Height(), bitdc, 0, 0, enemy.Get_Width(), enemy.Get_Height(), RGB(255, 255, 255));
+		break;
+	default:
+		break;
+	}
+
+	Paint_Hitting_Damage(hdc, enemy);
+	//Rectangle(hdc, enemy.Get_XPos(), enemy.Get_YPos() + enemy.Get_Height() - enemy.Get_Crash_Height(), enemy.Get_XPos() + enemy.Get_Crash_Width(), enemy.Get_YPos() + enemy.Get_Height());
 }

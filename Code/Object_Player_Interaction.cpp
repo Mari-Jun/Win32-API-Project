@@ -434,18 +434,18 @@ const int Select_Dialog_Ok(Interaction_Box& it_box, const WPARAM wParam) {
 	return 2;
 }
 
-bool Interaction_Dialog_Select(Player& player, Map_Village& map_v, Interaction_Box& it_box, const WPARAM wParam) {
+void Interaction_Dialog_Select(Player& player, Map_Village& map_v, Interaction_Box& it_box, const WPARAM wParam) {
 	if (player.Get_Status() != Player_Status::Interaction || it_box.Get_Dialog_Status() == 0)
-		return false;
+		return;
 
-	switch (Select_Dialog_Ok(it_box,wParam))
+	switch (Select_Dialog_Ok(it_box, wParam))
 	{
 	case 0:
 		//취소을 선택한 경우
 		it_box.Set_Dialog_Status(0);
 		for (int npc_type = Npc_Name::ELDER; npc_type <= Npc_Name::SOLDIER; npc_type++)
 			if (map_v.Get_Npc_Const(npc_type).Is_Interaction())
-			map_v.Get_Npc(npc_type).Set_interaction_Count(map_v.Get_Npc_Const(npc_type).Get_Interaction_Count() + 3);
+				map_v.Get_Npc(npc_type).Set_interaction_Count(map_v.Get_Npc_Const(npc_type).Get_Interaction_Count() + 3);
 		break;
 	case 1:
 		//확인을 선택한 경우
@@ -457,5 +457,4 @@ bool Interaction_Dialog_Select(Player& player, Map_Village& map_v, Interaction_B
 	default:
 		break;
 	}
-	return true;
 }

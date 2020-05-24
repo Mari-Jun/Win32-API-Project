@@ -11,9 +11,7 @@
 #include "Shop.h"
 
 Map_Village::~Map_Village() {
-	for (int index = 0; index < 4; index++)
-		DeleteObject(texture[index]);
-	Delete_Class<Practice_Enemy>(&p_enemy);
+	Delete_Class<Non_Move_Object>(&portal);
 	for (int index = 0; index < 6; index++)
 		Delete_Class<Npc>(&npc[index]);
 	Delete_Class<Shop>(&shop);
@@ -35,17 +33,12 @@ Shop& Map_Village::Get_Shop() const {
 	return *shop;
 }
 
-const Practice_Enemy& Map_Village::Get_P_Enemy_Const() const {
-	return *p_enemy;
+const Non_Move_Object& Map_Village::Get_Portal_Const() const {
+	return *portal;
 }
 
-Practice_Enemy& Map_Village::Get_P_Enemy() const {
-	return *p_enemy;
-}
-
-
-const HBITMAP& Map_Village::Get_Texture(const int& index) const {
-	return texture[index];
+Non_Move_Object& Map_Village::Get_Portal() const {
+	return *portal;
 }
 
 void Map_Village::Set_NM_Object() {
@@ -96,16 +89,15 @@ void Map_Village::Set_Npc() {
 	Reset_Npc(Get_Npc(Npc_Name::SOLDIER), Npc_Name::SOLDIER, Get_Map_Rect().right - 200, 440);
 }
 
-void Map_Village::Set_P_Enemy() {
-	p_enemy = Create_Class<Practice_Enemy>();
-	p_enemy->Set_Stop_Motion();
-	Reset_Practice_Enemy(*p_enemy);
+void Map_Village::Set_Texture() {
+	Create_Texture(VT::Load, (HBITMAP)LoadImage(NULL, _T(".\\BitMap\\Map\\Village\\Load.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
+	Create_Texture(VT::Grow1, (HBITMAP)LoadImage(NULL, _T(".\\BitMap\\Map\\Village\\Grow1.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
+	Create_Texture(VT::Grow2, (HBITMAP)LoadImage(NULL, _T(".\\BitMap\\Map\\Village\\Grow2.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
 }
 
-void Map_Village::Set_Texture() {
-	texture[VT::Load] = (HBITMAP)LoadImage(NULL, _T(".\\BitMap\\Map\\Village\\Load.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-	texture[VT::Grow1] = (HBITMAP)LoadImage(NULL, _T(".\\BitMap\\Map\\Village\\Grow1.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-	texture[VT::Grow2] = (HBITMAP)LoadImage(NULL, _T(".\\BitMap\\Map\\Village\\Grow2.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+void Map_Village::Create_Portal() {
+	portal = Create_Class<Non_Move_Object>();
+	portal->Set_Object_Bitmap((HBITMAP)LoadImage(NULL, _T(".\\BitMap\\Map\\Portal.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
 }
 
 void Map_Village::Create_Shop(const int& shop_type, const RECT& it_rect) {
@@ -117,17 +109,12 @@ void Map_Village::Destroy_Shop() {
 	Delete_Class<Shop>(&shop);
 }
 
-void Map_Village::Kill_P_Enemy() {
-	Delete_Class<Practice_Enemy>(&p_enemy);
-}
-
 void Reset_Village_Map(HDC hdc, Map_Village& map_v) {
 	map_v.Set_Map_Rect(0, 0, 1760, 1600);
 	map_v.Set_Map_Size_Bit(hdc);
 	map_v.Set_NM_Object();
 	map_v.Set_Portal();
 	map_v.Set_Npc();
-	map_v.Set_P_Enemy();
 	map_v.Set_Texture();
 }
 
@@ -183,7 +170,7 @@ void Paint_Village_Map(HDC hdc, HDC bitdc, const Player& player, const Map_Villa
 
 	int y_pos = 0;
 	for (y_pos = 0; y_pos <= map_v.Get_Map_Rect().bottom; y_pos++) {
-		for (int index = 0; index < 10; index++) {
+		for (int index = 0; index < 30; index++) {
 			if (&map_v.Get_NM_Object(index) != NULL && y_pos == map_v.Get_NM_Object(index).Get_YPos() + map_v.Get_NM_Object(index).Get_Height()) {
 				SelectObject(bitdc, map_v.Get_NM_Object(index).Get_Object_Bitmap());
 				TransparentBlt(hdc, map_v.Get_NM_Object(index).Get_XPos(), map_v.Get_NM_Object(index).Get_YPos(), map_v.Get_NM_Object(index).Get_Width(), map_v.Get_NM_Object(index).Get_Height(), bitdc, 0, 0, map_v.Get_NM_Object(index).Get_Width(), map_v.Get_NM_Object(index).Get_Height(), RGB(150, 150, 150));
@@ -195,10 +182,6 @@ void Paint_Village_Map(HDC hdc, HDC bitdc, const Player& player, const Map_Villa
 			if (&map_v.Get_Npc_Const(npc_type) != NULL && y_pos == map_v.Get_Npc_Const(npc_type).Get_YPos() + map_v.Get_Npc_Const(npc_type).Get_Height())
 				Paint_Npc(hdc, bitdc, map_v.Get_Npc_Const(npc_type));
 
-		//적 그리기
-		if (&map_v.Get_P_Enemy_Const() != NULL && y_pos == map_v.Get_P_Enemy_Const().Get_YPos() + map_v.Get_P_Enemy_Const().Get_Height())
-			Paint_Practice_Enemy(hdc, bitdc, map_v.Get_P_Enemy_Const());
-
 		//포탈 그리기
 		if (&map_v.Get_Portal_Const() != NULL && y_pos == map_v.Get_Portal_Const().Get_YPos() + map_v.Get_Portal_Const().Get_Height())
 			Paint_Portal(hdc, bitdc, map_v.Get_Portal_Const());
@@ -206,6 +189,12 @@ void Paint_Village_Map(HDC hdc, HDC bitdc, const Player& player, const Map_Villa
 		if (&player != NULL && y_pos == player.Get_YPos() + player.Get_Height())
 			Paint_Player(hdc, bitdc, player);
 	}
+}
+
+void Paint_Portal(HDC hdc, HDC bitdc, const Non_Move_Object& portal) {
+	SelectObject(bitdc, portal.Get_Object_Bitmap());
+	TransparentBlt(hdc, portal.Get_XPos(), portal.Get_YPos(), portal.Get_Object_Image_Size().bmWidth, portal.Get_Object_Image_Size().bmHeight,
+		bitdc, 0, 0, portal.Get_Object_Image_Size().bmWidth, portal.Get_Object_Image_Size().bmHeight, RGB(0, 0, 0));
 }
 
 //Paint부분도 Object자체로 돌려서 범위 체크하면 최대한 줄일 수 있다.
@@ -233,12 +222,7 @@ void Animation_Play_Npc(Map_Village& map_v) {
 	}
 }
 
-void Enemy_Kill_Check(Map_Village& map_v) {
-	if (&map_v.Get_P_Enemy_Const() != NULL && map_v.Get_P_Enemy_Const().Get_Object_Info_Const().Get_Hp() < 0)
-		map_v.Kill_P_Enemy();
-}
-
-bool Shop_Select_Item(Player& player, Map_Village& map_v, Interaction_Box& it_box, const WPARAM wParam) {
+void Shop_Select_Item(Player& player, Map_Village& map_v, Interaction_Box& it_box, const WPARAM wParam) {
 	if (player.Get_Status() == Player_Status::Shopping && &map_v.Get_Shop_Const() != NULL) {
 		if (it_box.Get_Dialog_Status() == 0) {
 			if (Change_Select_Item(map_v.Get_Shop(), wParam))
@@ -270,7 +254,5 @@ bool Shop_Select_Item(Player& player, Map_Village& map_v, Interaction_Box& it_bo
 				break;
 			}
 		}
-		return true;
 	}
-	return false;
 }

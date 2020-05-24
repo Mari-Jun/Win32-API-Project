@@ -59,4 +59,4 @@ void Show_Npc_Soldier_Interaction(HDC hdc, const Npc& Soldier, const Interaction
 
 void Show_Dialog_Box(HDC hdc, HDC bitdc, const Interaction_Box& it_box, const int& dialog_type);
 const int Select_Dialog_Ok(Interaction_Box& it_box, const WPARAM wParam);
-bool Interaction_Dialog_Select(Player& player, Map_Village& map_v, Interaction_Box& it_box, const WPARAM wParam);
+void Interaction_Dialog_Select(Player& player, Map_Village& map_v, Interaction_Box& it_box, const WPARAM wParam);

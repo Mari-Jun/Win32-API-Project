@@ -127,6 +127,10 @@ const int& Move_Object::Get_Hitting_Damage() const {
 	return hitting_damage;
 }
 
+const int& Move_Object::Get_Hitting_Damage_Count() const {
+	return hitting_damage_count;
+}
+
 const Hitting_Range_Polygon& Move_Object::Get_Hit_Range_P_Const(const int& index) const {
 	return *hit_range[index];
 }
@@ -163,6 +167,10 @@ void Move_Object::Set_Hitting_Damage(const int& hit_dmg) {
 	hitting_damage = hit_dmg;
 }
 
+void Move_Object::Set_Hitting_Damage_Count(const int& hit_dmg_count) {
+	hitting_damage_count = hit_dmg_count;
+}
+
 void Move_Object::Set_Hit_Range_Polygon(const int& index, const int& owner, const POINT pos[4]) {
 	hit_range[index] = Create_Class<Hitting_Range_Polygon>();
 	Reset_Hitting_Range_Polygon(*hit_range[index], owner, pos);
@@ -186,12 +194,12 @@ void Reset_Move_Object(Move_Object& m_object, const int& x_pos, const int& y_pos
 	m_object.Set_Direction(Object_Direction::Down);
 	m_object.Set_Ani_Count(0);
 	m_object.Set_Hitting_Damage(-1);
+	m_object.Set_Hitting_Damage_Count(-1);
 	m_object.Set_Speed(speed);
-	m_object.Create_Object_Info();
 }
 
 void Paint_Hitting_Damage(HDC hdc, const Move_Object& m_object) {
-	if (m_object.Get_Hitting_Damage() == -1)
+	if (m_object.Get_Hitting_Damage() == -1 || m_object.Get_Hitting_Damage_Count() == -1)
 		return;
 
 	SIZE damage_size;
@@ -210,5 +218,19 @@ void Calcul_Hitting_Damage(const Move_Object& attack_obj, Move_Object& hit_obj, 
 	hit_obj.Set_Hitting_Damage(hit_dmg - hit_obj.Get_Object_Info_Const().Get_Defence() + rand() % 10);
 	//치명타 넣어야함
 	hit_obj.Get_Object_Info().Set_Hp(hit_obj.Get_Object_Info_Const().Get_Hp() - hit_obj.Get_Hitting_Damage());
+
+	//데미지 표시 시간 초기화
+	hit_obj.Set_Hitting_Damage_Count(0);
 }
 
+void Count_Up_Hitting_Damage_Count(Move_Object& m_object) {
+	if (m_object.Get_Hitting_Damage_Count() != -1) {
+		m_object.Set_Hitting_Damage_Count(m_object.Get_Hitting_Damage_Count() + 1);
+		if (m_object.Get_Hitting_Damage_Count() == 20)
+			m_object.Set_Hitting_Damage_Count(-1);
+	}
+}
+
+void Change_Object_Speed(Move_Object& m_object, const int& speed) {
+	m_object.Set_Speed(speed);
+}

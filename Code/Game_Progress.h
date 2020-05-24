@@ -34,5 +34,5 @@ private:
 
 void Reset_Progress(Progress& progress, const int& player_class);
 void Paint_Map_Select(HDC hdc, HDC bitdc, const Progress& progress, const RECT c_rect);
-bool Change_Map_Select(Progress& progress, Player& player, const WPARAM wParam);
+int Change_Map_Select(Progress& progress, Player& player, const WPARAM wParam);
 

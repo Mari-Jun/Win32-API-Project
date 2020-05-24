@@ -1,19 +1,30 @@
 #pragma once
 #include "Object_Main.h"
 
-class Practice_Enemy : public Move_Object {
+class Enemy :public Move_Object {
 public:
-	~Practice_Enemy();
+	~Enemy();
 
-	const BITMAP Get_Bitmap_Size() const;
-	const HBITMAP Get_Stop_Motion_Bitmap(const int& index) const;
+	const int& Get_Enemy_Type() const;
+	const BITMAP& Get_Motion_Size() const;
+	const HBITMAP& Get_Stop_Motion(const int& direction, const int& index) const;
+	const HBITMAP& Get_Move_Motion(const int& direction, const int& index) const;
+	const HBITMAP& Get_Attack_Motion(const int& direction, const int& index) const;
+	const HBITMAP& Get_Skill_Motion1(const int& direction, const int& index) const;
 
-	void Set_Stop_Motion();
-		
+	void Set_Enemy_Type(const int& enemy_type);
+	void Set_Motion_Bitmap();
+
 private:
-	BITMAP bitmap_size;
-	HBITMAP stop_motion_bitmap[4];
+	int enemy_type;
+	BITMAP motion_size;
+	HBITMAP stop_motion_bitmap[8][10];
+	HBITMAP move_motion_bitmap[8][10];
+	HBITMAP attack_motion_bitmap[8][20];
+	HBITMAP skill_motion1_bitmap[8][20];
 };
 
-void Reset_Practice_Enemy(Practice_Enemy& p_enemy);
-void Paint_Practice_Enemy(HDC hdc, HDC bitdc, const Practice_Enemy& p_enemy);
+void Reset_Enemy(Enemy& enemy, const int& enemy_type);
+void Paint_Enemy(HDC hdc, HDC bitdc, const Enemy& enemy);
+//Boss라는 객체를 만들게되면 Command쪽에서 조금 꼬이지 않나.. (근데 어차피 맵에 넣을껀데??)
+

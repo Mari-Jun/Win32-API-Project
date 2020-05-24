@@ -4,11 +4,13 @@
 #include "resource.h"
 #include "Source.h"
 #include "Game_Progress.h"
-#include "Object_Command.h"
+#include "Object_Player_Command.h"
 #include "Object_Player.h"
 #include "Object_Player_Interaction.h"
+#include "Object_Enemy_Command.h"
 #include "Camera.h"
 #include "Map_Village.h"
+#include "Map_Dungeon.h"
 #include "Interface.h"
 
 #pragma comment(lib, "msimg32.lib")
@@ -87,6 +89,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 
 	//맵 관련 객체
 	static Map_Village* map_v;	
+	static Map_Dungeon* map_d;
 
 	switch (iMsg)
 	{
@@ -138,11 +141,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 		((MINMAXINFO*)lParam)->ptMaxTrackSize.y = WindowY;
 		break;
 	case WM_CHAR:
-	case WM_KEYDOWN:
 		switch (wParam)
-		{	
+		{
 		case Command_Key::Co_Interaction:
-			Interaction_Command(*player, *map_v, *it_box, *progress);
+			if (progress->Get_Map_Type() == Map_Type::Village1)
+				Interaction_Command(*player, *map_v, *it_box, *progress);
 			break;
 		case Command_Key::Co_Equipment:
 			Equipment_Command(*player);
@@ -157,33 +160,56 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 		case '3':
 			Use_Item_Command(*player, wParam - '0');
 			break;
-		
 		default:
 			break;
 		}
-		if (Chnage_Equipment(*player, wParam))
-			InvalidateRgn(hwnd, NULL, FALSE);
-		if (Shop_Select_Item(*player, *map_v, *it_box, wParam))
-			InvalidateRgn(hwnd, NULL, FALSE);
-		if (Interaction_Dialog_Select(*player, *map_v, *it_box, wParam))
-			InvalidateRgn(hwnd, NULL, FALSE);
-		if (Change_Map_Select(*progress, *player, wParam))
-			InvalidateRgn(hwnd, NULL, FALSE);
+		break;
+	case WM_KEYDOWN:
+		if (progress->Get_Map_Type() == Map_Type::Village1) {
+			Chnage_Equipment(*player, wParam);
+			Shop_Select_Item(*player, *map_v, *it_box, wParam);
+			Interaction_Dialog_Select(*player, *map_v, *it_box, wParam);
+			switch (Change_Map_Select(*progress, *player, wParam))
+			{
+			case Map_Type::Dungeon1:
+				map_d = Create_Class<Map_Dungeon>();
+				Reset_Dungeon_Map(hdc, *map_d, Map_Type::Dungeon1);
+				//던전으로 들어왔으니 속도를 설정해준다.
+				Change_Object_Speed(*player, 10);
+				break;
+			default:
+				break;
+			}
+		}
 		break;
 	case WM_TIMER:
-		switch (wParam)
-		{
-		case Default_Timer:
-			//Player 관련
-			Command_Player<Map_Village>(*player, *map_v, *progress);
-			Move_Camera(*camera, *player, *map_v, c_rect);
-			//Enemy관련
-			Enemy_Kill_Check(*map_v);
-			//Npc관련
-			Animation_Play_Npc(*map_v);
-			break;
-		default:
-			break;
+		if (progress->Get_Map_Type() == Map_Type::Village1) {
+			switch (wParam)
+			{
+			case Default_Timer:
+				//Player 관련
+				Command_Player<Map_Village>(*player, *map_v, *progress);
+				Move_Camera(*camera, *player, *map_v, c_rect);
+				//Npc관련
+				Animation_Play_Npc(*map_v);
+				break;
+			default:
+				break;
+			}
+		}
+		else {
+			switch (wParam)
+			{
+			case Default_Timer:
+				//Player 관련
+				Command_Player<Map_Dungeon>(*player, *map_d, *progress);
+				Move_Camera(*camera, *player, *map_d, c_rect);
+				//Enemy관련
+				Command_Enemy(*map_d);
+				break;
+			default:
+				break;
+			}
 		}
 		InvalidateRgn(hwnd, NULL, FALSE);		
 		break;
@@ -202,7 +228,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 			Paint_Village_Map(gamedc, bitdc, *player, *map_v);
 			break;
 		case Map_Type::Dungeon1:
-			exit(0);
+			Paint_Dungeon_Map(gamedc, bitdc, *player, *map_d);
 			break;
 		default:
 			break;
@@ -214,7 +240,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 		Paint_Player_Equipment(memdc, bitdc, *player);
 		
 		if (Paint_Interaction_Box(memdc, alphadc, bitdc, c_rect, *player, *it_box))
-			Show_Npc_Interaction(memdc, bitdc, *player, *map_v, *it_box);
+			if (progress->Get_Map_Type() == Map_Type::Village1)
+				Show_Npc_Interaction(memdc, bitdc, *player, *map_v, *it_box);
 
 		Paint_Map_Select(memdc, bitdc, *progress, c_rect);
 

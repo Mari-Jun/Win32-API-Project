@@ -20,6 +20,7 @@ Player::~Player() {
 		for (int j = 0; j < 8; j++) {
 			DeleteObject(stop_motion_bitmap[i][j]);
 			DeleteObject(move_motion_bitmap[i][j]);
+			DeleteObject(run_motion_bitmap[i][j]);
 		}
 		for (int j = 0; j < 10; j++) {
 			DeleteObject(attack_motion_bitmap[i][j]);
@@ -59,6 +60,10 @@ const HBITMAP& Player::Get_Move_Motion(const int& direction, const int& index) c
 	return move_motion_bitmap[direction][index];
 }
 
+const HBITMAP& Player::Get_Run_Motion(const int& direction, const int& index) const {
+	return run_motion_bitmap[direction][index];
+}
+
 const HBITMAP& Player::Get_Attack_Motion(const int& direction, const int& index) const {
 	return attack_motion_bitmap[direction][index];
 }
@@ -73,17 +78,22 @@ void Player::Set_Motion_Bitmap() {
 	case Class_Type::Warrior:
 		for (int direction = Object_Direction::Right; direction <= Object_Direction::DownRight; direction++) {
 			for (int index = 0; index < 8; index++) {
-				wchar_t str[100];
+				wchar_t str[50];
 				wsprintf(str, _T(".\\BitMap\\Warrior\\Stop\\Warrior_Stop%d.bmp"), direction * 8 + index + 369);
 				stop_motion_bitmap[direction][index] = (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 			}	
 			for (int index = 0; index < 8; index++) {
-				wchar_t str[100];
+				wchar_t str[50];
 				wsprintf(str, _T(".\\BitMap\\Warrior\\Move\\Warrior_Move%d.bmp"), direction * 8 + index + 1);
 				move_motion_bitmap[direction][index] = (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 			}
+			for (int index = 0; index < 8; index++) {
+				wchar_t str[50];
+				wsprintf(str, _T(".\\BitMap\\Warrior\\Run\\Warrior_Run%d.bmp"), direction * 8 + index + 1);
+				run_motion_bitmap[direction][index] = (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+			}
 			for (int index = 0; index < 10; index++) {
-				wchar_t str[100];
+				wchar_t str[50];
 				wsprintf(str, _T(".\\BitMap\\Warrior\\Attack\\Warrior_Attack_%d.bmp"), direction * 10 + index + 1369);
 				attack_motion_bitmap[direction][index] = (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 			}
@@ -110,6 +120,7 @@ void Reset_Player(Player& player, const int& class_type) {
 
 	player.Set_Motion_Bitmap();
 	Reset_Move_Object(player, 400, 500, player.Get_Motion_Size().bmWidth, player.Get_Motion_Size().bmHeight, 6);
+	player.Create_Object_Info();
 	Reset_Object_Info(player.Get_Object_Info(), 1, 100, 100, 10, 0, 0);
 	player.Set_Class_Type(class_type);
 	player.Create_Player_Equipment();
@@ -130,19 +141,21 @@ void Paint_Player(HDC hdc, HDC bitdc, const Player& player) {
 	case Player_Status::Shopping:
 	case Player_Status::Map_Selecting:
 		SelectObject(bitdc, player.Get_Stop_Motion(player.Get_Direction(), player.Get_Ani_Count() / 2 % 8));
-		TransparentBlt(hdc, player.Get_XPos() - 45, player.Get_YPos(), player.Get_Motion_Size().bmWidth, player.Get_Motion_Size().bmHeight, bitdc, 0, 0, player.Get_Motion_Size().bmWidth, player.Get_Motion_Size().bmHeight, RGB(255, 255, 255));
 		break;
 	case Player_Status::Move:
 		SelectObject(bitdc, player.Get_Move_Motion(player.Get_Direction(), player.Get_Ani_Count() / 2 % 8));
-		TransparentBlt(hdc, player.Get_XPos() - 45, player.Get_YPos(), player.Get_Motion_Size().bmWidth, player.Get_Motion_Size().bmHeight, bitdc, 0, 0, player.Get_Motion_Size().bmWidth, player.Get_Motion_Size().bmHeight, RGB(255, 255, 255));
+		break;
+	case Player_Status::Run:
+		SelectObject(bitdc, player.Get_Run_Motion(player.Get_Direction(), player.Get_Ani_Count() / 2 % 8));
 		break;
 	case Player_Status::Attack:
 		SelectObject(bitdc, player.Get_Attack_Motion(player.Get_Direction(), player.Get_Ani_Count() / 2 % 10));
-		TransparentBlt(hdc, player.Get_XPos() - 45, player.Get_YPos(), player.Get_Motion_Size().bmWidth, player.Get_Motion_Size().bmHeight, bitdc, 0, 0, player.Get_Motion_Size().bmWidth, player.Get_Motion_Size().bmHeight, RGB(255, 255, 255));
 		break;
 	default:
 		break;
 	}
+
+	TransparentBlt(hdc, player.Get_XPos() - 45, player.Get_YPos(), player.Get_Motion_Size().bmWidth, player.Get_Motion_Size().bmHeight, bitdc, 0, 0, player.Get_Motion_Size().bmWidth, player.Get_Motion_Size().bmHeight, RGB(255, 255, 255));
 
 	//나중에 스킬 설정할때나 다시 그려주장
 	/*for (int index = 0; index < 20; index++) {
@@ -179,16 +192,14 @@ void Equipment_Command(Player& player) {
 	}
 }
 
-bool Chnage_Equipment(Player& player, WPARAM wParam) {
+void Chnage_Equipment(Player& player, WPARAM wParam) {
 	if (player.Get_Status() == Player_Status::Inventory) {
 		//장비 변경중이 아닐 경우
 		if (!player.Get_Player_Equipment_Const().Is_Chnage_Select())
 			Change_Equipment_Type_Select(player.Get_Player_Equipment(), wParam);
 		else
-			Change_Select_Equipment_Detail(player.Get_Player_Equipment(), player.Get_Object_Info(),wParam);
-		return true;
+			Change_Select_Equipment_Detail(player.Get_Player_Equipment(), player.Get_Object_Info(), wParam);
 	}
-	return false;
 }
 
 void Use_Item_Command(Player& player, WPARAM wParam) {

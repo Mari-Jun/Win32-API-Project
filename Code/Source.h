@@ -42,12 +42,16 @@ enum Player_Status {
 	Stop, Move, Run, Interaction, Attack, Inventory, Shopping, Map_Selecting
 };
 
+enum Enemy_Status {
+	E_Stop, E_Move, E_Attack
+};
+
 enum Class_Type {
 	Warrior,
 };
 
 enum Enemy_Type {
-	E_Pratice
+	E_Pratice, Bird
 };
 
 enum Player_Item_Type {
