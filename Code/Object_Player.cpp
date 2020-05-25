@@ -157,6 +157,8 @@ void Paint_Player(HDC hdc, HDC bitdc, const Player& player) {
 
 	TransparentBlt(hdc, player.Get_XPos() - 45, player.Get_YPos(), player.Get_Motion_Size().bmWidth, player.Get_Motion_Size().bmHeight, bitdc, 0, 0, player.Get_Motion_Size().bmWidth, player.Get_Motion_Size().bmHeight, RGB(255, 255, 255));
 
+	Paint_Hitting_Damage(hdc, player);
+
 	//나중에 스킬 설정할때나 다시 그려주장
 	/*for (int index = 0; index < 20; index++) {
 		if (&player.Get_Hit_Range_P_Const(index) != NULL) {

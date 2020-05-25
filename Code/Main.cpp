@@ -128,7 +128,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 		map_v = Create_Class<Map_Village>();
 		Reset_Village_Map(hdc, *map_v);
 
-		SetTimer(hwnd, Default_Timer, 10, NULL);
+		SetTimer(hwnd, Default_Timer, 30, NULL);
 
 		ReleaseDC(hwnd, hdc);
 
@@ -205,7 +205,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 				Command_Player<Map_Dungeon>(*player, *map_d, *progress);
 				Move_Camera(*camera, *player, *map_d, c_rect);
 				//Enemy°ü·Ã
-				Command_Enemy(*map_d);
+				Command_Enemy(*map_d, *player);
 				break;
 			default:
 				break;

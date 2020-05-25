@@ -35,6 +35,10 @@ bool Crash_Attack_Polygon(const Move_Object& attack_obj, const Move_Object& hit_
 void Polygon_Damage_Enemy(Map_Dungeon& map_d, const Move_Object& attack_obj, const Hitting_Range_Polygon& hit_range_p, const int& hit_dmg);
 void Create_Hitting_Polygon(const Move_Object& m_object, POINT* pos, const int& width_size, const int& height_size, const int& shape);
 
+/*Player Hit*/
+void Hit_Player(Player& player);
+void Player_Kill_Check(Player& player);
+
 
 template <typename T_Map>
 void Command_Player(Player& player, T_Map& map, Progress& progress) {
@@ -50,6 +54,8 @@ void Command_Player(Player& player, T_Map& map, Progress& progress) {
 	Attack_Player(player, map);
 
 	Move_Player(player, map, progress);
+
+	Hit_Player(player);
 }
 
 template <typename T_Map>
@@ -62,7 +68,6 @@ void Move_Player(Move_Object& player, const T_Map& map, Progress& progress) {
 	bool KeyRight = (GetAsyncKeyState(VK_RIGHT) & 0x8001);
 
 
-	//이러면 안되는데..
 	if (player.Get_Status() != Player_Status::Attack) {
 		if (KeyUp || KeyDown || KeyLeft || KeyRight) {
 			//마을이면 그냥 이동, 던전이면 달리기를 선택합니다.

@@ -42,7 +42,7 @@ void Map_Dungeon::Set_Enemy() {
 		//老窜 1付府父 积己
 		enemy[0] = Create_Class<Enemy>();
 		Reset_Enemy(*enemy[0],Enemy_Type::Bird);
-		Reset_Move_Object(*enemy[0], 1100, 400, enemy[0]->Get_Motion_Size().bmWidth, enemy[0]->Get_Motion_Size().bmHeight, 8);
+		Reset_Move_Object(*enemy[0], 1100, 400, enemy[0]->Get_Motion_Size().bmWidth, enemy[0]->Get_Motion_Size().bmHeight, 4);
 		break;
 	default:
 		break;

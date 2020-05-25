@@ -30,7 +30,7 @@ enum Command_Key {
 	Co_Interaction = 'f', Co_Equipment = 'c'
 };
 
-enum Hit_Onwer {
+enum Hit_Owner {
 	HO_Player, HO_Enemy
 };
 
