@@ -8,6 +8,7 @@
 #include "Object_Player.h"
 #include "Object_Npc.h"
 #include "Equipment.h"
+#include "Object_Skill.h"
 #include "Hitting_Range.h"
 #include "Item.h"
 
@@ -40,6 +41,14 @@ Player_Equipment& Player::Get_Player_Equipment() const {
 	return *p_equip;
 }
 
+const Player_Skill& Player::Get_Player_Skill_Const() const {
+	return *p_skill;
+}
+
+Player_Skill& Player::Get_Player_Skill() const {
+	return *p_skill;
+}
+
 const Player_Item& Player::Get_Player_Item_Const() const {
 	return *p_item;
 }
@@ -64,6 +73,10 @@ const HBITMAP& Player::Get_Run_Motion(const int& direction, const int& index) co
 	return run_motion_bitmap[direction][index];
 }
 
+const HBITMAP& Player::Get_Die_Motion(const int& direction, const int& index) const {
+	return die_motion_bitmap[direction][index];
+}
+
 const HBITMAP& Player::Get_Attack_Motion(const int& direction, const int& index) const {
 	return attack_motion_bitmap[direction][index];
 }
@@ -79,7 +92,7 @@ void Player::Set_Motion_Bitmap() {
 		for (int direction = Object_Direction::Right; direction <= Object_Direction::DownRight; direction++) {
 			for (int index = 0; index < 8; index++) {
 				wchar_t str[50];
-				wsprintf(str, _T(".\\BitMap\\Warrior\\Stop\\Warrior_Stop%d.bmp"), direction * 8 + index + 369);
+				wsprintf(str, _T(".\\BitMap\\Warrior\\Stop\\Warrior_Stop%d.bmp"), direction * 8 + index + 1);
 				stop_motion_bitmap[direction][index] = (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 			}	
 			for (int index = 0; index < 8; index++) {
@@ -92,9 +105,14 @@ void Player::Set_Motion_Bitmap() {
 				wsprintf(str, _T(".\\BitMap\\Warrior\\Run\\Warrior_Run%d.bmp"), direction * 8 + index + 1);
 				run_motion_bitmap[direction][index] = (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 			}
+			for (int index = 0; index < 8; index++) {
+				wchar_t str[50];
+				wsprintf(str, _T(".\\BitMap\\Warrior\\Die\\Warrior_Die%d.bmp"), direction * 8 + index + 1);
+				die_motion_bitmap[direction][index] = (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+			}
 			for (int index = 0; index < 10; index++) {
 				wchar_t str[50];
-				wsprintf(str, _T(".\\BitMap\\Warrior\\Attack\\Warrior_Attack_%d.bmp"), direction * 10 + index + 1369);
+				wsprintf(str, _T(".\\BitMap\\Warrior\\Attack\\Warrior_Attack%d.bmp"), direction * 10 + index + 1);
 				attack_motion_bitmap[direction][index] = (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 			}
 		}
@@ -111,6 +129,11 @@ void Player::Create_Player_Equipment() {
 	Reset_Player_Equipment(*p_equip, Get_Object_Info());
 }
 
+void Player::Create_Player_Skill() {
+	p_skill = Create_Class<Player_Skill>();
+	Reset_Player_Skill(*p_skill, Get_Class_Type());
+}
+
 void Player::Create_Player_Item() {
 	p_item = Create_Class<Player_Item>();
 	Reset_Player_Item(*p_item);
@@ -124,6 +147,7 @@ void Reset_Player(Player& player, const int& class_type) {
 	Reset_Object_Info(player.Get_Object_Info(), 1, 100, 100, 10, 0, 0);
 	player.Set_Class_Type(class_type);
 	player.Create_Player_Equipment();
+	player.Create_Player_Skill();
 	player.Create_Player_Item();
 
 	//지면 충돌 크기는 비트맵 객체마다 다 다르기때문에 일일히 객체가 생성때 설정을 해주어야한다.
@@ -132,6 +156,19 @@ void Reset_Player(Player& player, const int& class_type) {
 }
 
 void Paint_Player(HDC hdc, HDC bitdc, const Player& player) {
+
+	//나중에 스킬 설정할때나 다시 그려주장
+	/*for (int index = 0; index < 20; index++) {
+		if (&player.Get_Hit_Range_P_Const(index) != NULL) {
+			POINT pos[4];
+			pos[0] = player.Get_Hit_Range_P_Const(index).Get_Pos(0);
+			pos[1] = player.Get_Hit_Range_P_Const(index).Get_Pos(1);
+			pos[2] = player.Get_Hit_Range_P_Const(index).Get_Pos(2);
+			pos[3] = player.Get_Hit_Range_P_Const(index).Get_Pos(3);
+
+			Polygon(hdc, pos, 4);
+		}
+	}*/
 
 	switch (player.Get_Status())
 	{
@@ -148,30 +185,31 @@ void Paint_Player(HDC hdc, HDC bitdc, const Player& player) {
 	case Player_Status::Run:
 		SelectObject(bitdc, player.Get_Run_Motion(player.Get_Direction(), player.Get_Ani_Count() / 2 % 8));
 		break;
+	case Player_Status::Die:
+		SelectObject(bitdc, player.Get_Die_Motion(player.Get_Direction(), player.Get_Ani_Count() / 2 % 8));
+		break;
 	case Player_Status::Attack:
 		SelectObject(bitdc, player.Get_Attack_Motion(player.Get_Direction(), player.Get_Ani_Count() / 2 % 10));
+		break;
+	case Player_Status::SkillQ:
+		SelectObject(bitdc, player.Get_Player_Skill_Const().Get_Skill1_Motion_Bitmap(player.Get_Direction(), player.Get_Ani_Count() / 2 % 18));
+		break;
+	case Player_Status::SkillW:
+		SelectObject(bitdc, player.Get_Player_Skill_Const().Get_Skill2_Motion_Bitmap(player.Get_Direction(), player.Get_Ani_Count() / 2 % 10));
+		break;
+	case Player_Status::SkillE:
+		SelectObject(bitdc, player.Get_Player_Skill_Const().Get_Skill3_Motion_Bitmap(player.Get_Direction(), player.Get_Ani_Count() / 2 % 17));
+		break;
+	case Player_Status::SkillR:
+		SelectObject(bitdc, player.Get_Player_Skill_Const().Get_Skill4_Motion_Bitmap(player.Get_Direction(), player.Get_Ani_Count() / 2 % 13));
 		break;
 	default:
 		break;
 	}
 
-	TransparentBlt(hdc, player.Get_XPos() - 45, player.Get_YPos(), player.Get_Motion_Size().bmWidth, player.Get_Motion_Size().bmHeight, bitdc, 0, 0, player.Get_Motion_Size().bmWidth, player.Get_Motion_Size().bmHeight, RGB(255, 255, 255));
+	TransparentBlt(hdc, player.Get_XPos() - 98, player.Get_YPos() + 14, player.Get_Motion_Size().bmWidth, player.Get_Motion_Size().bmHeight, bitdc, 0, 0, player.Get_Motion_Size().bmWidth, player.Get_Motion_Size().bmHeight, RGB(255, 255, 255));
 
-	Paint_Hitting_Damage(hdc, player);
-
-	//나중에 스킬 설정할때나 다시 그려주장
-	/*for (int index = 0; index < 20; index++) {
-		if (&player.Get_Hit_Range_P_Const(index) != NULL) {
-			POINT pos[4];
-			pos[0] = player.Get_Hit_Range_P_Const(index).Get_Pos(0);
-			pos[1] = player.Get_Hit_Range_P_Const(index).Get_Pos(1);
-			pos[2] = player.Get_Hit_Range_P_Const(index).Get_Pos(2);
-			pos[3] = player.Get_Hit_Range_P_Const(index).Get_Pos(3);
-
-			Polygon(hdc, pos, 4);
-		}
-		
-	}*/
+	Paint_Hitting_Damage(hdc, player);	
 }
 
 void Paint_Player_Equipment(HDC hdc, HDC bitdc, const Player& player) {

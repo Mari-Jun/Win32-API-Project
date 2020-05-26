@@ -22,7 +22,7 @@ public:
 private:
 	int enemy_type;
 	int attack_delay;
-	int skill_delay[5];
+	int skill_delay[4];
 	BITMAP motion_size;
 	HBITMAP stop_motion_bitmap[8][10];
 	HBITMAP move_motion_bitmap[8][10];

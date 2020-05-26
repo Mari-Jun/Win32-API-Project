@@ -1,39 +1,25 @@
 #pragma once
-#include "Source.h"
 #include <math.h>
-#include "Game_Progress.h"
-#include "Object_Info.h"
-#include "Object_Npc.h"
+#include "Source.h"
 #include "Object_Player.h"
+#include "Game_Progress.h"
 
-enum Hitting_Shape {
-	FRONT, ROUND
-};
 class Progress;
 class Hitting_Range_Polygon;
 class Move_Object;
 class Player;
-class Practice_Enemy;
-class Map;
-class Object;
 class Map_Village;
 class Map_Dungeon;
-class Map_D;
 
 /*Player Move*/
-bool Crash_Check_Map(const Move_Object& m_object, const Map& map, const int& move_x, const int& move_y);
-bool Crash_Check_Object(const Move_Object& m_object, const Object& obj, const int& move_x, const int& move_y);
-bool Crash_Check_Npc(const Move_Object& m_objcet, const Map_Village& map_v, const int& move_x, const int& move_y);
-bool Crash_Check_Enemy(const Move_Object& m_objcet, const Map_Dungeon& map_d, const int& move_x, const int& move_y);
 void Move_Player_Check(Move_Object& player, const Map_Village& map_v, Progress& progress, const int& move_x, const int& move_y);
 void Move_Player_Check(Move_Object& player, const Map_Dungeon& map_d, Progress& progress, const int& move_x, const int& move_y);
 
 /*Player Attack*/
-void Attack_Player(Player& player, Map_Village& map_v);
 void Attack_Player(Player& player, Map_Dungeon& map_d);
-bool Crash_Attack_Polygon(const Move_Object& attack_obj, const Move_Object& hit_object, const Hitting_Range_Polygon& hit_range_p);
-void Polygon_Damage_Enemy(Map_Dungeon& map_d, const Move_Object& attack_obj, const Hitting_Range_Polygon& hit_range_p, const int& hit_dmg);
-void Create_Hitting_Polygon(const Move_Object& m_object, POINT* pos, const int& width_size, const int& height_size, const int& shape);
+
+/*Player_Skill*/
+void Skill_Player(Player& player, Map_Dungeon& map_d);
 
 /*Player Hit*/
 void Hit_Player(Player& player);
@@ -43,7 +29,7 @@ void Player_Kill_Check(Player& player);
 template <typename T_Map>
 void Command_Player(Player& player, T_Map& map, Progress& progress) {
 
-	if (player.Get_Status() == Player_Status::Interaction || player.Get_Status() == Player_Status::Inventory || player.Get_Status() == Player_Status::Shopping ||
+	if (player.Get_Status() == Player_Status::Die || player.Get_Status() == Player_Status::Interaction || player.Get_Status() == Player_Status::Inventory || player.Get_Status() == Player_Status::Shopping ||
 		player.Get_Status() == Player_Status::Map_Selecting)
 		return;
 
@@ -51,12 +37,11 @@ void Command_Player(Player& player, T_Map& map, Progress& progress) {
 	if (player.Get_Ani_Count() == 800)
 		player.Set_Ani_Count(0);
 
-	Attack_Player(player, map);
-
 	Move_Player(player, map, progress);
-
-	Hit_Player(player);
 }
+
+template <>
+void Command_Player(Player& player, Map_Dungeon& map_d, Progress& progress);
 
 template <typename T_Map>
 void Move_Player(Move_Object& player, const T_Map& map, Progress& progress) {
@@ -68,7 +53,9 @@ void Move_Player(Move_Object& player, const T_Map& map, Progress& progress) {
 	bool KeyRight = (GetAsyncKeyState(VK_RIGHT) & 0x8001);
 
 
-	if (player.Get_Status() != Player_Status::Attack) {
+	if (player.Get_Status() != Player_Status::Attack && player.Get_Status() != Player_Status::SkillQ &&
+		player.Get_Status() != Player_Status::SkillW && player.Get_Status() != Player_Status::SkillE &&
+		player.Get_Status() != Player_Status::SkillR) {
 		if (KeyUp || KeyDown || KeyLeft || KeyRight) {
 			//마을이면 그냥 이동, 던전이면 달리기를 선택합니다.
 			if (progress.Get_Map_Type() == Map_Type::Village1)

@@ -39,7 +39,7 @@ enum Object_Direction {
 };
 
 enum Player_Status {
-	Stop, Move, Run, Interaction, Attack, Inventory, Shopping, Map_Selecting
+	Stop, Move, Run, Die, Attack, SkillQ, SkillW, SkillE, SkillR, Interaction, Inventory, Shopping, Map_Selecting
 };
 
 enum Enemy_Status {
@@ -52,6 +52,10 @@ enum Class_Type {
 
 enum Enemy_Type {
 	E_Pratice, Bird
+};
+
+enum Skill_Type {
+	Skill_Q, Skill_W, Skill_E, Skill_R
 };
 
 enum Player_Item_Type {
@@ -71,7 +75,10 @@ enum Quest_Name {
 	Main_Quest6, Main_Quest7, Main_Quest8
 };
 
-
 enum Timer_Name {
 	Default_Timer
+};
+
+enum Hitting_Shape {
+	FRONT, ROUND
 };

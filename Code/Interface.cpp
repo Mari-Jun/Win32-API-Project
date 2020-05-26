@@ -3,6 +3,7 @@
 #include "Interface.h"
 #include "Object_Player.h"
 #include "Object_Info.h"
+#include "Object_Skill.h"
 #include "Item.h"
 
 /*Player_Interface*/
@@ -82,7 +83,8 @@ void Paint_Player_Interface(HDC hdc, HDC bitdc, const RECT c_rect, const Player_
 	//아이템을 출력합니다.
 	Paint_Player_Item(hdc, bitdc, player.Get_Player_Item_Const(), c_rect);
 
-
+	//스킬을 출력합니다.
+	Paint_Player_Skill_Icon(hdc, bitdc, player.Get_Player_Skill_Const(), c_rect);
 
 	//단축키 그림을 출력합니다.
 	for (int index = 0; index < 3; index++) {
@@ -93,4 +95,5 @@ void Paint_Player_Interface(HDC hdc, HDC bitdc, const RECT c_rect, const Player_
 		SelectObject(bitdc, p_inter.Get_Command_Bitmap(index));
 		TransparentBlt(hdc, c_rect.right - 460 + (index - 3) * 56, c_rect.bottom - 60, p_inter.Get_Command_Bitmap_Size().bmWidth, p_inter.Get_Command_Bitmap_Size().bmHeight, bitdc, 0, 0, p_inter.Get_Command_Bitmap_Size().bmWidth, p_inter.Get_Command_Bitmap_Size().bmHeight, RGB(17, 33, 42));
 	}
+
 }

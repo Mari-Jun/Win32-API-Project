@@ -1,13 +1,14 @@
 #include <Windows.h>
+#include <math.h>
 #include "Source.h"
-#include "Game_Progress.h"
+#include "Object_Command.h"
 #include "Object_Enemy_Command.h"
-#include "Object_Player_Command.h"
 #include "Object_Info.h"
+#include "Object_Player.h"
 #include "Object_Enemy.h"
 #include "Hitting_Range.h"
-#include "Hitting_Range.h"
 #include "Map_Dungeon.h"
+#include "Game_Progress.h"
 
 void Command_Enemy(Map_Dungeon& map_d, Player& player) {
 	for (int index = 0; index < 50; index++) {
@@ -36,10 +37,10 @@ void Command_Enemy(Map_Dungeon& map_d, Player& player) {
 
 bool Reaction_Range_Check(const Move_Object& enemy, const Player& player, const int& range) {
 	//범위 내에 있는 경우 true반환
-	if (enemy.Get_XPos() - range < player.Get_XPos() + player.Get_Crash_Width() &&
-		enemy.Get_XPos() + enemy.Get_Crash_Width() + range > player.Get_XPos() &&
-		enemy.Get_YPos() + enemy.Get_Crash_Height() - enemy.Get_Crash_Height() - range < player.Get_YPos() + player.Get_Crash_Height() &&
-		enemy.Get_YPos() + enemy.Get_Crash_Height() + range > player.Get_YPos())
+	if (enemy.Get_XPos() + enemy.Get_Crash_Width() / 2 - range < player.Get_XPos() + player.Get_Crash_Width() &&
+		enemy.Get_XPos() + enemy.Get_Crash_Width() / 2 + range > player.Get_XPos() &&
+		enemy.Get_YPos() + enemy.Get_Height() - enemy.Get_Crash_Height() / 2 - range < player.Get_YPos() + player.Get_Height() &&
+		enemy.Get_YPos() + enemy.Get_Height() - enemy.Get_Crash_Height() / 2 + range > player.Get_YPos() + player.Get_Height() - player.Get_Crash_Height())
 		return true;
 	return false;
 }
@@ -166,69 +167,30 @@ void Attack_Enemy(Map_Dungeon& map_d, Player& player) {
 				switch (map_d.Get_Enemy_Const(e_index).Get_Enemy_Type())
 				{
 				case Enemy_Type::Bird:
-					//이 밑부터 전체를 함수화를 하면 되지 않을까?
-					//아직은 ㄴㄴ하다. 왜냐? Skill을 구현하고 함수화를 하자
 					if (map_d.Get_Enemy_Const(e_index).Get_Status() != Enemy_Status::E_Attack) {
-						if (Reaction_Range_Check(map_d.Get_Enemy_Const(e_index), player, 60)) {
+						if (Reaction_Range_Check(map_d.Get_Enemy_Const(e_index), player, 50)) {
 							map_d.Get_Enemy(e_index).Set_Status(Enemy_Status::E_Attack);
 							map_d.Get_Enemy(e_index).Set_Ani_Count(0);
 						}
 					}
 					else {
-						//공격의 Hitting_Point생성 지점
-						if (map_d.Get_Enemy_Const(e_index).Get_Ani_Count() == 4) {
-							for (int index = 0; index < 20; index++) {
-								if (&map_d.Get_Enemy_Const(e_index).Get_Hit_Range_P_Const(index) == NULL) {
-									//폴리곤 생성
-
-									POINT pos[4];
-									Create_Hitting_Polygon(map_d.Get_Enemy_Const(e_index), pos, 50, 50, Hitting_Shape::FRONT);
-
-									map_d.Get_Enemy(e_index).Set_Hit_Range_Polygon(index, Hit_Owner::HO_Enemy, pos, 6);
-									break;
-								}
-							}
-						}
-						//공격의 Hitting_Point실행 지점
-						else if (map_d.Get_Enemy_Const(e_index).Get_Ani_Count() == 10) {
-
-						}
-						else if (map_d.Get_Enemy_Const(e_index).Get_Ani_Count() == 16) {
-							map_d.Get_Enemy(e_index).Set_Status(Enemy_Status::E_Move);
-							map_d.Get_Enemy(e_index).Set_Ani_Count(0);
-							map_d.Get_Enemy(e_index).Set_Attack_Delay(16);
-						}
+						//공격의 Hitting_Point지점을 생성해줍니다.
+						if (map_d.Get_Enemy_Const(e_index).Get_Ani_Count() == 4)
+							Create_Hitting_Point(map_d.Get_Enemy(e_index), 50, 50, Hitting_Shape::FRONT, Hit_Owner::HO_Enemy, 6, 1.0);
+						//공격 모션의 끝
+						else if (map_d.Get_Enemy_Const(e_index).Get_Ani_Count() == 16) 
+							Attack_End(map_d.Get_Enemy(e_index));
 					}
 					break;
 				default:
 					break;
 				}
 			}
-			//히팅 포인트 지점 계산
-			for (int index = 0; index < 20; index++) {
-				if (&map_d.Get_Enemy_Const(e_index).Get_Hit_Range_P_Const(index) != NULL) {
-					if (map_d.Get_Enemy_Const(e_index).Get_Hit_Range_P_Const(index).Get_Delay() == 0) {
-						Polygon_Damage_Player(map_d.Get_Enemy_Const(e_index), player, map_d.Get_Enemy_Const(e_index).Get_Hit_Range_P_Const(index), map_d.Get_Enemy_Const(e_index).Get_Object_Info_Const().Get_Attack());
-						//마지막 인자부분이 우리가 설정해주어야 할 배수이다. 즉 이건 기본공격이므로 배수가 안들어갔다. 100%의 공격임.
 
-						//폴리곤 제거
-						map_d.Get_Enemy(e_index).Delete_Hit_Range_Polygon(index);
-					}
-
-					if (&map_d.Get_Enemy_Const(e_index).Get_Hit_Range_P_Const(index) != NULL)
-						map_d.Get_Enemy(e_index).Get_Hit_Range_P(index).Set_Delay(map_d.Get_Enemy_Const(e_index).Get_Hit_Range_P_Const(index).Get_Delay() - 1);
-				}
-			}
+			//특정 시간때 Hitting을 합니다.
+			CalCul_Hitting_Point(map_d.Get_Enemy(e_index), player);
 		}
 	}
-
-
-}
-
-
-void Polygon_Damage_Player(const Move_Object& attack_obj, Player& player, const Hitting_Range_Polygon& hit_range_p, const int& hit_dmg) {
-	if (hit_range_p.Get_Owner() == Hit_Owner::HO_Enemy && &player != NULL && Crash_Attack_Polygon(attack_obj, player, hit_range_p))
-		Calcul_Hitting_Damage(attack_obj, player, hit_dmg);
 }
 
 void Hit_Enemy(Map_Dungeon& map_d, const int& index) {

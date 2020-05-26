@@ -171,9 +171,9 @@ void Move_Object::Set_Hitting_Damage_Count(const int& hit_dmg_count) {
 	hitting_damage_count = hit_dmg_count;
 }
 
-void Move_Object::Set_Hit_Range_Polygon(const int& index, const int& owner, const POINT pos[4], const int& delay) {
+void Move_Object::Set_Hit_Range_Polygon(const int& index, const int& owner, const POINT pos[4], const int& delay, const double& attack_multiple) {
 	hit_range[index] = Create_Class<Hitting_Range_Polygon>();
-	Reset_Hitting_Range_Polygon(*hit_range[index], owner, pos, delay);
+	Reset_Hitting_Range_Polygon(*hit_range[index], owner, pos, delay, attack_multiple);
 }
 
 void Move_Object::Set_Hit_Range_Circle(const int& index, const int& owner) {
@@ -214,8 +214,21 @@ void Paint_Hitting_Damage(HDC hdc, const Move_Object& m_object) {
 	TextOut(hdc, m_object.Get_XPos() + m_object.Get_Crash_Width() / 2 - damage_size.cx / 2, m_object.Get_YPos() - damage_size.cy + 5, str, _tcslen(str));
 }
 
-void Calcul_Hitting_Damage(const Move_Object& attack_obj, Move_Object& hit_obj, const int& hit_dmg) {
-	hit_obj.Set_Hitting_Damage(hit_dmg - hit_obj.Get_Object_Info_Const().Get_Defence() + rand() % 10);
+void Calcul_Hitting_Damage(const Move_Object& attack_obj, Move_Object& hit_obj, const int& hit_dmg, const int& owner) {
+	int critical = rand() % 100;
+	int dmg_range;
+
+	if (owner == Hit_Owner::HO_Player)
+		dmg_range = 10;
+	else
+		dmg_range = 5;
+
+	if (critical <= attack_obj.Get_Object_Info_Const().Get_Fatal())
+		hit_obj.Set_Hitting_Damage((hit_dmg - hit_obj.Get_Object_Info_Const().Get_Defence() + ((rand() % 2 == 0) ? rand() % dmg_range : -rand() % dmg_range)) * 2);
+	else
+		hit_obj.Set_Hitting_Damage(hit_dmg - hit_obj.Get_Object_Info_Const().Get_Defence() + ((rand() % 2 == 0) ? rand() % dmg_range : -rand() % dmg_range));
+
+
 	//치명타 넣어야함
 	hit_obj.Get_Object_Info().Set_Hp(hit_obj.Get_Object_Info_Const().Get_Hp() - hit_obj.Get_Hitting_Damage());
 

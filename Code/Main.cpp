@@ -8,6 +8,7 @@
 #include "Object_Player.h"
 #include "Object_Player_Interaction.h"
 #include "Object_Enemy_Command.h"
+#include "Object_Skill.h"
 #include "Camera.h"
 #include "Map_Village.h"
 #include "Map_Dungeon.h"
@@ -22,7 +23,6 @@ static const int WindowY = 720 + GetSystemMetrics(SM_CYFRAME << 2) + GetSystemMe
 LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam);
 
 HINSTANCE hInst;
-
 int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow) {
 	HWND hwnd;
 	MSG msg;
@@ -128,7 +128,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 		map_v = Create_Class<Map_Village>();
 		Reset_Village_Map(hdc, *map_v);
 
-		SetTimer(hwnd, Default_Timer, 30, NULL);
+		SetTimer(hwnd, Default_Timer, 10, NULL);
 
 		ReleaseDC(hwnd, hdc);
 
@@ -150,11 +150,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 		case Command_Key::Co_Equipment:
 			Equipment_Command(*player);
 			break;
-		case 'p':
-			//개발자 커맨드 //체력과 마나를 20%/10%감소시킵니다.
-			player->Get_Object_Info().Set_Hp(player->Get_Object_Info_Const().Get_Hp() - player->Get_Object_Info_Const().Get_Max_Hp() / 5);
-			player->Get_Object_Info().Set_Mp(player->Get_Object_Info_Const().Get_Mp() - player->Get_Object_Info_Const().Get_Max_Mp() / 10);
-			break;
 		case '1':
 		case '2':
 		case '3':
@@ -163,6 +158,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 		default:
 			break;
 		}
+		if (progress->Get_Map_Type() != Map_Type::Village1)
+			Change_Player_Status_To_Skill(*player, wParam);
 		break;
 	case WM_KEYDOWN:
 		if (progress->Get_Map_Type() == Map_Type::Village1) {

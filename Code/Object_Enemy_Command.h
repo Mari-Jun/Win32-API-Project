@@ -16,7 +16,6 @@ void Move_Enemy(Map_Dungeon& map_d, const Player& player, const int& index);
 
 /*Enemy Attack*/
 void Attack_Enemy(Map_Dungeon& map_d, Player& player);
-void Polygon_Damage_Player(const Move_Object& attack_obj, Player& player, const Hitting_Range_Polygon& hit_range_p, const int& hit_dmg);
 
 /*Enemy Hit*/
 

@@ -2,7 +2,7 @@
 #include <Windows.h>
 
 class Player;
-class Non_Move_Npc;
+class Npc;
 class Map_Village;
 class Progress;
 

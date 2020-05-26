@@ -99,7 +99,7 @@ void Reset_Enemy(Enemy& enemy, const int& enemy_type) {
 	{
 	case Enemy_Type::Bird:
 		enemy.Create_Object_Info();
-		Reset_Object_Info(enemy.Get_Object_Info(), 1, 200, 0, 30, 5, 0);
+		Reset_Object_Info(enemy.Get_Object_Info(), 1, 20000000, 0, 30, 5, 0);
 		enemy.Set_Crash_Width(80);
 		enemy.Set_Crash_Height(80);
 		break;

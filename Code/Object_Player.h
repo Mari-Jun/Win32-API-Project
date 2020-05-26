@@ -4,6 +4,7 @@
 
 class Player_Equipment;
 class Player_Item;
+class Player_Skill;
 
 class Player : public Move_Object {
 public:
@@ -12,6 +13,8 @@ public:
 	const int& Get_Class_Type() const;
 	const Player_Equipment& Get_Player_Equipment_Const() const;
 	Player_Equipment& Get_Player_Equipment() const;
+	const Player_Skill& Get_Player_Skill_Const() const;
+	Player_Skill& Get_Player_Skill() const;
 	const Player_Item& Get_Player_Item_Const() const;
 	Player_Item& Get_Player_Item() const;
 	
@@ -19,22 +22,26 @@ public:
 	const HBITMAP& Get_Stop_Motion(const int& direction, const int& index) const;
 	const HBITMAP& Get_Move_Motion(const int& direction, const int& index) const;
 	const HBITMAP& Get_Run_Motion(const int& direction, const int& index) const;
+	const HBITMAP& Get_Die_Motion(const int& direction, const int& index) const;
 	const HBITMAP& Get_Attack_Motion(const int& direction, const int& index) const;
 
 	void Set_Class_Type(const int& class_type);
 	void Set_Motion_Bitmap();
 
 	void Create_Player_Equipment();
+	void Create_Player_Skill();
 	void Create_Player_Item();
 
 private:
 	int class_type;
 	Player_Equipment* p_equip;
+	Player_Skill* p_skill;
 	Player_Item* p_item;
 	BITMAP motion_size;
 	HBITMAP stop_motion_bitmap[8][8];
 	HBITMAP move_motion_bitmap[8][8];
 	HBITMAP run_motion_bitmap[8][8];
+	HBITMAP die_motion_bitmap[8][8];
 	HBITMAP attack_motion_bitmap[8][10];
 };
 
