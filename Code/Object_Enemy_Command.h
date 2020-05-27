@@ -15,7 +15,8 @@ void Move_Enemy_Check(Move_Object& enemy, const Map_Dungeon& map_d, const Player
 void Move_Enemy(Map_Dungeon& map_d, const Player& player, const int& index);
 
 /*Enemy Attack*/
-void Attack_Enemy(Map_Dungeon& map_d, Player& player);
+void Attack_Enemy(Map_Dungeon& map_d, Player& player, const int& index);
+void CalCul_Enemy_Hitting_Point(Move_Object& attack_obj, Player& player, const int& e_index);
 
 /*Enemy Hit*/
 

@@ -1,4 +1,6 @@
 #include <Windows.h>
+#include <iostream>
+#include <tchar.h>
 #include <math.h>
 #include "Source.h"
 #include "Object_Command.h"
@@ -9,6 +11,8 @@
 #include "Hitting_Range.h"
 #include "Map_Dungeon.h"
 #include "Game_Progress.h"
+
+using namespace std;
 
 void Command_Enemy(Map_Dungeon& map_d, Player& player) {
 	for (int index = 0; index < 50; index++) {
@@ -28,7 +32,10 @@ void Command_Enemy(Map_Dungeon& map_d, Player& player) {
 					map_d.Get_Enemy(index).Set_Skill_Delay(s_index, map_d.Get_Enemy_Const(index).Get_Skill_Delay(s_index) - 1);
 			}
 
-			Attack_Enemy(map_d, player);
+			Attack_Enemy(map_d, player, index);
+
+			//특정 시간때 Hitting을 합니다.
+			CalCul_Enemy_Hitting_Point(map_d.Get_Enemy(index), player, index);
 
 			Hit_Enemy(map_d, index);
 		}
@@ -159,37 +166,45 @@ void Move_Enemy(Map_Dungeon& map_d, const Player& player, const int& index) {
 	}
 }
 
-void Attack_Enemy(Map_Dungeon& map_d, Player& player) {
-
-	for (int e_index = 0; e_index < 50; e_index++) {
-		if (&map_d.Get_Enemy_Const(e_index) != NULL) {
-			if (map_d.Get_Enemy_Const(e_index).Get_Attack_Delay() == 0) {
-				switch (map_d.Get_Enemy_Const(e_index).Get_Enemy_Type())
-				{
-				case Enemy_Type::Bird:
-					if (map_d.Get_Enemy_Const(e_index).Get_Status() != Enemy_Status::E_Attack) {
-						if (Reaction_Range_Check(map_d.Get_Enemy_Const(e_index), player, 50)) {
-							map_d.Get_Enemy(e_index).Set_Status(Enemy_Status::E_Attack);
-							map_d.Get_Enemy(e_index).Set_Ani_Count(0);
-						}
-					}
-					else {
-						//공격의 Hitting_Point지점을 생성해줍니다.
-						if (map_d.Get_Enemy_Const(e_index).Get_Ani_Count() == 4)
-							Create_Hitting_Point(map_d.Get_Enemy(e_index), 50, 50, Hitting_Shape::FRONT, Hit_Owner::HO_Enemy, 6, 1.0);
-						//공격 모션의 끝
-						else if (map_d.Get_Enemy_Const(e_index).Get_Ani_Count() == 16) 
-							Attack_End(map_d.Get_Enemy(e_index));
-					}
-					break;
-				default:
-					break;
+void Attack_Enemy(Map_Dungeon& map_d, Player& player, const int& index) {
+	if (map_d.Get_Enemy_Const(index).Get_Attack_Delay() == 0) {
+		switch (map_d.Get_Enemy_Const(index).Get_Enemy_Type())
+		{
+		case Enemy_Type::Bird:
+			if (map_d.Get_Enemy_Const(index).Get_Status() != Enemy_Status::E_Attack) {
+				if (Reaction_Range_Check(map_d.Get_Enemy_Const(index), player, 50)) {
+					map_d.Get_Enemy(index).Set_Status(Enemy_Status::E_Attack);
+					map_d.Get_Enemy(index).Set_Ani_Count(0);
 				}
 			}
-
-			//특정 시간때 Hitting을 합니다.
-			CalCul_Hitting_Point(map_d.Get_Enemy(e_index), player);
+			else {
+				//공격의 Hitting_Point지점을 생성해줍니다.
+				if (map_d.Get_Enemy_Const(index).Get_Ani_Count() == 4) {
+					Create_Hitting_Point(map_d.Get_Enemy(index), 50, 50, Hitting_Shape::FRONT, Hit_Owner::HO_Enemy, 15, 1.0);
+				}
+				else if (map_d.Get_Enemy_Const(index).Get_Ani_Count() == 16) {
+					Attack_End(map_d.Get_Enemy(index));
+					map_d.Get_Enemy(index).Set_Attack_Delay(32);
+				}
+			}
+			break;
+		default:
+			break;
 		}
+	}
+}
+
+//히팅 범위를 적에게 적용하는 함수
+void CalCul_Enemy_Hitting_Point(Move_Object& attack_obj, Player& player, const int& e_index) {
+	
+	//히팅 포인트 지점 계산
+	for (int index = 0; index < 20; index++) {
+		if (&attack_obj.Get_Hit_Range_P_Const(index) != NULL && attack_obj.Get_Hit_Range_P_Const(index).Get_Delay() == 0) {
+			Polygon_Damage_Enemy(attack_obj, player, attack_obj.Get_Hit_Range_P_Const(index), attack_obj.Get_Object_Info_Const().Get_Attack() * attack_obj.Get_Hit_Range_P_Const(index).Get_Attack_Multiple());
+			attack_obj.Delete_Hit_Range_Polygon(index);
+		}
+		else if (&attack_obj.Get_Hit_Range_P_Const(index) != NULL)
+			attack_obj.Get_Hit_Range_P(index).Set_Delay(attack_obj.Get_Hit_Range_P_Const(index).Get_Delay() - 1);
 	}
 }
 

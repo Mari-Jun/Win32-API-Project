@@ -99,7 +99,7 @@ void Reset_Enemy(Enemy& enemy, const int& enemy_type) {
 	{
 	case Enemy_Type::Bird:
 		enemy.Create_Object_Info();
-		Reset_Object_Info(enemy.Get_Object_Info(), 1, 20000000, 0, 30, 5, 0);
+		Reset_Object_Info(enemy.Get_Object_Info(), 1, 200, 0, 20, 0, 0);
 		enemy.Set_Crash_Width(80);
 		enemy.Set_Crash_Height(80);
 		break;
@@ -110,7 +110,7 @@ void Reset_Enemy(Enemy& enemy, const int& enemy_type) {
 
 void Paint_Enemy(HDC hdc, HDC bitdc, const Enemy& enemy) {
 
-	/*for (int index = 0; index < 20; index++) {
+	for (int index = 0; index < 20; index++) {
 		if (&enemy.Get_Hit_Range_P_Const(index) != NULL) {
 			POINT pos[4];
 			pos[0] = enemy.Get_Hit_Range_P_Const(index).Get_Pos(0);
@@ -120,7 +120,7 @@ void Paint_Enemy(HDC hdc, HDC bitdc, const Enemy& enemy) {
 
 			Polygon(hdc, pos, 4);
 		}
-	}*/
+	}
 
 	switch (enemy.Get_Enemy_Type())
 	{

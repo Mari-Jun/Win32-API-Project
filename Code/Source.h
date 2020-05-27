@@ -67,7 +67,7 @@ enum Shop_Type {
 };
 
 enum Dialog_Type {
-	Shop_Type, Quest_Type, No_Money_Type
+	Shop_Type, Quest_Type, No_Money_Type, Heal_Type
 };
 
 enum Quest_Name {

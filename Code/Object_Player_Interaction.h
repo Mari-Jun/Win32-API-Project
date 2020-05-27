@@ -5,6 +5,7 @@ class Player;
 class Npc;
 class Map_Village;
 class Progress;
+class Sound;
 
 class Interaction_Box {
 public:

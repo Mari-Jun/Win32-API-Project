@@ -40,9 +40,11 @@ void Map_Dungeon::Set_Enemy() {
 	{
 	case Map_Type::Dungeon1:
 		//老窜 1付府父 积己
-		enemy[0] = Create_Class<Enemy>();
-		Reset_Enemy(*enemy[0],Enemy_Type::Bird);
-		Reset_Move_Object(*enemy[0], 1100, 400, enemy[0]->Get_Motion_Size().bmWidth, enemy[0]->Get_Motion_Size().bmHeight, 4);
+		for (int index = 0; index < 5; index++) {
+			enemy[index] = Create_Class<Enemy>();
+			Reset_Enemy(*enemy[index], Enemy_Type::Bird);
+			Reset_Move_Object(*enemy[index], 0 + index * 100, 400, enemy[index]->Get_Motion_Size().bmWidth, enemy[index]->Get_Motion_Size().bmHeight, 4);
+		}
 		break;
 	default:
 		break;

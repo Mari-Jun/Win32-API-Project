@@ -9,12 +9,14 @@
 #include "Object_Info.h"
 #include "Object_Player_Interaction.h"
 #include "Shop.h"
+#include "Sound.h"
 
 Map_Village::~Map_Village() {
 	Delete_Class<Non_Move_Object>(&portal);
 	for (int index = 0; index < 6; index++)
 		Delete_Class<Npc>(&npc[index]);
 	Delete_Class<Shop>(&shop);
+	Delete_Class<Sound>(&village_sound);
 }
 
 const Npc& Map_Village::Get_Npc_Const(const int& npc_type) const {
@@ -41,6 +43,10 @@ Non_Move_Object& Map_Village::Get_Portal() const {
 	return *portal;
 }
 
+Sound& Map_Village::Get_Village_Sound() const {
+	return *village_sound;
+}
+
 void Map_Village::Set_NM_Object() {
 
 	for (int index = VNM_OB::House1; index <= VNM_OB::House5; index++)
@@ -60,6 +66,28 @@ void Map_Village::Set_NM_Object() {
 	Create_NM_Object(VNM_OB::Wall1);
 	Reset_Non_Move_Object(Get_NM_Object(VNM_OB::Wall1), 0, Get_Map_Rect().bottom - 160, (HBITMAP)LoadImage(NULL, _T(".\\BitMap\\Map\\Village\\Ground_Wall.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
 	Get_NM_Object(VNM_OB::Wall1).Set_Crash_Height(Get_NM_Object(VNM_OB::Wall1).Get_Object_Image_Size().bmHeight);
+
+	Create_NM_Object(VNM_OB::Tree1);
+	Reset_Non_Move_Object(Get_NM_Object(VNM_OB::Tree1), 880, 60, (HBITMAP)LoadImage(NULL, _T(".\\BitMap\\Map\\Village\\Tree1.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
+	Get_NM_Object(VNM_OB::Tree1).Set_Height(500);
+	Get_NM_Object(VNM_OB::Tree1).Set_Crash_Width(Get_NM_Object(VNM_OB::Tree1).Get_Object_Image_Size().bmWidth + 280);
+	Get_NM_Object(VNM_OB::Tree1).Set_Crash_Height(400);
+
+	Create_NM_Object(VNM_OB::Tree2);
+	Reset_Non_Move_Object(Get_NM_Object(VNM_OB::Tree2), 1440, 60, (HBITMAP)LoadImage(NULL, _T(".\\BitMap\\Map\\Village\\Tree1.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
+	Get_NM_Object(VNM_OB::Tree2).Set_Height(500);
+	Get_NM_Object(VNM_OB::Tree2).Set_Crash_Width(Get_NM_Object(VNM_OB::Tree2).Get_Object_Image_Size().bmWidth + 120);
+	Get_NM_Object(VNM_OB::Tree2).Set_Crash_Height(400);
+
+	Create_NM_Object(VNM_OB::Tree3);
+	Reset_Non_Move_Object(Get_NM_Object(VNM_OB::Tree3), -80, -80, (HBITMAP)LoadImage(NULL, _T(".\\BitMap\\Map\\Village\\Tree1.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
+	Get_NM_Object(VNM_OB::Tree3).Set_Crash_Width(Get_NM_Object(VNM_OB::Tree3).Get_Object_Image_Size().bmWidth + 1640);
+}
+
+void Map_Village::Set_Texture() {
+	Create_Texture(VT::Load, (HBITMAP)LoadImage(NULL, _T(".\\BitMap\\Map\\Village\\Load.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
+	Create_Texture(VT::Grow1, (HBITMAP)LoadImage(NULL, _T(".\\BitMap\\Map\\Village\\Grow1.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
+	Create_Texture(VT::Grow2, (HBITMAP)LoadImage(NULL, _T(".\\BitMap\\Map\\Village\\Grow2.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
 }
 
  void Map_Village::Set_Portal() {
@@ -89,10 +117,9 @@ void Map_Village::Set_Npc() {
 	Reset_Npc(Get_Npc(Npc_Name::SOLDIER), Npc_Name::SOLDIER, Get_Map_Rect().right - 200, 440);
 }
 
-void Map_Village::Set_Texture() {
-	Create_Texture(VT::Load, (HBITMAP)LoadImage(NULL, _T(".\\BitMap\\Map\\Village\\Load.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
-	Create_Texture(VT::Grow1, (HBITMAP)LoadImage(NULL, _T(".\\BitMap\\Map\\Village\\Grow1.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
-	Create_Texture(VT::Grow2, (HBITMAP)LoadImage(NULL, _T(".\\BitMap\\Map\\Village\\Grow2.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
+void Map_Village::Set_Village_Sound() {
+	village_sound = Create_Class<Sound>();
+	Reset_Sound(*village_sound, Sound_Type::Sound_Map_Type, Map_Type::Village1);
 }
 
 void Map_Village::Create_Portal() {
@@ -116,6 +143,10 @@ void Reset_Village_Map(HDC hdc, Map_Village& map_v) {
 	map_v.Set_Portal();
 	map_v.Set_Npc();
 	map_v.Set_Texture();
+	map_v.Set_Village_Sound();
+
+	//À½¾Ç Àç»ý
+	map_v.Get_Village_Sound().Play_Sound(Village_Sound::BackGround_Village_Sound);
 }
 
 void Paint_Village_Map_Texture(HDC hdc, HDC bitdc, const Map_Village& map_v) {
@@ -173,7 +204,30 @@ void Paint_Village_Map(HDC hdc, HDC bitdc, const Player& player, const Map_Villa
 		for (int index = 0; index < 30; index++) {
 			if (&map_v.Get_NM_Object(index) != NULL && y_pos == map_v.Get_NM_Object(index).Get_YPos() + map_v.Get_NM_Object(index).Get_Height()) {
 				SelectObject(bitdc, map_v.Get_NM_Object(index).Get_Object_Bitmap());
-				TransparentBlt(hdc, map_v.Get_NM_Object(index).Get_XPos(), map_v.Get_NM_Object(index).Get_YPos(), map_v.Get_NM_Object(index).Get_Width(), map_v.Get_NM_Object(index).Get_Height(), bitdc, 0, 0, map_v.Get_NM_Object(index).Get_Width(), map_v.Get_NM_Object(index).Get_Height(), RGB(150, 150, 150));
+				switch (index)
+				{
+				case VNM_OB::Tree1:
+					for (int y = 0; y < 4; y++) 
+						for (int x = 0; x < 3; x++) 
+							TransparentBlt(hdc, map_v.Get_NM_Object(index).Get_XPos() + x * 160, map_v.Get_NM_Object(index).Get_YPos() + y * 100, map_v.Get_NM_Object(index).Get_Object_Image_Size().bmWidth, map_v.Get_NM_Object(index).Get_Object_Image_Size().bmHeight,
+								bitdc, 0, 0, map_v.Get_NM_Object(index).Get_Object_Image_Size().bmWidth, map_v.Get_NM_Object(index).Get_Object_Image_Size().bmHeight, RGB(150, 150, 150));
+					break;
+				case VNM_OB::Tree2:
+					for (int y = 0; y < 4; y++)
+						for (int x = 0; x < 2; x++)
+							TransparentBlt(hdc, map_v.Get_NM_Object(index).Get_XPos() + x * 160, map_v.Get_NM_Object(index).Get_YPos() + y * 100, map_v.Get_NM_Object(index).Get_Object_Image_Size().bmWidth, map_v.Get_NM_Object(index).Get_Object_Image_Size().bmHeight,
+								bitdc, 0, 0, map_v.Get_NM_Object(index).Get_Object_Image_Size().bmWidth, map_v.Get_NM_Object(index).Get_Object_Image_Size().bmHeight, RGB(150, 150, 150));
+					break;
+				case VNM_OB::Tree3:
+					for (int x = 0; x < 12; x++)
+						TransparentBlt(hdc, map_v.Get_NM_Object(index).Get_XPos() + x * 160, map_v.Get_NM_Object(index).Get_YPos(), map_v.Get_NM_Object(index).Get_Object_Image_Size().bmWidth, map_v.Get_NM_Object(index).Get_Object_Image_Size().bmHeight,
+							bitdc, 0, 0, map_v.Get_NM_Object(index).Get_Object_Image_Size().bmWidth, map_v.Get_NM_Object(index).Get_Object_Image_Size().bmHeight, RGB(150, 150, 150));
+					break;
+				default:
+					TransparentBlt(hdc, map_v.Get_NM_Object(index).Get_XPos(), map_v.Get_NM_Object(index).Get_YPos(), map_v.Get_NM_Object(index).Get_Object_Image_Size().bmWidth, map_v.Get_NM_Object(index).Get_Object_Image_Size().bmHeight,
+						bitdc, 0, 0, map_v.Get_NM_Object(index).Get_Object_Image_Size().bmWidth, map_v.Get_NM_Object(index).Get_Object_Image_Size().bmHeight, RGB(150, 150, 150));
+					break;
+				}
 			}
 		}
 
@@ -255,4 +309,12 @@ void Shop_Select_Item(Player& player, Map_Village& map_v, Interaction_Box& it_bo
 			}
 		}
 	}
+}
+
+void Change_Map_Village_To(Map_Village& map_v) {
+	map_v.Get_Village_Sound().AllSoundStop();
+}
+
+void Change_Map_To_Village(Map_Village& map_v) {
+	map_v.Get_Village_Sound().Play_Sound(Village_Sound::BackGround_Village_Sound);
 }

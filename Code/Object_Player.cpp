@@ -11,6 +11,7 @@
 #include "Object_Skill.h"
 #include "Hitting_Range.h"
 #include "Item.h"
+#include "Sound.h"
 
 /*Player Player*/
 
@@ -55,6 +56,10 @@ const Player_Item& Player::Get_Player_Item_Const() const {
 
 Player_Item& Player::Get_Player_Item() const {
 	return *p_item;
+}
+
+Sound& Player::Get_Player_Sound() const {
+	return *p_sound;
 }
 
 const BITMAP& Player::Get_Motion_Size() const {
@@ -139,6 +144,11 @@ void Player::Create_Player_Item() {
 	Reset_Player_Item(*p_item);
 }
 
+void Player::Create_Player_Sound() {
+	p_sound = Create_Class<Sound>();
+	Reset_Sound(*p_sound, Sound_Type::Sound_Player_Type, Class_Type::Warrior);
+}
+
 void Reset_Player(Player& player, const int& class_type) {
 
 	player.Set_Motion_Bitmap();
@@ -149,6 +159,7 @@ void Reset_Player(Player& player, const int& class_type) {
 	player.Create_Player_Equipment();
 	player.Create_Player_Skill();
 	player.Create_Player_Item();
+	player.Create_Player_Sound();
 
 	//지면 충돌 크기는 비트맵 객체마다 다 다르기때문에 일일히 객체가 생성때 설정을 해주어야한다.
 	player.Set_Crash_Height(30);
@@ -158,7 +169,7 @@ void Reset_Player(Player& player, const int& class_type) {
 void Paint_Player(HDC hdc, HDC bitdc, const Player& player) {
 
 	//나중에 스킬 설정할때나 다시 그려주장
-	/*for (int index = 0; index < 20; index++) {
+	for (int index = 0; index < 20; index++) {
 		if (&player.Get_Hit_Range_P_Const(index) != NULL) {
 			POINT pos[4];
 			pos[0] = player.Get_Hit_Range_P_Const(index).Get_Pos(0);
@@ -168,7 +179,7 @@ void Paint_Player(HDC hdc, HDC bitdc, const Player& player) {
 
 			Polygon(hdc, pos, 4);
 		}
-	}*/
+	}
 
 	switch (player.Get_Status())
 	{

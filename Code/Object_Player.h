@@ -5,6 +5,7 @@
 class Player_Equipment;
 class Player_Item;
 class Player_Skill;
+class Sound;
 
 class Player : public Move_Object {
 public:
@@ -17,6 +18,7 @@ public:
 	Player_Skill& Get_Player_Skill() const;
 	const Player_Item& Get_Player_Item_Const() const;
 	Player_Item& Get_Player_Item() const;
+	Sound& Get_Player_Sound() const;
 	
 	const BITMAP& Get_Motion_Size() const;
 	const HBITMAP& Get_Stop_Motion(const int& direction, const int& index) const;
@@ -31,12 +33,14 @@ public:
 	void Create_Player_Equipment();
 	void Create_Player_Skill();
 	void Create_Player_Item();
+	void Create_Player_Sound();
 
 private:
 	int class_type;
 	Player_Equipment* p_equip;
 	Player_Skill* p_skill;
 	Player_Item* p_item;
+	Sound* p_sound;
 	BITMAP motion_size;
 	HBITMAP stop_motion_bitmap[8][8];
 	HBITMAP move_motion_bitmap[8][8];

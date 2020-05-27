@@ -1,4 +1,6 @@
+#include <Windows.h>
 #include <math.h>
+#include <iostream>
 #include "Source.h"
 #include "Object_Command.h"
 #include "Map_Main.h"
@@ -10,6 +12,8 @@
 #include "Object_Enemy.h"
 #include "Object_Npc.h"
 #include "Hitting_Range.h"
+
+using namespace std;
 
 /*Move*/
 
@@ -111,28 +115,7 @@ void Create_Hitting_Point(Move_Object& m_object, const int& width_size, const in
 			Create_Hitting_Polygon(m_object, pos, width_size, height_size, shape);
 
 			m_object.Set_Hit_Range_Polygon(index, owner, pos, delay, attack_multiple);
-
-			//히팅!
-			break;
-		}
-	}
-}
-
-//히팅 범위를 적에게 적용하는 함수
-void CalCul_Hitting_Point(Move_Object& attack_obj, Move_Object& hit_obj) {
-	//히팅 포인트 지점 계산
-	for (int index = 0; index < 20; index++) {
-		if (&attack_obj.Get_Hit_Range_P_Const(index) != NULL) {
-			if (attack_obj.Get_Hit_Range_P_Const(index).Get_Delay() == 0) {
-				Polygon_Damage_Enemy(attack_obj, hit_obj, attack_obj.Get_Hit_Range_P_Const(index), attack_obj.Get_Object_Info_Const().Get_Attack() * attack_obj.Get_Hit_Range_P_Const(index).Get_Attack_Multiple());
-				//마지막 인자부분이 우리가 설정해주어야 할 배수이다. 즉 이건 기본공격이므로 배수가 안들어갔다. 100%의 공격임.
-
-				//폴리곤 제거
-				attack_obj.Delete_Hit_Range_Polygon(index);
-			}
-
-			if (&attack_obj.Get_Hit_Range_P_Const(index) != NULL)
-				attack_obj.Get_Hit_Range_P(index).Set_Delay(attack_obj.Get_Hit_Range_P_Const(index).Get_Delay() - 1);
+			return;
 		}
 	}
 }

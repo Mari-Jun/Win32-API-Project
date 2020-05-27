@@ -136,8 +136,8 @@ void Player_Skill::Set_Use_Mp(const int& class_type) {
 	switch (class_type)
 	{
 	case Class_Type::Warrior:
-		use_mp[Skill_Type::Skill_Q] = 1;
-		use_mp[Skill_Type::Skill_W] = 1;
+		use_mp[Skill_Type::Skill_Q] = 15;
+		use_mp[Skill_Type::Skill_W] = 10;
 		use_mp[Skill_Type::Skill_E] = 25;
 		use_mp[Skill_Type::Skill_R] = 20;
 		break;
@@ -150,8 +150,8 @@ void Player_Skill::Set_Delay(const int& class_type) {
 	switch (class_type)
 	{
 	case Class_Type::Warrior:
-		Set_Skill_Delay(Skill_Type::Skill_Q, 10);
-		Set_Skill_Delay(Skill_Type::Skill_W, 10);
+		Set_Skill_Delay(Skill_Type::Skill_Q, 500);
+		Set_Skill_Delay(Skill_Type::Skill_W, 400);
 		Set_Skill_Delay(Skill_Type::Skill_E, 1000);
 		Set_Skill_Delay(Skill_Type::Skill_R, 750);
 		break;

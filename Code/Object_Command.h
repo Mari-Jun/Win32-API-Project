@@ -20,4 +20,3 @@ void Polygon_Damage_Enemy(const Move_Object& attack_obj, Move_Object& hit_obj, c
 void Create_Hitting_Point(Move_Object& m_object, const int& width_size, const int& height_size, const int& shape, const int& owner, const int& delay, const double& attack_multiple);
 void Create_Hitting_Polygon(const Move_Object& m_object, POINT* pos, const int& width_size, const int& height_size, const int& shape);
 void Attack_End(Move_Object& m_objcet);
-void CalCul_Hitting_Point(Move_Object& attack_obj, Move_Object& hit_obj);

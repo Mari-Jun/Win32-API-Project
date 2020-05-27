@@ -3,10 +3,13 @@
 #include "Source.h"
 #include "Game_Progress.h"
 #include "Object_Npc.h"
+#include "Object_Info.h"
 #include "Object_Player.h"
 #include "Object_Player_Interaction.h"
 #include "Map_Village.h"
 #include "Shop.h"
+#include "Item.h"
+#include "Sound.h"
 
 Interaction_Box::~Interaction_Box() {
 	DeleteObject(message_box);
@@ -115,7 +118,6 @@ void Interaction_Command(Player& player, Map_Village& map_v, Interaction_Box& it
 	//NPC와의 상호작용
 	if (player.Get_Status() != Player_Status::Interaction && player.Get_Status() != Player_Status::Shopping) {
 		for (int npc_type = Npc_Name::ELDER; npc_type <= Npc_Name::SOLDIER; npc_type++) {
-			//장비 상점인 경우 따로 해주면 되는거 아닌가?
 			if (&map_v.Get_Npc_Const(npc_type) != NULL && Interaction_Range_Player_To_Npc(player, map_v.Get_Npc_Const(npc_type))) {
 				player.Set_Status(Player_Status::Interaction);
 				map_v.Get_Npc(npc_type).Set_Interaction(true);
@@ -128,6 +130,9 @@ void Interaction_Command(Player& player, Map_Village& map_v, Interaction_Box& it
 					map_v.Create_Shop(Shop_Type::Accessory_Type, it_box.Get_Messsage_Box_Rect());
 					player.Set_Status(Player_Status::Shopping);
 				}
+
+				//상호작용 사운드 재생
+				map_v.Get_Village_Sound().Play_Sound(npc_type + 1);
 			}
 		}
 	}
@@ -139,12 +144,30 @@ void Interaction_Command(Player& player, Map_Village& map_v, Interaction_Box& it
 					switch (npc_type)
 					{
 					case Npc_Name::ELDER:
-					case Npc_Name::ITEM_SHOP:
 					case Npc_Name::LEGEND:
 					case Npc_Name::SOLDIER:
 						map_v.Get_Npc(npc_type).Set_interaction_Count(0);
 						player.Set_Status(Player_Status::Stop);
 						map_v.Get_Npc(npc_type).Set_Interaction(false);
+						break;
+					case Npc_Name::ITEM_SHOP:
+						//Hp포션과 Mp포션과 만병통치약을 가득 채웁니다.
+						if (map_v.Get_Npc_Const(npc_type).Get_Interaction_Count() == 1) {
+							player.Get_Object_Info().Set_Hp(player.Get_Object_Info_Const().Get_Max_Hp());
+							player.Get_Object_Info().Set_Mp(player.Get_Object_Info_Const().Get_Max_Mp());
+							player.Get_Player_Item().Set_Hp_Potion(player.Get_Player_Item_Const().Get_Hp_Potion_Max());
+							player.Get_Player_Item().Set_Mp_Potion(player.Get_Player_Item_Const().Get_Mp_Potion_Max());
+							player.Get_Player_Item().Set_Panacea(1);
+
+							//다이얼로그를 띄웁니다.
+							it_box.Set_Dialog_Status(it_box.Get_Dialog_Status() + 1);
+
+						}
+						else if (map_v.Get_Npc_Const(npc_type).Get_Interaction_Count() > 1) {
+							map_v.Get_Npc(npc_type).Set_interaction_Count(0);
+							player.Set_Status(Player_Status::Stop);
+							map_v.Get_Npc(npc_type).Set_Interaction(false);
+						}
 						break;
 					case Npc_Name::EQUIPMENT_SHOP:
 					case Npc_Name::WEAPON_SHOP:
@@ -245,6 +268,8 @@ void Show_Npc_Interaction(HDC hdc, HDC bitdc, const Player& player, const Map_Vi
 				break;
 			case Npc_Name::ITEM_SHOP:
 				Show_Npc_Item_Interaction(hdc, map_v.Get_Npc_Const(npc_type), it_box);
+				if (it_box.Get_Dialog_Status() == 1)
+					Show_Dialog_Box(hdc, bitdc, it_box, Dialog_Type::Heal_Type);
 				break;
 			case Npc_Name::LEGEND:
 				Show_Npc_Legend_Interaction(hdc, map_v.Get_Npc_Const(npc_type), it_box);
@@ -343,7 +368,7 @@ void Show_Npc_Item_Interaction(HDC hdc, const Npc& item, const Interaction_Box& 
 	TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 45, _T("치유 술사"), 5);
 
 	SelectObject(hdc, it_box.Get_Message_Box_Font(1));
-	TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 90, _T("치유가 필요하신가요?"), 11);
+	TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 90, _T("당신에게 가호가 있기를.."), 14);
 }
 
 void Show_Npc_Legend_Interaction(HDC hdc, const Npc& Legend, const Interaction_Box& it_box) {
@@ -369,6 +394,7 @@ void Show_Dialog_Box(HDC hdc, HDC bitdc, const Interaction_Box& it_box, const in
 		SelectObject(bitdc, it_box.Get_Dialog_Box(0));
 		break;
 	case Dialog_Type::No_Money_Type:
+	case Dialog_Type::Heal_Type:
 		SelectObject(bitdc, it_box.Get_Dialog_Box(1));
 		break;
 	default:
@@ -388,6 +414,7 @@ void Show_Dialog_Box(HDC hdc, HDC bitdc, const Interaction_Box& it_box, const in
 			bitdc, 0, 0, it_box.Get_Dialog_Select_Size().bmWidth, it_box.Get_Dialog_Select_Size().bmHeight, RGB(150, 150, 150));
 		break;
 	case Dialog_Type::No_Money_Type:
+	case Dialog_Type::Heal_Type:
 		TransparentBlt(hdc, it_box.Get_Dialog_Box_Rect().left + 102, it_box.Get_Dialog_Box_Rect().top + 92, it_box.Get_Dialog_Select_Size().bmWidth, it_box.Get_Dialog_Select_Size().bmHeight,
 			bitdc, 0, 0, it_box.Get_Dialog_Select_Size().bmWidth, it_box.Get_Dialog_Select_Size().bmHeight, RGB(150, 150, 150));
 		break;
@@ -406,6 +433,9 @@ void Show_Dialog_Box(HDC hdc, HDC bitdc, const Interaction_Box& it_box, const in
 		break;
 	case Dialog_Type::No_Money_Type:
 		TextOut(hdc, it_box.Get_Dialog_Box_Rect().left + 17, it_box.Get_Dialog_Box_Rect().top + 30, _T("골드가 충분하지 않습니다."), 13);
+		break;
+	case Dialog_Type::Heal_Type:
+		TextOut(hdc, it_box.Get_Dialog_Box_Rect().left + 17, it_box.Get_Dialog_Box_Rect().top + 30, _T("플레이어가 회복되었습니다."), 13);
 		break;
 	default:
 		break;

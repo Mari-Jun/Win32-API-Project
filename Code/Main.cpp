@@ -1,6 +1,5 @@
 #include <windows.h>
 #include <tchar.h>
-#include <fmod.h>
 #include "resource.h"
 #include "Source.h"
 #include "Game_Progress.h"
@@ -13,9 +12,11 @@
 #include "Map_Village.h"
 #include "Map_Dungeon.h"
 #include "Interface.h"
+#include "Sound.h"
 
 #pragma comment(lib, "msimg32.lib")
 #pragma comment(lib,"fmodL_vc.lib")
+#pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console")
 
 static const int WindowX = 1280 + GetSystemMetrics(SM_CXFRAME << 2);
 static const int WindowY = 720 + GetSystemMetrics(SM_CYFRAME << 2) + GetSystemMetrics(SM_CYCAPTION);
@@ -128,7 +129,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 		map_v = Create_Class<Map_Village>();
 		Reset_Village_Map(hdc, *map_v);
 
-		SetTimer(hwnd, Default_Timer, 10, NULL);
+		SetTimer(hwnd, Default_Timer, 30, NULL);
 
 		ReleaseDC(hwnd, hdc);
 
@@ -169,6 +170,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 			switch (Change_Map_Select(*progress, *player, wParam))
 			{
 			case Map_Type::Dungeon1:
+				Change_Map_Village_To(*map_v);
 				map_d = Create_Class<Map_Dungeon>();
 				Reset_Dungeon_Map(hdc, *map_d, Map_Type::Dungeon1);
 				//던전으로 들어왔으니 속도를 설정해준다.

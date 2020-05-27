@@ -17,6 +17,7 @@ void Move_Player_Check(Move_Object& player, const Map_Dungeon& map_d, Progress& 
 
 /*Player Attack*/
 void Attack_Player(Player& player, Map_Dungeon& map_d);
+void CalCul_Player_Hitting_Point(Move_Object& attack_obj, Map_Dungeon& map_d);
 
 /*Player_Skill*/
 void Skill_Player(Player& player, Map_Dungeon& map_d);
