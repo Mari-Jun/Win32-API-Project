@@ -51,7 +51,7 @@ bool Crash_Check_Npc(const Move_Object& m_objcet, const Map_Village& map_v, cons
 
 /*Attack*/
 
-bool Crash_Attack_Polygon(const Move_Object& attack_obj, const Move_Object& hit_object, const Hitting_Range_Polygon& hit_range_p) {
+const bool Crash_Attack_Polygon(const Move_Object& attack_obj, const Move_Object& hit_object, const Hitting_Range_Polygon& hit_range_p) {
 
 	//두점 사이의 벡터를 구합니다.
 	int vx = (hit_range_p.Get_Pos(2).x + hit_range_p.Get_Pos(0).x) / 2 - (hit_object.Get_XPos() + hit_object.Get_Crash_Width() / 2);
@@ -100,13 +100,16 @@ bool Crash_Attack_Polygon(const Move_Object& attack_obj, const Move_Object& hit_
 	return true;
 }
 
-void Polygon_Damage_Enemy(const Move_Object& attack_obj, Move_Object& hit_obj, const Hitting_Range_Polygon& hit_range_p, const int& hit_dmg) {
-	if (Crash_Attack_Polygon(attack_obj, hit_obj, hit_range_p))
+const bool Polygon_Damage_Enemy(const Move_Object& attack_obj, Move_Object& hit_obj, const Hitting_Range_Polygon& hit_range_p, const int& hit_dmg) {
+	if (Crash_Attack_Polygon(attack_obj, hit_obj, hit_range_p)) {
 		Calcul_Hitting_Damage(attack_obj, hit_obj, hit_dmg, hit_range_p.Get_Owner());
+		return true;
+	}
+	return false;
 }
 
 //히팅 범위를 생성하는 함수
-void Create_Hitting_Point(Move_Object& m_object, const int& width_size, const int& height_size, const int& shape, const int& owner, const int& delay, const double& attack_multiple) {
+void Create_Hitting_Point(Move_Object& m_object, const int& width_size, const int& height_size, const int& shape, const int& owner, const bool& move, const int& speed, const int& delay, const double& attack_multiple) {
 	for (int index = 0; index < 20; index++) {
 		if (&m_object.Get_Hit_Range_P_Const(index) == NULL) {
 			//폴리곤 생성
@@ -114,7 +117,7 @@ void Create_Hitting_Point(Move_Object& m_object, const int& width_size, const in
 			POINT pos[4];
 			Create_Hitting_Polygon(m_object, pos, width_size, height_size, shape);
 
-			m_object.Set_Hit_Range_Polygon(index, owner, pos, delay, attack_multiple);
+			m_object.Set_Hit_Range_Polygon(index, owner, move, Create_Speed(m_object.Get_Direction(), speed), pos, delay, attack_multiple);
 			return;
 		}
 	}

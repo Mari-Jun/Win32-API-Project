@@ -5,9 +5,11 @@
 #include "Source.h"
 #include "Object_Command.h"
 #include "Object_Enemy_Command.h"
+#include "Object_Enemy_Attack_Info.h"
 #include "Object_Info.h"
 #include "Object_Player.h"
 #include "Object_Enemy.h"
+#include "Object_Skill.h"
 #include "Hitting_Range.h"
 #include "Map_Dungeon.h"
 #include "Game_Progress.h"
@@ -27,12 +29,12 @@ void Command_Enemy(Map_Dungeon& map_d, Player& player) {
 			if (map_d.Get_Enemy_Const(index).Get_Attack_Delay() != 0)
 				map_d.Get_Enemy(index).Set_Attack_Delay(map_d.Get_Enemy_Const(index).Get_Attack_Delay() - 1);
 
-			for (int s_index = 0; s_index < 5; s_index++) {
-				if (map_d.Get_Enemy_Const(index).Get_Skill_Delay(s_index) != 0)
-					map_d.Get_Enemy(index).Set_Skill_Delay(s_index, map_d.Get_Enemy_Const(index).Get_Skill_Delay(s_index) - 1);
+			for (int s_index = 0; s_index < 4; s_index++) {
+				if (map_d.Get_Enemy_Const(index).Get_Enemy_Skill_Const().Get_Current_Delay(s_index) != 0)
+					map_d.Get_Enemy(index).Get_Enemy_Skill().Set_Current_Delay(s_index, map_d.Get_Enemy_Const(index).Get_Enemy_Skill_Const().Get_Current_Delay(s_index) - 1);
 			}
 
-			Attack_Enemy(map_d, player, index);
+			Attack_Base_Enemy(map_d, player, index);
 
 			//특정 시간때 Hitting을 합니다.
 			CalCul_Enemy_Hitting_Point(map_d.Get_Enemy(index), player, index);
@@ -81,7 +83,7 @@ void Move_Enemy_Check(Move_Object& enemy, const Map_Dungeon& map_d, const Player
 void Move_Enemy(Map_Dungeon& map_d, const Player& player, const int& index) {
 
 	//플레이어 근처에 있을 경우의 움직임
-	if (Reaction_Range_Check(map_d.Get_Enemy_Const(index), player, 300)) {
+	if (Reaction_Range_Check(map_d.Get_Enemy_Const(index), player, 400)) {
 
 		//가만히 있는 경우 움직여준다.
 		if (map_d.Get_Enemy(index).Get_Status() == Enemy_Status::E_Stop) {
@@ -166,32 +168,41 @@ void Move_Enemy(Map_Dungeon& map_d, const Player& player, const int& index) {
 	}
 }
 
-void Attack_Enemy(Map_Dungeon& map_d, Player& player, const int& index) {
+void Attack_Base_Enemy(Map_Dungeon& map_d, Player& player, const int& index) {
 	if (map_d.Get_Enemy_Const(index).Get_Attack_Delay() == 0) {
-		switch (map_d.Get_Enemy_Const(index).Get_Enemy_Type())
-		{
-		case Enemy_Type::Bird:
-			if (map_d.Get_Enemy_Const(index).Get_Status() != Enemy_Status::E_Attack) {
-				if (Reaction_Range_Check(map_d.Get_Enemy_Const(index), player, 50)) {
-					map_d.Get_Enemy(index).Set_Status(Enemy_Status::E_Attack);
-					map_d.Get_Enemy(index).Set_Ani_Count(0);
-				}
+		if (map_d.Get_Enemy_Const(index).Get_Status() == Enemy_Status::E_Stop || map_d.Get_Enemy_Const(index).Get_Status() == Enemy_Status::E_Move)
+			Attack_Select(map_d.Get_Enemy(index), player);
+		else
+			Attack_Enemy_Action(map_d.Get_Enemy(index));
+
+	}
+}
+
+void Attack_Select(Enemy& enemy, Player& player) {
+	for (int select = 4; select > 0; select--) {
+		if (enemy.Get_Enemy_Skill_Const().Get_Skill_Delay(select - 1) != 0 && enemy.Get_Enemy_Skill_Const().Get_Current_Delay(select - 1) == 0) {
+			if (Reaction_Range_Check(enemy, player, enemy.Get_Attack_Reaction_Range(select))) {
+				enemy.Set_Status(Enemy_Status::E_Attack + select);
+				enemy.Set_Ani_Count(0);
+				return;
 			}
-			else {
-				//공격의 Hitting_Point지점을 생성해줍니다.
-				if (map_d.Get_Enemy_Const(index).Get_Ani_Count() == 4) {
-					Create_Hitting_Point(map_d.Get_Enemy(index), 50, 50, Hitting_Shape::FRONT, Hit_Owner::HO_Enemy, 15, 1.0);
-				}
-				else if (map_d.Get_Enemy_Const(index).Get_Ani_Count() == 16) {
-					Attack_End(map_d.Get_Enemy(index));
-					map_d.Get_Enemy(index).Set_Attack_Delay(32);
-				}
-			}
-			break;
-		default:
-			break;
 		}
 	}
+	if (Reaction_Range_Check(enemy, player, enemy.Get_Attack_Reaction_Range(0))) {
+		enemy.Set_Status(Enemy_Status::E_Attack);
+		enemy.Set_Ani_Count(0);
+		return;
+	}
+}
+
+void Attack_Enemy_End(Enemy& enemy, const int& attack_delay) {
+	Attack_End(enemy);
+	enemy.Set_Attack_Delay(attack_delay);
+}
+
+void Skill_Enemy_End(Enemy& enemy, const int& index, const int& attack_delay) {
+	Attack_Enemy_End(enemy, attack_delay);
+	enemy.Get_Enemy_Skill().Set_Current_Delay(index, enemy.Get_Enemy_Skill_Const().Get_Skill_Delay(index));
 }
 
 //히팅 범위를 적에게 적용하는 함수
@@ -199,12 +210,23 @@ void CalCul_Enemy_Hitting_Point(Move_Object& attack_obj, Player& player, const i
 	
 	//히팅 포인트 지점 계산
 	for (int index = 0; index < 20; index++) {
-		if (&attack_obj.Get_Hit_Range_P_Const(index) != NULL && attack_obj.Get_Hit_Range_P_Const(index).Get_Delay() == 0) {
-			Polygon_Damage_Enemy(attack_obj, player, attack_obj.Get_Hit_Range_P_Const(index), attack_obj.Get_Object_Info_Const().Get_Attack() * attack_obj.Get_Hit_Range_P_Const(index).Get_Attack_Multiple());
-			attack_obj.Delete_Hit_Range_Polygon(index);
+		if (&attack_obj.Get_Hit_Range_P_Const(index) != NULL) {
+			if (!attack_obj.Get_Hit_Range_P_Const(index).Is_Move() && attack_obj.Get_Hit_Range_P_Const(index).Get_Delay() == 0) {
+				Polygon_Damage_Enemy(attack_obj, player, attack_obj.Get_Hit_Range_P_Const(index), attack_obj.Get_Object_Info_Const().Get_Attack() * attack_obj.Get_Hit_Range_P_Const(index).Get_Attack_Multiple());
+				attack_obj.Delete_Hit_Range_Polygon(index);
+			}
+			else if (attack_obj.Get_Hit_Range_P_Const(index).Is_Move()) {
+				if (Polygon_Damage_Enemy(attack_obj, player, attack_obj.Get_Hit_Range_P_Const(index), attack_obj.Get_Object_Info_Const().Get_Attack() * attack_obj.Get_Hit_Range_P_Const(index).Get_Attack_Multiple())
+					|| attack_obj.Get_Hit_Range_P_Const(index).Get_Delay() == 0)
+					attack_obj.Delete_Hit_Range_Polygon(index);
+				//플레이어와 부딪히지 않았고 삭제 딜레이도 시간이 있으니 움직여줍니다.
+				else
+					Move_Hitting_Range_Polygon(attack_obj.Get_Hit_Range_P(index));
+			}
+
+			if (&attack_obj.Get_Hit_Range_P_Const(index) != NULL)
+				attack_obj.Get_Hit_Range_P(index).Set_Delay(attack_obj.Get_Hit_Range_P_Const(index).Get_Delay() - 1);
 		}
-		else if (&attack_obj.Get_Hit_Range_P_Const(index) != NULL)
-			attack_obj.Get_Hit_Range_P(index).Set_Delay(attack_obj.Get_Hit_Range_P_Const(index).Get_Delay() - 1);
 	}
 }
 

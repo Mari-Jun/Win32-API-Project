@@ -95,7 +95,7 @@ void Attack_Player(Player& player, Map_Dungeon& map_d) {
 	else {
 		//공격의 Hitting_Point지점을 생성해줍니다.
 		if (player.Get_Ani_Count() == 4) {
-			Create_Hitting_Point(player, 80, 50, Hitting_Shape::FRONT, Hit_Owner::HO_Player, 5, 1.0);
+			Create_Hitting_Point(player, 80, 50, Hitting_Shape::FRONT, Hit_Owner::HO_Player, false, 0, 5, 1.0);
 			player.Get_Player_Sound().Play_Sound(Player_Sound::Attack_Sound);
 		}
 		//공격 모션의 끝
@@ -108,15 +108,31 @@ void Attack_Player(Player& player, Map_Dungeon& map_d) {
 void CalCul_Player_Hitting_Point(Move_Object& attack_obj, Map_Dungeon& map_d) {
 	//히팅 포인트 지점 계산
 	for (int index = 0; index < 20; index++) {
-		if (&attack_obj.Get_Hit_Range_P_Const(index) != NULL && attack_obj.Get_Hit_Range_P_Const(index).Get_Delay() == 0) {
-			for (int e_index = 0; e_index < 50; e_index++) 
-				if(&map_d.Get_Enemy_Const(e_index)!=NULL)
-					Polygon_Damage_Enemy(attack_obj, map_d.Get_Enemy(e_index), attack_obj.Get_Hit_Range_P_Const(index), attack_obj.Get_Object_Info_Const().Get_Attack() * attack_obj.Get_Hit_Range_P_Const(index).Get_Attack_Multiple());
-			//폴리곤 제거
-			attack_obj.Delete_Hit_Range_Polygon(index);
+		if (&attack_obj.Get_Hit_Range_P_Const(index) != NULL) {
+			if (!attack_obj.Get_Hit_Range_P_Const(index).Is_Move() && attack_obj.Get_Hit_Range_P_Const(index).Get_Delay() == 0) {
+				for (int e_index = 0; e_index < 50; e_index++)
+					if (&map_d.Get_Enemy_Const(e_index) != NULL)
+						Polygon_Damage_Enemy(attack_obj, map_d.Get_Enemy(e_index), attack_obj.Get_Hit_Range_P_Const(index), attack_obj.Get_Object_Info_Const().Get_Attack() * attack_obj.Get_Hit_Range_P_Const(index).Get_Attack_Multiple());
+				//폴리곤 제거
+				attack_obj.Delete_Hit_Range_Polygon(index);
+			}
+			else if (attack_obj.Get_Hit_Range_P_Const(index).Is_Move()) {
+				bool destory = false;
+				for (int e_index = 0; e_index < 50; e_index++) {
+					if (&map_d.Get_Enemy_Const(e_index) != NULL) {
+						if (Polygon_Damage_Enemy(attack_obj, map_d.Get_Enemy(e_index), attack_obj.Get_Hit_Range_P_Const(index), attack_obj.Get_Object_Info_Const().Get_Attack() * attack_obj.Get_Hit_Range_P_Const(index).Get_Attack_Multiple()))
+							destory = true;
+					}
+				}
+				if (destory || attack_obj.Get_Hit_Range_P_Const(index).Get_Delay() == 0)
+					attack_obj.Delete_Hit_Range_Polygon(index);
+				else
+					Move_Hitting_Range_Polygon(attack_obj.Get_Hit_Range_P(index));
+			}
+			if (&attack_obj.Get_Hit_Range_P_Const(index) != NULL)
+				attack_obj.Get_Hit_Range_P(index).Set_Delay(attack_obj.Get_Hit_Range_P_Const(index).Get_Delay() - 1);
+
 		}
-		else if (&attack_obj.Get_Hit_Range_P_Const(index) != NULL)
-			attack_obj.Get_Hit_Range_P(index).Set_Delay(attack_obj.Get_Hit_Range_P_Const(index).Get_Delay() - 1);
 	}
 }
 
@@ -133,7 +149,7 @@ void Skill_Player(Player& player, Map_Dungeon& map_d) {
 		{
 		case Player_Status::SkillQ:
 			if (player.Get_Ani_Count() == 14 || player.Get_Ani_Count() == 20 || player.Get_Ani_Count() == 26) {
-				Create_Hitting_Point(player, 70, 70, Hitting_Shape::ROUND, Hit_Owner::HO_Player, 0, 0.5);
+				Create_Hitting_Point(player, 70, 70, Hitting_Shape::ROUND, Hit_Owner::HO_Player, false, 0, 0, 0.5);
 				if(player.Get_Ani_Count()==14)
 					player.Get_Player_Sound().Play_Sound(Player_Sound::SkillQ_Sound);
 			}	
@@ -142,7 +158,7 @@ void Skill_Player(Player& player, Map_Dungeon& map_d) {
 			break;
 		case Player_Status::SkillW:
 			if (player.Get_Ani_Count() == 8) {
-				Create_Hitting_Point(player, 130, 20, Hitting_Shape::FRONT, Hit_Owner::HO_Player, 4, 1.6);
+				Create_Hitting_Point(player, 130, 20, Hitting_Shape::FRONT, Hit_Owner::HO_Player, false, 0, 4, 1.6);
 				player.Get_Player_Sound().Play_Sound(Player_Sound::SkillW_Sound);
 			}
 			if (player.Get_Ani_Count() == 20)
@@ -150,7 +166,7 @@ void Skill_Player(Player& player, Map_Dungeon& map_d) {
 			break;
 		case Player_Status::SkillE:
 			if (player.Get_Ani_Count() == 12 || player.Get_Ani_Count() == 22) {
-				Create_Hitting_Point(player, 100, 40, Hitting_Shape::FRONT, Hit_Owner::HO_Player, 1, 1.2);
+				Create_Hitting_Point(player, 100, 40, Hitting_Shape::FRONT, Hit_Owner::HO_Player, false, 0, 1, 1.2);
 				if (player.Get_Ani_Count() == 12)
 					player.Get_Player_Sound().Play_Sound(Player_Sound::SkillE_Sound);
 			}
@@ -159,7 +175,7 @@ void Skill_Player(Player& player, Map_Dungeon& map_d) {
 			break;
 		case Player_Status::SkillR:
 			if (player.Get_Ani_Count() == 8) {
-				Create_Hitting_Point(player, 50, 20, Hitting_Shape::FRONT, Hit_Owner::HO_Player, 3, 2.0);
+				Create_Hitting_Point(player, 50, 20, Hitting_Shape::FRONT, Hit_Owner::HO_Player, false, 0, 3, 2.0);
 				player.Get_Player_Sound().Play_Sound(Player_Sound::SkillR_Sound);
 			}
 			if (player.Get_Ani_Count() == 26)

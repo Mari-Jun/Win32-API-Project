@@ -171,9 +171,9 @@ void Move_Object::Set_Hitting_Damage_Count(const int& hit_dmg_count) {
 	hitting_damage_count = hit_dmg_count;
 }
 
-void Move_Object::Set_Hit_Range_Polygon(const int& index, const int& owner, const POINT pos[4], const int& delay, const double& attack_multiple) {
+void Move_Object::Set_Hit_Range_Polygon(const int& index, const int& owner, const bool& move, const POINT& speed, const POINT pos[4], const int& delay, const double& attack_multiple) {
 	hit_range[index] = Create_Class<Hitting_Range_Polygon>();
-	Reset_Hitting_Range_Polygon(*hit_range[index], owner, pos, delay, attack_multiple);
+	Reset_Hitting_Range_Polygon(*hit_range[index], owner, move, speed, pos, delay, attack_multiple);
 }
 
 void Move_Object::Set_Hit_Range_Circle(const int& index, const int& owner) {

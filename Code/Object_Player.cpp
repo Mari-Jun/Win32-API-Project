@@ -203,16 +203,16 @@ void Paint_Player(HDC hdc, HDC bitdc, const Player& player) {
 		SelectObject(bitdc, player.Get_Attack_Motion(player.Get_Direction(), player.Get_Ani_Count() / 2 % 10));
 		break;
 	case Player_Status::SkillQ:
-		SelectObject(bitdc, player.Get_Player_Skill_Const().Get_Skill1_Motion_Bitmap(player.Get_Direction(), player.Get_Ani_Count() / 2 % 18));
+		SelectObject(bitdc, player.Get_Player_Skill_Const().Get_Skill_Motion_Bitmap(0, player.Get_Direction(), player.Get_Ani_Count() / 2 % 18));
 		break;
 	case Player_Status::SkillW:
-		SelectObject(bitdc, player.Get_Player_Skill_Const().Get_Skill2_Motion_Bitmap(player.Get_Direction(), player.Get_Ani_Count() / 2 % 10));
+		SelectObject(bitdc, player.Get_Player_Skill_Const().Get_Skill_Motion_Bitmap(1, player.Get_Direction(), player.Get_Ani_Count() / 2 % 10));
 		break;
 	case Player_Status::SkillE:
-		SelectObject(bitdc, player.Get_Player_Skill_Const().Get_Skill3_Motion_Bitmap(player.Get_Direction(), player.Get_Ani_Count() / 2 % 17));
+		SelectObject(bitdc, player.Get_Player_Skill_Const().Get_Skill_Motion_Bitmap(2, player.Get_Direction(), player.Get_Ani_Count() / 2 % 17));
 		break;
 	case Player_Status::SkillR:
-		SelectObject(bitdc, player.Get_Player_Skill_Const().Get_Skill4_Motion_Bitmap(player.Get_Direction(), player.Get_Ani_Count() / 2 % 13));
+		SelectObject(bitdc, player.Get_Player_Skill_Const().Get_Skill_Motion_Bitmap(3, player.Get_Direction(), player.Get_Ani_Count() / 2 % 13));
 		break;
 	default:
 		break;

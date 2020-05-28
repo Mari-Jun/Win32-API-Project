@@ -2,6 +2,7 @@
 
 class Map_Dungeon;
 class Player;
+class Enemy;
 class Move_Object;
 class Hitting_Range_Polygon;
 
@@ -15,7 +16,11 @@ void Move_Enemy_Check(Move_Object& enemy, const Map_Dungeon& map_d, const Player
 void Move_Enemy(Map_Dungeon& map_d, const Player& player, const int& index);
 
 /*Enemy Attack*/
-void Attack_Enemy(Map_Dungeon& map_d, Player& player, const int& index);
+void Attack_Base_Enemy(Map_Dungeon& map_d, Player& player, const int& index);
+void Attack_Select(Enemy& enemy, Player& player);
+
+void Attack_Enemy_End(Enemy& enemy, const int& attack_delay);
+void Skill_Enemy_End(Enemy& enemy, const int& index, const int& attack_delay);
 void CalCul_Enemy_Hitting_Point(Move_Object& attack_obj, Player& player, const int& e_index);
 
 /*Enemy Hit*/

@@ -75,7 +75,7 @@ public:
 	void Set_Ani_Count(const int& ani_count);
 	void Set_Hitting_Damage(const int& hit_dmg);
 	void Set_Hitting_Damage_Count(const int& hit_dmg_count);
-	void Set_Hit_Range_Polygon(const int& index, const int& owner, const POINT pos[4], const int& delay, const double& attack_multiple);
+	void Set_Hit_Range_Polygon(const int& index, const int& owner, const bool& move, const POINT& speed, const POINT pos[4], const int& delay, const double& attack_multiple);
 	void Set_Hit_Range_Circle(const int& index, const int& owner);
 
 	void Create_Object_Info();

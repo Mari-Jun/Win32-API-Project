@@ -5,32 +5,37 @@
 #include "Object_Player.h"
 #include "Object_Info.h"
 
-Object_Skill::~Object_Skill() {
-	for (int direction = 0; direction < 8; direction++) {
-		for (int index = 0; index < 20; index++) {
-			DeleteObject(skill1_motion_bitmap[direction][index]);
-			DeleteObject(skill2_motion_bitmap[direction][index]);
-			DeleteObject(skill3_motion_bitmap[direction][index]);
-			DeleteObject(skill4_motion_bitmap[direction][index]);
-		}
+Object_Skill::Object_Skill() {
+	for (int type = 0; type < 4; type++) 
+		for (int direction = 0; direction < 8; direction++) 
+			for (int index = 0; index < 20; index++) {
+				skill_motion_bitmap[type][direction][index] = NULL;
+				skill_effect_bitmap[type][direction][index] = NULL;
+			}
+				
+	for (int index = 0; index < 4; index++) {
+		current_delay[index] = 0;
+		skill_delay[index] = 0;
 	}
 }
 
-
-const HBITMAP& Object_Skill::Get_Skill1_Motion_Bitmap(const int& direction, const int& index) const {
-	return skill1_motion_bitmap[direction][index];
+Object_Skill::~Object_Skill() {
+	for (int type = 0; type < 4; type++) 
+		for (int direction = 0; direction < 8; direction++) 
+			for (int index = 0; index < 20; index++) {
+				DeleteObject(skill_motion_bitmap[type][direction][index]);
+				DeleteObject(skill_effect_bitmap[type][direction][index]);
+			}
+				
 }
 
-const HBITMAP& Object_Skill::Get_Skill2_Motion_Bitmap(const int& direction, const int& index) const {
-	return skill2_motion_bitmap[direction][index];
+
+const HBITMAP& Object_Skill::Get_Skill_Motion_Bitmap(const int& skill_type, const int& direction, const int& index) const {
+	return skill_motion_bitmap[skill_type][direction][index];
 }
 
-const HBITMAP& Object_Skill::Get_Skill3_Motion_Bitmap(const int& direction, const int& index) const {
-	return skill3_motion_bitmap[direction][index];
-}
-
-const HBITMAP& Object_Skill::Get_Skill4_Motion_Bitmap(const int& direction, const int& index) const {
-	return skill4_motion_bitmap[direction][index];
+const HBITMAP& Object_Skill::Get_Skill_Effect_Bitmap(const int& skill_type, const int& direction, const int& index) const {
+	return skill_effect_bitmap[skill_type][direction][index];
 }
 
 const int& Object_Skill::Get_Current_Delay(const int& index) const {
@@ -42,23 +47,11 @@ const int& Object_Skill::Get_Skill_Delay(const int& index) const {
 }
 
 void Object_Skill::Set_Bitmap(const int& skill, const int& direction, const int& index, const HBITMAP& bitmap) {
-	switch (skill)
-	{
-	case 0:
-		skill1_motion_bitmap[direction][index] = bitmap;
-		break;
-	case 1:
-		skill2_motion_bitmap[direction][index] = bitmap;
-		break;
-	case 2:
-		skill3_motion_bitmap[direction][index] = bitmap;
-		break;
-	case 3:
-		skill4_motion_bitmap[direction][index] = bitmap;
-		break;
-	default:
-		break;
-	}
+	skill_motion_bitmap[skill][direction][index] = bitmap;
+}
+
+void Object_Skill::Set_Effect_Bitmap(const int& skill, const int& direction, const int& index, const HBITMAP& bitmap) {
+	skill_effect_bitmap[skill][direction][index] = bitmap;
 }
 
 void  Object_Skill::Set_Current_Delay(const int& index, const int& current_delay) {
@@ -68,6 +61,8 @@ void  Object_Skill::Set_Current_Delay(const int& index, const int& current_delay
 void  Object_Skill::Set_Skill_Delay(const int& index, const int& skill_delay) {
 	this->skill_delay[index] = skill_delay;
 }
+
+/*player skill*/
 
 Player_Skill::~Player_Skill() {
 	for (int index = 0; index < 4; index++)
@@ -102,9 +97,9 @@ void Player_Skill::Set_Skill_Bitmap(const int& class_type) {
 	GetObject(skill_bitmap[0], sizeof(BITMAP), &skill_bitmap_size);
 }
 
-void Player_Skill::Set_Motion_Bitmap(const int& class_type) {
+void Player_Skill::Set_Motion_Bitmap(const int& type) {
 	
-	switch (class_type)
+	switch (type)
 	{
 	case Class_Type::Warrior:
 		TCHAR str[50];
@@ -219,4 +214,43 @@ void Change_Player_Info_Use_Skill(Player& player, const int& status_type, const 
 	player.Set_Ani_Count(0);
 	player.Get_Object_Info().Set_Mp(player.Get_Object_Info_Const().Get_Mp() - player.Get_Player_Skill_Const().Get_Use_Mp(skill_type));
 	player.Get_Player_Skill().Set_Current_Delay(skill_type, player.Get_Player_Skill_Const().Get_Skill_Delay(skill_type));
+}
+
+/*enemy_skill*/
+
+void Enemy_Skill::Set_Motion_Bitmap(const int& type) {
+	TCHAR str[80];
+	switch (type)
+	{
+	case Enemy_Type::Tolpi:
+		for (int direction = Object_Direction::Right; direction <= Object_Direction::DownRight; direction++) {
+			for (int index = 0; index < 8; index++) {
+				wsprintf(str, _T(".\\BitMap\\Monster\\M3\\Skill1\\Tolpi_SkillQ%d.bmp"), direction * 8 + index + 1);
+				Set_Bitmap(0, direction, index, (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
+				wsprintf(str, _T(".\\BitMap\\Monster\\M3\\Skill1\\Tolpi_SkillQ_Effect%d.bmp"), direction * 8 + index + 1);
+				Set_Effect_Bitmap(0, direction, index, (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
+			}
+		}
+		break;
+	default:
+		break;
+	}
+}
+
+void Enemy_Skill::Set_Delay(const int& enemy_type) {
+	switch (enemy_type)
+	{
+	case Enemy_Type::Tolpi:
+		Set_Skill_Delay(Skill_Type::Skill_Q, 300);
+		break;
+	default:
+		break;
+	}
+}
+
+void Reset_Enemy_Skill(Enemy_Skill& e_skill, const int& enemy_type) {
+	e_skill.Set_Motion_Bitmap(enemy_type);
+	e_skill.Set_Delay(enemy_type);
+	for (int index = Skill_Type::Skill_Q; index <= Skill_Type::Skill_R; index++)
+		e_skill.Set_Current_Delay(index, 0);
 }

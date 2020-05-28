@@ -39,11 +39,20 @@ void Map_Dungeon::Set_Enemy() {
 	switch (Get_Dungeon_Type())
 	{
 	case Map_Type::Dungeon1:
-		//老窜 1付府父 积己
-		for (int index = 0; index < 5; index++) {
+		for (int index = 0; index < 10; index++) {
 			enemy[index] = Create_Class<Enemy>();
 			Reset_Enemy(*enemy[index], Enemy_Type::Bird);
-			Reset_Move_Object(*enemy[index], 0 + index * 100, 400, enemy[index]->Get_Motion_Size().bmWidth, enemy[index]->Get_Motion_Size().bmHeight, 4);
+			Reset_Move_Object(*enemy[index], 0 + index * 100, 400, enemy[index]->Get_Motion_Size().bmWidth, enemy[index]->Get_Motion_Size().bmHeight, 8);
+		}
+		for (int index = 10; index < 15; index++) {
+			enemy[index] = Create_Class<Enemy>();
+			Reset_Enemy(*enemy[index], Enemy_Type::Zadrom);
+			Reset_Move_Object(*enemy[index], 0 + index * 100, 700, enemy[index]->Get_Motion_Size().bmWidth, enemy[index]->Get_Motion_Size().bmHeight, 6);
+		}
+		for (int index = 20; index < 25; index++) {
+			enemy[index] = Create_Class<Enemy>();
+			Reset_Enemy(*enemy[index], Enemy_Type::Tolpi);
+			Reset_Move_Object(*enemy[index], 0 + (index-15) * 100, 900, enemy[index]->Get_Motion_Size().bmWidth, enemy[index]->Get_Motion_Size().bmHeight, 4);
 		}
 		break;
 	default:

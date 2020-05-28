@@ -43,7 +43,7 @@ enum Player_Status {
 };
 
 enum Enemy_Status {
-	E_Stop, E_Move, E_Attack
+	E_Stop, E_Move, E_Attack, E_SkillQ, E_SkillW, E_SkillE, E_SkillR
 };
 
 enum Class_Type {
@@ -51,7 +51,7 @@ enum Class_Type {
 };
 
 enum Enemy_Type {
-	E_Pratice, Bird
+	Bird, Zadrom, Tolpi
 };
 
 enum Skill_Type {
