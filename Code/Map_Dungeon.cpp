@@ -32,7 +32,8 @@ void Map_Dungeon::Set_NM_Object() {
 }
 
 void Map_Dungeon::Set_Texture() {
-	//임시 미구현
+	Create_Texture(Dungeon1_Texture::D1_Grass, (HBITMAP)LoadImage(NULL, _T(".\\BitMap\\Map\\Dungeon1\\grass1.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
+	Create_Texture(Dungeon1_Texture::D1_Rock, (HBITMAP)LoadImage(NULL, _T(".\\BitMap\\Map\\Dungeon1\\rock1.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
 }
 
 void Map_Dungeon::Set_Enemy() {
@@ -69,7 +70,7 @@ void Reset_Dungeon_Map(HDC hdc, Map_Dungeon& map_d, const int& dungeon_type) {
 	switch (map_d.Get_Dungeon_Type())
 	{
 	case Map_Type::Dungeon1:
-		map_d.Set_Map_Rect(0, 0, 1760, 1600);
+		map_d.Set_Map_Rect(0, 0, 1600, 1600);
 		break;
 	case Map_Type::Dungeon2:
 		map_d.Set_Map_Rect(0, 0, 1760, 1600);
@@ -84,7 +85,12 @@ void Reset_Dungeon_Map(HDC hdc, Map_Dungeon& map_d, const int& dungeon_type) {
 }
 
 void Paint_Dungeon_Map_Texture(HDC hdc, HDC bitdc, const Map_Dungeon& map_d) {
-	//일단 미구현
+	SelectObject(bitdc, map_d.Get_Texture(Dungeon1_Texture::D1_Rock));
+	for (int y = 0; y < map_d.Get_Map_Rect().bottom; y += 80) {
+		BitBlt(hdc, 0, y, 80, 80, bitdc, 0, 0, SRCCOPY);
+		BitBlt(hdc, map_d.Get_Map_Rect().right - 80, y, 80, 80, bitdc, 0, 0, SRCCOPY);
+	}
+
 }
 
 void Paint_Dungeon_Map(HDC hdc, HDC bitdc, const Player& player, const Map_Dungeon& map_d) {

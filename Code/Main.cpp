@@ -173,11 +173,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 				Change_Map_Village_To(*map_v);
 				map_d = Create_Class<Map_Dungeon>();
 				Reset_Dungeon_Map(hdc, *map_d, Map_Type::Dungeon1);
-				//던전으로 들어왔으니 속도를 설정해준다.
-				Change_Object_Speed(*player, 10);
+				Change_Map_Reset_Player(*player, *progress);
+				//Move_Camera(*camera, *player, *map_v, c_rect);
+				//InvalidateRgn(hwnd, NULL, FALSE);
 				break;
 			default:
 				break;
+				
 			}
 		}
 		break;

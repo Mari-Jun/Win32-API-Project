@@ -5,6 +5,10 @@
 class Player;
 class Enemy;
 
+enum Dungeon1_Texture {
+	D1_Grass, D1_Rock
+};
+
 class Map_Dungeon : public Map {
 public:
 	virtual ~Map_Dungeon();

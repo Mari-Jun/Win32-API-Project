@@ -19,7 +19,7 @@ using namespace std;
 
 bool Crash_Check_Map(const Move_Object& m_object, const Map& map, const int& move_x, const int& move_y) {
 	if (m_object.Get_XPos() + move_x >= map.Get_Map_Rect().left && m_object.Get_XPos() + m_object.Get_Crash_Width() + move_x <= map.Get_Map_Rect().right &&
-		m_object.Get_YPos() + move_y >= map.Get_Map_Rect().top && m_object.Get_YPos() + m_object.Get_Height() - m_object.Get_Crash_Height() + move_y <= map.Get_Map_Rect().bottom)
+		m_object.Get_YPos() + move_y >= map.Get_Map_Rect().top && m_object.Get_YPos() + m_object.Get_Height() + move_y <= map.Get_Map_Rect().bottom)
 		return false;
 	return true;
 }
@@ -109,7 +109,7 @@ const bool Polygon_Damage_Enemy(const Move_Object& attack_obj, Move_Object& hit_
 }
 
 //히팅 범위를 생성하는 함수
-void Create_Hitting_Point(Move_Object& m_object, const int& width_size, const int& height_size, const int& shape, const int& owner, const bool& move, const int& speed, const int& delay, const double& attack_multiple) {
+void Create_Hitting_Point(Move_Object& m_object, const int& width_size, const int& height_size, const int& shape, const int& owner, const bool& move, const int& speed, const int& type, const int& attack_type, const int& delay, const double& attack_multiple) {
 	for (int index = 0; index < 20; index++) {
 		if (&m_object.Get_Hit_Range_P_Const(index) == NULL) {
 			//폴리곤 생성
@@ -117,7 +117,7 @@ void Create_Hitting_Point(Move_Object& m_object, const int& width_size, const in
 			POINT pos[4];
 			Create_Hitting_Polygon(m_object, pos, width_size, height_size, shape);
 
-			m_object.Set_Hit_Range_Polygon(index, owner, move, Create_Speed(m_object.Get_Direction(), speed), pos, delay, attack_multiple);
+			m_object.Set_Hit_Range_Polygon(index, owner, move, m_object.Get_Direction(), Create_Speed(m_object.Get_Direction(), speed), type, attack_type, pos, delay, attack_multiple);
 			return;
 		}
 	}

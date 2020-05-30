@@ -11,7 +11,11 @@
 #include "Object_Skill.h"
 #include "Hitting_Range.h"
 #include "Item.h"
+#include "Game_Progress.h"
 #include "Sound.h"
+
+#include <iostream>
+using namespace std;
 
 /*Player Player*/
 
@@ -221,6 +225,8 @@ void Paint_Player(HDC hdc, HDC bitdc, const Player& player) {
 	TransparentBlt(hdc, player.Get_XPos() - 98, player.Get_YPos() + 14, player.Get_Motion_Size().bmWidth, player.Get_Motion_Size().bmHeight, bitdc, 0, 0, player.Get_Motion_Size().bmWidth, player.Get_Motion_Size().bmHeight, RGB(255, 255, 255));
 
 	Paint_Hitting_Damage(hdc, player);	
+
+	cout << player.Get_XPos() << ", " << player.Get_YPos() << endl;
 }
 
 void Paint_Player_Equipment(HDC hdc, HDC bitdc, const Player& player) {
@@ -270,5 +276,23 @@ void Use_Item_Command(Player& player, WPARAM wParam) {
 		default:
 			break;
 		}
+	}
+}
+
+void Change_Map_Reset_Player(Player& player, const Progress& progress) {
+	switch (progress.Get_Map_Type())
+	{
+	case Map_Type::Village1:
+		player.Set_Speed(6);
+		player.Set_XPos(1550);
+		player.Set_YPos(600);
+		break;
+	case Map_Type::Dungeon1:
+		player.Set_Speed(10);
+		player.Set_XPos(500);
+		player.Set_YPos(800);
+		break;
+	default:
+		break;
 	}
 }

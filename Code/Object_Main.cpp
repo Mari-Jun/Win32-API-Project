@@ -171,9 +171,9 @@ void Move_Object::Set_Hitting_Damage_Count(const int& hit_dmg_count) {
 	hitting_damage_count = hit_dmg_count;
 }
 
-void Move_Object::Set_Hit_Range_Polygon(const int& index, const int& owner, const bool& move, const POINT& speed, const POINT pos[4], const int& delay, const double& attack_multiple) {
+void Move_Object::Set_Hit_Range_Polygon(const int& index, const int& owner, const bool& move, const int& direcction, const POINT& speed, const int& type, const int& attack_type, const POINT pos[4], const int& delay, const double& attack_multiple) {
 	hit_range[index] = Create_Class<Hitting_Range_Polygon>();
-	Reset_Hitting_Range_Polygon(*hit_range[index], owner, move, speed, pos, delay, attack_multiple);
+	Reset_Hitting_Range_Polygon(*hit_range[index], owner, move, direcction, speed, type, attack_type, pos, delay, attack_multiple);
 }
 
 void Move_Object::Set_Hit_Range_Circle(const int& index, const int& owner) {
@@ -242,8 +242,4 @@ void Count_Up_Hitting_Damage_Count(Move_Object& m_object) {
 		if (m_object.Get_Hitting_Damage_Count() == 20)
 			m_object.Set_Hitting_Damage_Count(-1);
 	}
-}
-
-void Change_Object_Speed(Move_Object& m_object, const int& speed) {
-	m_object.Set_Speed(speed);
 }

@@ -95,7 +95,7 @@ void Attack_Player(Player& player, Map_Dungeon& map_d) {
 	else {
 		//공격의 Hitting_Point지점을 생성해줍니다.
 		if (player.Get_Ani_Count() == 4) {
-			Create_Hitting_Point(player, 80, 50, Hitting_Shape::FRONT, Hit_Owner::HO_Player, false, 0, 5, 1.0);
+			Create_Hitting_Point(player, 80, 50, Hitting_Shape::FRONT, Hit_Owner::HO_Player, false, 0, player.Get_Class_Type(), player.Get_Status() - Player_Status::Attack, 5, 1.0);
 			player.Get_Player_Sound().Play_Sound(Player_Sound::Attack_Sound);
 		}
 		//공격 모션의 끝
@@ -149,7 +149,7 @@ void Skill_Player(Player& player, Map_Dungeon& map_d) {
 		{
 		case Player_Status::SkillQ:
 			if (player.Get_Ani_Count() == 14 || player.Get_Ani_Count() == 20 || player.Get_Ani_Count() == 26) {
-				Create_Hitting_Point(player, 70, 70, Hitting_Shape::ROUND, Hit_Owner::HO_Player, false, 0, 0, 0.5);
+				Create_Hitting_Point(player, 70, 70, Hitting_Shape::ROUND, Hit_Owner::HO_Player, false, 0, player.Get_Class_Type(), player.Get_Status() - Player_Status::Attack, 0, 0.5);
 				if(player.Get_Ani_Count()==14)
 					player.Get_Player_Sound().Play_Sound(Player_Sound::SkillQ_Sound);
 			}	
@@ -158,7 +158,7 @@ void Skill_Player(Player& player, Map_Dungeon& map_d) {
 			break;
 		case Player_Status::SkillW:
 			if (player.Get_Ani_Count() == 8) {
-				Create_Hitting_Point(player, 130, 20, Hitting_Shape::FRONT, Hit_Owner::HO_Player, false, 0, 4, 1.6);
+				Create_Hitting_Point(player, 130, 20, Hitting_Shape::FRONT, Hit_Owner::HO_Player, false, 0, player.Get_Class_Type(), player.Get_Status() - Player_Status::Attack, 4, 1.6);
 				player.Get_Player_Sound().Play_Sound(Player_Sound::SkillW_Sound);
 			}
 			if (player.Get_Ani_Count() == 20)
@@ -166,7 +166,7 @@ void Skill_Player(Player& player, Map_Dungeon& map_d) {
 			break;
 		case Player_Status::SkillE:
 			if (player.Get_Ani_Count() == 12 || player.Get_Ani_Count() == 22) {
-				Create_Hitting_Point(player, 100, 40, Hitting_Shape::FRONT, Hit_Owner::HO_Player, false, 0, 1, 1.2);
+				Create_Hitting_Point(player, 100, 40, Hitting_Shape::FRONT, Hit_Owner::HO_Player, false, 0, player.Get_Class_Type(), player.Get_Status() - Player_Status::Attack, 1, 1.2);
 				if (player.Get_Ani_Count() == 12)
 					player.Get_Player_Sound().Play_Sound(Player_Sound::SkillE_Sound);
 			}
@@ -175,7 +175,7 @@ void Skill_Player(Player& player, Map_Dungeon& map_d) {
 			break;
 		case Player_Status::SkillR:
 			if (player.Get_Ani_Count() == 8) {
-				Create_Hitting_Point(player, 50, 20, Hitting_Shape::FRONT, Hit_Owner::HO_Player, false, 0, 3, 2.0);
+				Create_Hitting_Point(player, 50, 20, Hitting_Shape::FRONT, Hit_Owner::HO_Player, false, 0, player.Get_Class_Type(), player.Get_Status() - Player_Status::Attack, 3, 2.0);
 				player.Get_Player_Sound().Play_Sound(Player_Sound::SkillR_Sound);
 			}
 			if (player.Get_Ani_Count() == 26)

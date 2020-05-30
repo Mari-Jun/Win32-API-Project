@@ -42,6 +42,6 @@ private:
 void Reset_Enemy(Enemy& enemy, const int& enemy_type);
 void Paint_Enemy(HDC hdc, HDC bitdc, const Enemy& enemy);
 void Paint_Enemy_Detail(HDC hdc, HDC bitdc, const Enemy& enemy, const int& stop, const int& move, const int& attack, const int& skillq, const int& skillw, const int& skille, const int& skillr, const int& x_move, const int& y_move);
-void Paint_Enemy_Attack_Effect(HDC hdc, HDC bitdc, const Enemy& enemy, const int& effect);
+//void Paint_Enemy_Attack_Effect(HDC hdc, HDC bitdc, const Enemy& enemy, const int& effect);
 //Boss라는 객체를 만들게되면 Command쪽에서 조금 꼬이지 않나.. (근데 어차피 맵에 넣을껀데??)
 

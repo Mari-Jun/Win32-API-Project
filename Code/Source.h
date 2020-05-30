@@ -50,6 +50,10 @@ enum Class_Type {
 	Warrior,
 };
 
+enum Attack_Type {
+	A_Attack, A_SkillQ, A_SkillW, A_SkillE, A_SkillR
+};
+
 enum Enemy_Type {
 	Bird, Zadrom, Tolpi
 };

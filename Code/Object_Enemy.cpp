@@ -6,7 +6,6 @@
 #include "Object_Info.h"
 #include "Object_Enemy.h"
 #include "Object_Skill.h"
-//юс╫ц╥н
 #include "Hitting_Range.h"
 
 using namespace std;
@@ -117,7 +116,6 @@ void Enemy::Set_Motion_Bitmap() {
 				move_motion_bitmap[direction][index] = (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 				wsprintf(str, _T(".\\BitMap\\Monster\\M2\\Attack\\Zadrom_Attack%d.bmp"), direction * 8 + index + 1);
 				attack_motion_bitmap[direction][index] = (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-				attack_effect_bitmap[direction][index] = (HBITMAP)LoadImage(NULL, _T(".\\BitMap\\Monster\\M2\\Attack\\Zadrom_Effect1.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 			}
 
 		}
@@ -240,10 +238,15 @@ void Paint_Enemy_Detail(HDC hdc, HDC bitdc, const Enemy& enemy, const int& stop,
 	}
 	TransparentBlt(hdc, enemy.Get_XPos() + x_move, enemy.Get_YPos() + y_move, enemy.Get_Width(), enemy.Get_Height(), bitdc, 0, 0, enemy.Get_Width(), enemy.Get_Height(), RGB(255, 255, 255));
 
-	Paint_Enemy_Attack_Effect(hdc, bitdc, enemy, attack);
+	//Paint_Enemy_Attack_Effect(hdc, bitdc, enemy, attack);
+	for (int index = 0; index < 20; index++) {
+		if (&enemy.Get_Hit_Range_P_Const(index) != NULL) {
+			Paint_Hitting_Range(hdc, bitdc, enemy.Get_Hit_Range_P_Const(index));
+		}
+	}
 }
 
-void Paint_Enemy_Attack_Effect(HDC hdc, HDC bitdc, const Enemy& enemy, const int& effect) {
+/*void Paint_Enemy_Attack_Effect(HDC hdc, HDC bitdc, const Enemy& enemy, const int& effect) {
 	SelectObject(bitdc, enemy.Get_Attack_Effect_Motion(enemy.Get_Direction(), enemy.Get_Ani_Count() / 2 % effect));
 	for (int index = 0; index < 20; index++) {
 		if (&enemy.Get_Hit_Range_P_Const(index) != NULL) {
@@ -253,4 +256,4 @@ void Paint_Enemy_Attack_Effect(HDC hdc, HDC bitdc, const Enemy& enemy, const int
 				bitdc, 0, 0, enemy.Get_Attack_Effect_Size().bmWidth, enemy.Get_Attack_Effect_Size().bmHeight, RGB(255, 255, 255));
 		}
 	}
-}
+}*/

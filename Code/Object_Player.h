@@ -5,6 +5,7 @@
 class Player_Equipment;
 class Player_Item;
 class Player_Skill;
+class Progress;
 class Sound;
 
 class Player : public Move_Object {
@@ -56,3 +57,5 @@ void Paint_Player_Equipment(HDC hdc, HDC bitdc, const Player& player);
 void Equipment_Command(Player& player);
 void Chnage_Equipment(Player& player, WPARAM wParam);
 void Use_Item_Command(Player& player, WPARAM wParam);
+
+void Change_Map_Reset_Player(Player& player, const Progress& progress);
