@@ -10,6 +10,7 @@
 #include "Object_Player_Interaction.h"
 #include "Shop.h"
 #include "Sound.h"
+#include "Camera.h"
 
 Map_Village::~Map_Village() {
 	Delete_Class<Non_Move_Object>(&portal);
@@ -137,7 +138,7 @@ void Map_Village::Destroy_Shop() {
 }
 
 void Reset_Village_Map(HDC hdc, Map_Village& map_v) {
-	map_v.Set_Map_Rect(0, 0, 1760, 1600);
+	map_v.Set_Map_Rect(0, 0, 1780, 1600);
 	map_v.Set_Map_Size_Bit(hdc);
 	map_v.Set_NM_Object();
 	map_v.Set_Portal();
@@ -149,83 +150,82 @@ void Reset_Village_Map(HDC hdc, Map_Village& map_v) {
 	map_v.Get_Village_Sound().Play_Sound(Village_Sound::BackGround_Village_Sound);
 }
 
-void Paint_Village_Map_Texture(HDC hdc, HDC bitdc, const Map_Village& map_v) {
+
+void Paint_Village_Map_Texture(HDC hdc, HDC bitdc, const Map_Village& map_v, const Camera& camera, const RECT c_rect) {
 	
 	SelectObject(bitdc, map_v.Get_Texture(VT::Grow1));
-	for (int y = 0; y < map_v.Get_Map_Rect().bottom - 320; y += 80) {
-		for (int x = 0; x < map_v.Get_Map_Rect().right; x += 80) {
-			BitBlt(hdc, x, y, 80, 80, bitdc, 0, 0, SRCCOPY);
+	for (int y = camera.Get_Cam_Top() - (camera.Get_Cam_Top() % 80); y < camera.Get_Cam_Top() + c_rect.bottom; y += 80) {
+		for (int x= camera.Get_Cam_Left() - (camera.Get_Cam_Left() % 80); x < camera.Get_Cam_Left() + c_rect.right; x += 80) {
+			Paint_BitBlt_Camera_In(hdc, bitdc, camera, c_rect, x, y, 80, 80);
 		}
 	}
 
 	SelectObject(bitdc, map_v.Get_Texture(VT::Load));
-	for (int x = 0; x < map_v.Get_Map_Rect().right; x += 80) {
-		BitBlt(hdc, x, map_v.Get_Map_Rect().bottom - 320, 80, 80, bitdc, 0, 0, SRCCOPY);
-		BitBlt(hdc, x, map_v.Get_Map_Rect().bottom - 240, 80, 80, bitdc, 0, 0, SRCCOPY);
-		BitBlt(hdc, x, 560, 80, 80, bitdc, 0, 0, SRCCOPY);
-		BitBlt(hdc, x, 640, 80, 80, bitdc, 0, 0, SRCCOPY);
-		BitBlt(hdc, x, 720, 80, 80, bitdc, 0, 0, SRCCOPY);
+	for (int x = camera.Get_Cam_Left() - (camera.Get_Cam_Left() % 80); x < camera.Get_Cam_Left() + c_rect.right; x += 80) {
+		Paint_BitBlt_Camera_In(hdc, bitdc, camera, c_rect, x, map_v.Get_Map_Rect().bottom - 320, 80, 80);
+		Paint_BitBlt_Camera_In(hdc, bitdc, camera, c_rect, x, map_v.Get_Map_Rect().bottom - 240, 80, 80);
+		Paint_BitBlt_Camera_In(hdc, bitdc, camera, c_rect, x, 560, 80, 80);
+		Paint_BitBlt_Camera_In(hdc, bitdc, camera, c_rect, x, 640, 80, 80);
+		Paint_BitBlt_Camera_In(hdc, bitdc, camera, c_rect, x, 720, 80, 80);
 	}
 
 	for (int y = 800; y < map_v.Get_Map_Rect().bottom - 320; y += 80) {
-		BitBlt(hdc, 480, y, 80, 80, bitdc, 0, 0, SRCCOPY);
-		BitBlt(hdc, 560, y, 80, 80, bitdc, 0, 0, SRCCOPY);
-		BitBlt(hdc, 640, y, 80, 80, bitdc, 0, 0, SRCCOPY);
+		Paint_BitBlt_Camera_In(hdc, bitdc, camera, c_rect, 480, y, 80, 80);
+		Paint_BitBlt_Camera_In(hdc, bitdc, camera, c_rect, 560, y, 80, 80);
+		Paint_BitBlt_Camera_In(hdc, bitdc, camera, c_rect, 640, y, 80, 80);
 	}
 
 	for (int y = 800; y < map_v.Get_Map_Rect().bottom - 320; y += 80) {
-		BitBlt(hdc, 1200, y, 80, 80, bitdc, 0, 0, SRCCOPY);
-		BitBlt(hdc, 1280, y, 80, 80, bitdc, 0, 0, SRCCOPY);
-		BitBlt(hdc, 1360, y, 80, 80, bitdc, 0, 0, SRCCOPY);
+		Paint_BitBlt_Camera_In(hdc, bitdc, camera, c_rect, 1200, y, 80, 80);
+		Paint_BitBlt_Camera_In(hdc, bitdc, camera, c_rect, 1280, y, 80, 80);
+		Paint_BitBlt_Camera_In(hdc, bitdc, camera, c_rect, 1360, y, 80, 80);
 	}
 
-	BitBlt(hdc, 80, 400, 80, 80, bitdc, 0, 0, SRCCOPY);
-	BitBlt(hdc, 80, 480, 80, 80, bitdc, 0, 0, SRCCOPY);
-	BitBlt(hdc, 160, 480, 80, 80, bitdc, 0, 0, SRCCOPY);
-	BitBlt(hdc, 160, 400, 80, 80, bitdc, 0, 0, SRCCOPY);
-	BitBlt(hdc, 630, 400, 80, 80, bitdc, 0, 0, SRCCOPY);
-	BitBlt(hdc, 630, 480, 80, 80, bitdc, 0, 0, SRCCOPY);
-	BitBlt(hdc, 65, 1120, 80, 80, bitdc, 0, 0, SRCCOPY);
-	BitBlt(hdc, 65, 1200, 80, 80, bitdc, 0, 0, SRCCOPY);
-	BitBlt(hdc, 340, 1120, 80, 80, bitdc, 0, 0, SRCCOPY);
-	BitBlt(hdc, 340, 1200, 80, 80, bitdc, 0, 0, SRCCOPY);
-	BitBlt(hdc, map_v.Get_Map_Rect().right - 200, 1120, 80, 80, bitdc, 0, 0, SRCCOPY);
-	BitBlt(hdc, map_v.Get_Map_Rect().right - 200, 1200, 80, 80, bitdc, 0, 0, SRCCOPY);
+	Paint_BitBlt_Camera_In(hdc, bitdc, camera, c_rect, 80, 400, 80, 80);
+	Paint_BitBlt_Camera_In(hdc, bitdc, camera, c_rect, 80, 480, 80, 80);
+	Paint_BitBlt_Camera_In(hdc, bitdc, camera, c_rect, 160, 480, 80, 80);
+	Paint_BitBlt_Camera_In(hdc, bitdc, camera, c_rect, 160, 400, 80, 80);
+	Paint_BitBlt_Camera_In(hdc, bitdc, camera, c_rect, 630, 400, 80, 80);
+	Paint_BitBlt_Camera_In(hdc, bitdc, camera, c_rect, 630, 480, 80, 80);
+	Paint_BitBlt_Camera_In(hdc, bitdc, camera, c_rect, 65, 1120, 80, 80);
+	Paint_BitBlt_Camera_In(hdc, bitdc, camera, c_rect, 65, 1200, 80, 80);
+	Paint_BitBlt_Camera_In(hdc, bitdc, camera, c_rect, 340, 1120, 80, 80);
+	Paint_BitBlt_Camera_In(hdc, bitdc, camera, c_rect, 340, 1200, 80, 80);
+	Paint_BitBlt_Camera_In(hdc, bitdc, camera, c_rect, map_v.Get_Map_Rect().right - 200, 1120, 80, 80);
+	Paint_BitBlt_Camera_In(hdc, bitdc, camera, c_rect, map_v.Get_Map_Rect().right - 200, 1200, 80, 80);
 }
 
-void Paint_Village_Map(HDC hdc, HDC bitdc, const Player& player, const Map_Village& map_v) {
+void Paint_Village_Map(HDC hdc, HDC bitdc, const Player& player, const Map_Village& map_v, const Camera& camera, const RECT c_rect) {
 	SelectObject(hdc, map_v.Get_Map_Size_Bitmap());
-	FillRect(hdc, &map_v.Get_Map_Rect(), WHITE_BRUSH);
+	Paint_Village_Map_Texture(hdc, bitdc, map_v, camera, c_rect);
 
-	Paint_Village_Map_Texture(hdc, bitdc, map_v);
-
-	int y_pos = 0;
-	for (y_pos = 0; y_pos <= map_v.Get_Map_Rect().bottom; y_pos++) {
-		for (int index = 0; index < 30; index++) {
+	int y_pos;
+	for (y_pos = camera.Get_Cam_Top(); y_pos < camera.Get_Cam_Top() + c_rect.bottom * 2; y_pos++) {
+		for (int index = 0; index < 60; index++) {
 			if (&map_v.Get_NM_Object(index) != NULL && y_pos == map_v.Get_NM_Object(index).Get_YPos() + map_v.Get_NM_Object(index).Get_Height()) {
 				SelectObject(bitdc, map_v.Get_NM_Object(index).Get_Object_Bitmap());
 				switch (index)
 				{
 				case VNM_OB::Tree1:
-					for (int y = 0; y < 4; y++) 
-						for (int x = 0; x < 3; x++) 
-							TransparentBlt(hdc, map_v.Get_NM_Object(index).Get_XPos() + x * 160, map_v.Get_NM_Object(index).Get_YPos() + y * 100, map_v.Get_NM_Object(index).Get_Object_Image_Size().bmWidth, map_v.Get_NM_Object(index).Get_Object_Image_Size().bmHeight,
-								bitdc, 0, 0, map_v.Get_NM_Object(index).Get_Object_Image_Size().bmWidth, map_v.Get_NM_Object(index).Get_Object_Image_Size().bmHeight, RGB(150, 150, 150));
+					for (int y = 0; y < 4; y++)
+						for (int x = 0; x < 3; x++)
+							Paint_TransparentBlt_Camera_In(hdc, bitdc, camera, c_rect, map_v.Get_NM_Object(index).Get_XPos() + x * 160, map_v.Get_NM_Object(index).Get_YPos() + y * 100, 
+								map_v.Get_NM_Object(index).Get_Object_Image_Size().bmWidth, map_v.Get_NM_Object(index).Get_Object_Image_Size().bmHeight, RGB(150, 150, 150));
 					break;
 				case VNM_OB::Tree2:
 					for (int y = 0; y < 4; y++)
 						for (int x = 0; x < 2; x++)
-							TransparentBlt(hdc, map_v.Get_NM_Object(index).Get_XPos() + x * 160, map_v.Get_NM_Object(index).Get_YPos() + y * 100, map_v.Get_NM_Object(index).Get_Object_Image_Size().bmWidth, map_v.Get_NM_Object(index).Get_Object_Image_Size().bmHeight,
-								bitdc, 0, 0, map_v.Get_NM_Object(index).Get_Object_Image_Size().bmWidth, map_v.Get_NM_Object(index).Get_Object_Image_Size().bmHeight, RGB(150, 150, 150));
+							Paint_TransparentBlt_Camera_In(hdc, bitdc, camera, c_rect, map_v.Get_NM_Object(index).Get_XPos() + x * 160, map_v.Get_NM_Object(index).Get_YPos() + y * 100,
+								map_v.Get_NM_Object(index).Get_Object_Image_Size().bmWidth, map_v.Get_NM_Object(index).Get_Object_Image_Size().bmHeight, RGB(150, 150, 150));
 					break;
 				case VNM_OB::Tree3:
 					for (int x = 0; x < 12; x++)
-						TransparentBlt(hdc, map_v.Get_NM_Object(index).Get_XPos() + x * 160, map_v.Get_NM_Object(index).Get_YPos(), map_v.Get_NM_Object(index).Get_Object_Image_Size().bmWidth, map_v.Get_NM_Object(index).Get_Object_Image_Size().bmHeight,
-							bitdc, 0, 0, map_v.Get_NM_Object(index).Get_Object_Image_Size().bmWidth, map_v.Get_NM_Object(index).Get_Object_Image_Size().bmHeight, RGB(150, 150, 150));
+						Paint_TransparentBlt_Camera_In(hdc, bitdc, camera, c_rect, map_v.Get_NM_Object(index).Get_XPos() + x * 160, map_v.Get_NM_Object(index).Get_YPos(),
+							map_v.Get_NM_Object(index).Get_Object_Image_Size().bmWidth, map_v.Get_NM_Object(index).Get_Object_Image_Size().bmHeight, RGB(150, 150, 150));
 					break;
 				default:
-					TransparentBlt(hdc, map_v.Get_NM_Object(index).Get_XPos(), map_v.Get_NM_Object(index).Get_YPos(), map_v.Get_NM_Object(index).Get_Object_Image_Size().bmWidth, map_v.Get_NM_Object(index).Get_Object_Image_Size().bmHeight,
-						bitdc, 0, 0, map_v.Get_NM_Object(index).Get_Object_Image_Size().bmWidth, map_v.Get_NM_Object(index).Get_Object_Image_Size().bmHeight, RGB(150, 150, 150));
+					Paint_TransparentBlt_Camera_In(hdc, bitdc, camera, c_rect, map_v.Get_NM_Object(index).Get_XPos(), map_v.Get_NM_Object(index).Get_YPos(),
+						map_v.Get_NM_Object(index).Get_Object_Image_Size().bmWidth, map_v.Get_NM_Object(index).Get_Object_Image_Size().bmHeight, RGB(150, 150, 150));
 					break;
 				}
 			}
@@ -241,8 +241,9 @@ void Paint_Village_Map(HDC hdc, HDC bitdc, const Player& player, const Map_Villa
 			Paint_Portal(hdc, bitdc, map_v.Get_Portal_Const());
 
 		if (&player != NULL && y_pos == player.Get_YPos() + player.Get_Height())
-			Paint_Player(hdc, bitdc, player);
+			Paint_Player(hdc, bitdc, player);	
 	}
+
 }
 
 void Paint_Portal(HDC hdc, HDC bitdc, const Non_Move_Object& portal) {

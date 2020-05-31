@@ -5,6 +5,7 @@
 #include "Object_Enemy.h"
 #include "Map_Main.h"
 #include "Object_Npc.h"
+#include "Camera.h"
 
 Map::~Map() {
 	DeleteObject(map_size_bit);
@@ -49,6 +50,16 @@ void Map::Set_Map_Rect(const int& left, const int& top, const int& right, const 
 	map_rect.right = right;
 }
 
-void Map::Set_Map_Size_Bit(HDC hdc) {
+void Map::Set_Map_Size_Bit(const HDC hdc) {
 	map_size_bit = CreateCompatibleBitmap(hdc, Get_Map_Rect().right, Get_Map_Rect().bottom);
+}
+
+void Paint_BitBlt_Camera_In(HDC hdc, HDC bitdc, const Camera& camera, const RECT c_rect, const int& x_pos, const int& y_pos, const int& x_size, const int& y_size) {
+	if (camera.Get_Cam_Left() <= x_pos + x_size && camera.Get_Cam_Left() + c_rect.right >= x_pos && camera.Get_Cam_Top() <= y_pos + y_size && camera.Get_Cam_Top() + c_rect.bottom >= y_pos)
+		BitBlt(hdc, x_pos, y_pos, x_size, y_size, bitdc, 0, 0, SRCCOPY);
+}
+
+void Paint_TransparentBlt_Camera_In(HDC hdc, HDC bitdc, const Camera& camera, const RECT c_rect, const int& x_pos, const int& y_pos, const int& x_size, const int& y_size, const COLORREF& color) {
+	if (camera.Get_Cam_Left() <= x_pos + x_size && camera.Get_Cam_Left() + c_rect.right >= x_pos && camera.Get_Cam_Top() <= y_pos + y_size && camera.Get_Cam_Top() + c_rect.bottom >= y_pos)
+		TransparentBlt(hdc, x_pos, y_pos, x_size, y_size, bitdc, 0, 0, x_size, y_size, color);
 }

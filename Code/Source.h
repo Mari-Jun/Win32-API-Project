@@ -54,8 +54,12 @@ enum Attack_Type {
 	A_Attack, A_SkillQ, A_SkillW, A_SkillE, A_SkillR
 };
 
+enum Attack_Info {
+	Attack_Delay, Attack_Reaction_Range, Attack_Range_X, Attack_Range_Y, Attack_Shape, Attack_Move, Attack_Speed, Attack_Guide, Attack_Hit_Delay, Attack_Multiple
+};
+
 enum Enemy_Type {
-	Bird, Zadrom, Tolpi
+	Bird, Zadrom, Tolpi, Dark_Flower
 };
 
 enum Skill_Type {

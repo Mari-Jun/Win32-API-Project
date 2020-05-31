@@ -13,6 +13,7 @@
 #include "Item.h"
 #include "Game_Progress.h"
 #include "Sound.h"
+#include "File.h"
 
 #include <iostream>
 using namespace std;
@@ -138,9 +139,9 @@ void Player::Create_Player_Equipment() {
 	Reset_Player_Equipment(*p_equip, Get_Object_Info());
 }
 
-void Player::Create_Player_Skill() {
+void Player::Create_Player_Skill(File& file) {
 	p_skill = Create_Class<Player_Skill>();
-	Reset_Player_Skill(*p_skill, Get_Class_Type());
+	Reset_Player_Skill(*p_skill,file, Get_Class_Type());
 }
 
 void Player::Create_Player_Item() {
@@ -153,7 +154,7 @@ void Player::Create_Player_Sound() {
 	Reset_Sound(*p_sound, Sound_Type::Sound_Player_Type, Class_Type::Warrior);
 }
 
-void Reset_Player(Player& player, const int& class_type) {
+void Reset_Player(Player& player, File& file, const int& class_type) {
 
 	player.Set_Motion_Bitmap();
 	Reset_Move_Object(player, 400, 500, player.Get_Motion_Size().bmWidth, player.Get_Motion_Size().bmHeight, 6);
@@ -161,7 +162,7 @@ void Reset_Player(Player& player, const int& class_type) {
 	Reset_Object_Info(player.Get_Object_Info(), 1, 100, 100, 10, 0, 0);
 	player.Set_Class_Type(class_type);
 	player.Create_Player_Equipment();
-	player.Create_Player_Skill();
+	player.Create_Player_Skill(file);
 	player.Create_Player_Item();
 	player.Create_Player_Sound();
 
@@ -173,7 +174,7 @@ void Reset_Player(Player& player, const int& class_type) {
 void Paint_Player(HDC hdc, HDC bitdc, const Player& player) {
 
 	//나중에 스킬 설정할때나 다시 그려주장
-	for (int index = 0; index < 20; index++) {
+	/*for (int index = 0; index < 20; index++) {
 		if (&player.Get_Hit_Range_P_Const(index) != NULL) {
 			POINT pos[4];
 			pos[0] = player.Get_Hit_Range_P_Const(index).Get_Pos(0);
@@ -183,7 +184,7 @@ void Paint_Player(HDC hdc, HDC bitdc, const Player& player) {
 
 			Polygon(hdc, pos, 4);
 		}
-	}
+	}*/
 
 	switch (player.Get_Status())
 	{
@@ -224,9 +225,9 @@ void Paint_Player(HDC hdc, HDC bitdc, const Player& player) {
 
 	TransparentBlt(hdc, player.Get_XPos() - 98, player.Get_YPos() + 14, player.Get_Motion_Size().bmWidth, player.Get_Motion_Size().bmHeight, bitdc, 0, 0, player.Get_Motion_Size().bmWidth, player.Get_Motion_Size().bmHeight, RGB(255, 255, 255));
 
-	Paint_Hitting_Damage(hdc, player);	
+	Paint_Hitting_Damage(hdc, player, 0);
 
-	cout << player.Get_XPos() << ", " << player.Get_YPos() << endl;
+	//cout << player.Get_XPos() << ", " << player.Get_YPos() << endl;
 }
 
 void Paint_Player_Equipment(HDC hdc, HDC bitdc, const Player& player) {
@@ -289,8 +290,8 @@ void Change_Map_Reset_Player(Player& player, const Progress& progress) {
 		break;
 	case Map_Type::Dungeon1:
 		player.Set_Speed(10);
-		player.Set_XPos(500);
-		player.Set_YPos(800);
+		player.Set_XPos(100);
+		player.Set_YPos(100);
 		break;
 	default:
 		break;

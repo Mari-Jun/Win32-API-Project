@@ -1,9 +1,11 @@
 #include <Windows.h>
 #include <tchar.h>
+#include <iostream>
 #include "Source.h"
 #include "Object_Skill.h"
 #include "Object_Player.h"
 #include "Object_Info.h"
+#include "File.h"
 
 Object_Skill::Object_Skill() {
 	for (int type = 0; type < 4; type++) 
@@ -97,7 +99,7 @@ void Player_Skill::Set_Skill_Bitmap(const int& class_type) {
 	GetObject(skill_bitmap[0], sizeof(BITMAP), &skill_bitmap_size);
 }
 
-void Player_Skill::Set_Motion_Bitmap(const int& type) {
+void Player_Skill::Set_Motion_Bitmap(const File& file, const int& type) {
 	
 	switch (type)
 	{
@@ -155,9 +157,9 @@ void Player_Skill::Set_Delay(const int& class_type) {
 	}
 }
 
-void Reset_Player_Skill(Player_Skill& p_skill, const int& class_type) {
+void Reset_Player_Skill(Player_Skill& p_skill, const File& file, const int& class_type) {
 	p_skill.Set_Skill_Bitmap(class_type);
-	p_skill.Set_Motion_Bitmap(class_type);
+	p_skill.Set_Motion_Bitmap(file, class_type);
 	p_skill.Set_Use_Mp(class_type);
 	p_skill.Set_Delay(class_type);
 	for (int index = Skill_Type::Skill_Q; index <= Skill_Type::Skill_R; index++)
@@ -218,39 +220,58 @@ void Change_Player_Info_Use_Skill(Player& player, const int& status_type, const 
 
 /*enemy_skill*/
 
-void Enemy_Skill::Set_Motion_Bitmap(const int& type) {
-	TCHAR str[80];
-	switch (type)
-	{
-	case Enemy_Type::Tolpi:
-		for (int direction = Object_Direction::Right; direction <= Object_Direction::DownRight; direction++) {
-			for (int index = 0; index < 8; index++) {
-				wsprintf(str, _T(".\\BitMap\\Monster\\M3\\Skill1\\Tolpi_SkillQ%d.bmp"), direction * 8 + index + 1);
-				Set_Bitmap(0, direction, index, (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
-				wsprintf(str, _T(".\\BitMap\\Monster\\M3\\Skill1\\Tolpi_SkillQ_Effect%d.bmp"), direction * 8 + index + 1);
-				Set_Effect_Bitmap(0, direction, index, (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
-			}
+void Enemy_Skill::Set_Motion_Bitmap(const File& file, const int& type) {
+
+	wchar_t str[80];
+	for (int direction = Object_Direction::Right; direction <= Object_Direction::DownRight; direction++) {
+		for (int index = 0; index < file.Get_Enemy_Motion_Count(type, Enemy_Status::E_SkillQ); index++) {
+			wsprintf(str, file.Get_Enemy_Motion_Text(type, Enemy_Status::E_SkillQ), direction * file.Get_Enemy_Motion_Count(type, Enemy_Status::E_SkillQ) + index + 1);
+			Set_Bitmap(Skill_Type::Skill_Q, direction, index, (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
+			std::wcout << str << std::endl;
 		}
-		break;
-	default:
-		break;
+		for (int index = 0; index < file.Get_Enemy_Motion_Count(type, Enemy_Status::E_SkillW); index++) {
+			wsprintf(str, file.Get_Enemy_Motion_Text(type, Enemy_Status::E_SkillW), direction * file.Get_Enemy_Motion_Count(type, Enemy_Status::E_SkillW) + index + 1);
+			Set_Bitmap(Skill_Type::Skill_W, direction, index, (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
+			std::wcout << str << std::endl;
+		}
+		for (int index = 0; index < file.Get_Enemy_Motion_Count(type, Enemy_Status::E_SkillE); index++) {
+			wsprintf(str, file.Get_Enemy_Motion_Text(type, Enemy_Status::E_SkillE), direction * file.Get_Enemy_Motion_Count(type, Enemy_Status::E_SkillE) + index + 1);
+			Set_Bitmap(Skill_Type::Skill_E, direction, index, (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
+			std::wcout << str << std::endl;
+		}
+		for (int index = 0; index < file.Get_Enemy_Motion_Count(type, Enemy_Status::E_SkillR); index++) {
+			wsprintf(str, file.Get_Enemy_Motion_Text(type, Enemy_Status::E_SkillR), direction * file.Get_Enemy_Motion_Count(type, Enemy_Status::E_SkillR) + index + 1);
+			Set_Bitmap(Skill_Type::Skill_R, direction, index, (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
+			std::wcout << str << std::endl;
+		}
 	}
+
+
 }
 
-void Enemy_Skill::Set_Delay(const int& enemy_type) {
-	switch (enemy_type)
+void Enemy_Skill::Set_Delay(const File& file, const int& enemy_type) {
+	Set_Skill_Delay(Skill_Type::Skill_Q, file.Get_Enemy_Attack_Info(enemy_type, Attack_Type::A_SkillQ, Attack_Info::Attack_Delay));
+	Set_Skill_Delay(Skill_Type::Skill_W, file.Get_Enemy_Attack_Info(enemy_type, Attack_Type::A_SkillW, Attack_Info::Attack_Delay));
+	Set_Skill_Delay(Skill_Type::Skill_E, file.Get_Enemy_Attack_Info(enemy_type, Attack_Type::A_SkillE, Attack_Info::Attack_Delay));
+	Set_Skill_Delay(Skill_Type::Skill_R, file.Get_Enemy_Attack_Info(enemy_type, Attack_Type::A_SkillR, Attack_Info::Attack_Delay));
+
+	/*switch (enemy_type)
 	{
 	case Enemy_Type::Tolpi:
 		Set_Skill_Delay(Skill_Type::Skill_Q, 300);
 		break;
+	case Enemy_Type::Dark_Flower:
+		Set_Skill_Delay(Skill_Type::Skill_Q, 300);
+		Set_Skill_Delay(Skill_Type::Skill_W, 500);
+		break;
 	default:
 		break;
-	}
+	}*/
 }
 
-void Reset_Enemy_Skill(Enemy_Skill& e_skill, const int& enemy_type) {
-	e_skill.Set_Motion_Bitmap(enemy_type);
-	e_skill.Set_Delay(enemy_type);
+void Reset_Enemy_Skill(Enemy_Skill& e_skill, const File& file, const int& enemy_type) {
+	e_skill.Set_Motion_Bitmap(file, enemy_type);
+	e_skill.Set_Delay(file, enemy_type);
 	for (int index = Skill_Type::Skill_Q; index <= Skill_Type::Skill_R; index++)
 		e_skill.Set_Current_Delay(index, 0);
 }

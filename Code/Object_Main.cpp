@@ -171,9 +171,9 @@ void Move_Object::Set_Hitting_Damage_Count(const int& hit_dmg_count) {
 	hitting_damage_count = hit_dmg_count;
 }
 
-void Move_Object::Set_Hit_Range_Polygon(const int& index, const int& owner, const bool& move, const int& direcction, const POINT& speed, const int& type, const int& attack_type, const POINT pos[4], const int& delay, const double& attack_multiple) {
+void Move_Object::Set_Hit_Range_Polygon(const int& index, const int& owner, const bool& move, const int& direcction, const bool& guide, const POINT& speed, const int& type, const int& attack_type, const POINT pos[4], const int& delay, const double& attack_multiple) {
 	hit_range[index] = Create_Class<Hitting_Range_Polygon>();
-	Reset_Hitting_Range_Polygon(*hit_range[index], owner, move, direcction, speed, type, attack_type, pos, delay, attack_multiple);
+	Reset_Hitting_Range_Polygon(*hit_range[index], owner, move, direcction, guide, speed, type, attack_type, pos, delay, attack_multiple);
 }
 
 void Move_Object::Set_Hit_Range_Circle(const int& index, const int& owner) {
@@ -198,7 +198,7 @@ void Reset_Move_Object(Move_Object& m_object, const int& x_pos, const int& y_pos
 	m_object.Set_Speed(speed);
 }
 
-void Paint_Hitting_Damage(HDC hdc, const Move_Object& m_object) {
+void Paint_Hitting_Damage(HDC hdc, const Move_Object& m_object, const int& y_move) {
 	if (m_object.Get_Hitting_Damage() == -1 || m_object.Get_Hitting_Damage_Count() == -1)
 		return;
 
@@ -211,7 +211,7 @@ void Paint_Hitting_Damage(HDC hdc, const Move_Object& m_object) {
 	SetBkMode(hdc, TRANSPARENT);
 	SetTextColor(hdc, RGB(204, 61, 61));
 
-	TextOut(hdc, m_object.Get_XPos() + m_object.Get_Crash_Width() / 2 - damage_size.cx / 2, m_object.Get_YPos() - damage_size.cy + 5, str, _tcslen(str));
+	TextOut(hdc, m_object.Get_XPos() + m_object.Get_Crash_Width() / 2 - damage_size.cx / 2, m_object.Get_YPos() - damage_size.cy + 5 + y_move, str, _tcslen(str));
 }
 
 void Calcul_Hitting_Damage(const Move_Object& attack_obj, Move_Object& hit_obj, const int& hit_dmg, const int& owner) {

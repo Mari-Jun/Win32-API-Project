@@ -2,6 +2,7 @@
 #include "Object_Main.h"
 
 class Enemy_Skill;
+class File;
 
 class Enemy :public Move_Object {
 public:
@@ -22,9 +23,9 @@ public:
 	void Set_Enemy_Type(const int& enemy_type);
 	void Set_Attack_Delay(const int& delay);
 	void Set_Attack_Reaction_Range(const int& r1, const int& r2, const int& r3, const int& r4, const int& r5);
-	void Set_Motion_Bitmap();
+	void Set_Motion_Bitmap(const File& file);
 
-	void Create_Enemy_Skill();
+	void Create_Enemy_Skill(const File& file);
 
 private:
 	int enemy_type;
@@ -39,9 +40,8 @@ private:
 	HBITMAP attack_effect_bitmap[8][20];
 };
 
-void Reset_Enemy(Enemy& enemy, const int& enemy_type);
-void Paint_Enemy(HDC hdc, HDC bitdc, const Enemy& enemy);
-void Paint_Enemy_Detail(HDC hdc, HDC bitdc, const Enemy& enemy, const int& stop, const int& move, const int& attack, const int& skillq, const int& skillw, const int& skille, const int& skillr, const int& x_move, const int& y_move);
+void Reset_Enemy(Enemy& enemy, const File& file, const int& enemy_type);
+void Paint_Enemy(HDC hdc, HDC bitdc, const File& file, const Enemy& enemy);
+void Paint_Enemy_Detail(HDC hdc, HDC bitdc, const Enemy& enemy, const File& file);
 //void Paint_Enemy_Attack_Effect(HDC hdc, HDC bitdc, const Enemy& enemy, const int& effect);
-//Boss라는 객체를 만들게되면 Command쪽에서 조금 꼬이지 않나.. (근데 어차피 맵에 넣을껀데??)
 

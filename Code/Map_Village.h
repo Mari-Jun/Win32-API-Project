@@ -9,6 +9,7 @@ class Npc;
 class Shop;
 class Interaction_Box;
 class Sound;
+class Camera;
 
 typedef enum Village_Texture {
 	Load, Grow1, Grow2
@@ -30,8 +31,8 @@ public:
 	Non_Move_Object& Get_Portal() const;
 	Sound& Get_Village_Sound() const;
 	
-	virtual void Set_NM_Object();
-	virtual void Set_Texture();
+	void Set_NM_Object();
+	void Set_Texture();
 
 ;	void Set_Portal();
 	void Set_Npc();
@@ -50,8 +51,8 @@ private:
 };
 
 void Reset_Village_Map(HDC hdc, Map_Village& map_v);
-void Paint_Village_Map_Texture(HDC hdc, HDC bitdc, const Map_Village& map_v);
-void Paint_Village_Map(HDC hdc, HDC bitdc, const Player& player, const Map_Village& map_v);
+void Paint_Village_Map_Texture(HDC hdc, HDC bitdc, const Map_Village& map_v, const Camera& camera, const RECT c_rect);
+void Paint_Village_Map(HDC hdc, HDC bitdc, const Player& player, const Map_Village& map_v, const Camera& camera, const RECT c_rect);
 void Paint_Portal(HDC hdc, HDC bitdc, const Non_Move_Object& portal);
 
 void Animation_Play_Npc(Map_Village& map_v);

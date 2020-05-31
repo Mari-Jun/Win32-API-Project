@@ -7,6 +7,7 @@
 #include "Object_Enemy.h"
 #include "Object_Skill.h"
 #include "Hitting_Range.h"
+#include "File.h"
 
 using namespace std;
 
@@ -85,98 +86,78 @@ void Enemy::Set_Attack_Reaction_Range(const int& r1, const int& r2, const int& r
 	attack_reaction_range[4] = r5;
 }
 
-void Enemy::Create_Enemy_Skill() {
+void Enemy::Create_Enemy_Skill(const File& file) {
 	e_skill = Create_Class<Enemy_Skill>();
-	Reset_Enemy_Skill(*e_skill, Get_Enemy_Type());
+	Reset_Enemy_Skill(*e_skill, file, Get_Enemy_Type());
 }
 
 
-void Enemy::Set_Motion_Bitmap() {
-	TCHAR str[50];
-	switch (Get_Enemy_Type())
-	{
-	case Enemy_Type::Bird:
-		for (int direction = Object_Direction::Right; direction <= Object_Direction::DownRight; direction++) {
-			for (int index = 0; index < 8; index++) {
-				wsprintf(str, _T(".\\BitMap\\Monster\\M1\\Move\\Bird_Move%d.bmp"), direction * 8 + index + 1);
-				//가만히 있을 경우, 움직이는 경우의 모션이 같다.
-				stop_motion_bitmap[direction][index] = (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-				move_motion_bitmap[direction][index] = (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-				wsprintf(str, _T(".\\BitMap\\Monster\\M1\\Attack\\Bird_Attack%d.bmp"), direction * 8 + index + 1);
-				attack_motion_bitmap[direction][index] = (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-			}
-		}
-		break;
-	case Enemy_Type::Zadrom:
-		for (int direction = Object_Direction::Right; direction <= Object_Direction::DownRight; direction++) {
-			for (int index = 0; index < 8; index++) {
-				wsprintf(str, _T(".\\BitMap\\Monster\\M2\\Stop\\Zadrom_Stop%d.bmp"), direction * 8 + index + 1);
-				stop_motion_bitmap[direction][index] = (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-				wsprintf(str, _T(".\\BitMap\\Monster\\M2\\Move\\Zadrom_Move%d.bmp"), direction * 8 + index + 1);
-				move_motion_bitmap[direction][index] = (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-				wsprintf(str, _T(".\\BitMap\\Monster\\M2\\Attack\\Zadrom_Attack%d.bmp"), direction * 8 + index + 1);
-				attack_motion_bitmap[direction][index] = (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-			}
+void Enemy::Set_Motion_Bitmap(const File& file) {
 
+	wchar_t str[80];
+	for (int direction = Object_Direction::Right; direction <= Object_Direction::DownRight; direction++) {
+		for (int index = 0; index < file.Get_Enemy_Motion_Count(Get_Enemy_Type(), Enemy_Status::E_Stop); index++) {
+			wsprintf(str, file.Get_Enemy_Motion_Text(Get_Enemy_Type(), Enemy_Status::E_Stop), direction * file.Get_Enemy_Motion_Count(Get_Enemy_Type(), Enemy_Status::E_Move) + index + 1);
+			stop_motion_bitmap[direction][index] = (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+			//wcout << str << endl;
 		}
-		break;
-	case Enemy_Type::Tolpi:
-		for (int direction = Object_Direction::Right; direction <= Object_Direction::DownRight; direction++) {
-			for (int index = 0; index < 8; index++) {
-				wsprintf(str, _T(".\\BitMap\\Monster\\M3\\Stop\\Tolpi_Stop%d.bmp"), direction * 8 + index + 1);
-				stop_motion_bitmap[direction][index] = (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-				move_motion_bitmap[direction][index] = (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-				wsprintf(str, _T(".\\BitMap\\Monster\\M3\\Attack\\Tolpi_Attack%d.bmp"), direction * 8 + index + 1);
-				attack_motion_bitmap[direction][index] = (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-				/*wsprintf(str, _T(".\\BitMap\\Monster\\M2\\Attack\\Zadrom_Attack%d.bmp"), direction * 8 + index + 1);
-				attack_motion_bitmap[direction][index] = (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);*/
-			}	
+		for (int index = 0; index < file.Get_Enemy_Motion_Count(Get_Enemy_Type(), Enemy_Status::E_Move); index++) {
+			wsprintf(str, file.Get_Enemy_Motion_Text(Get_Enemy_Type(), Enemy_Status::E_Move), direction * file.Get_Enemy_Motion_Count(Get_Enemy_Type(), Enemy_Status::E_Move) + index + 1);
+			move_motion_bitmap[direction][index] = (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+			//wcout << str << endl;
 		}
-		break;
-	default:
-		break;
+		for (int index = 0; index < file.Get_Enemy_Motion_Count(Get_Enemy_Type(), Enemy_Status::E_Attack); index++) {
+			wsprintf(str, file.Get_Enemy_Motion_Text(Get_Enemy_Type(), Enemy_Status::E_Attack), direction * file.Get_Enemy_Motion_Count(Get_Enemy_Type(), Enemy_Status::E_Attack) + index + 1);
+			attack_motion_bitmap[direction][index] = (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+			//wcout << str << endl;
+		}
 	}
+
 	GetObject(stop_motion_bitmap[0][0], sizeof(BITMAP), &motion_size);
 	GetObject(attack_effect_bitmap[0][0], sizeof(BITMAP), &attack_effect_size);
 };
 
-void Reset_Enemy(Enemy& enemy, const int& enemy_type) {
+void Reset_Enemy(Enemy& enemy, const File& file, const int& enemy_type) {
 	enemy.Set_Enemy_Type(enemy_type);
 	enemy.Set_Attack_Delay(0);
-	enemy.Set_Motion_Bitmap();
-	enemy.Create_Enemy_Skill();
+	enemy.Set_Motion_Bitmap(file);
+	enemy.Create_Enemy_Skill(file);
 
-	switch (enemy_type)
+	enemy.Create_Object_Info();
+	Reset_Object_Info(enemy.Get_Object_Info(), file.Get_Enemy_Object_Info(enemy_type, 0), file.Get_Enemy_Object_Info(enemy_type, 1),
+		file.Get_Enemy_Object_Info(enemy_type, 2), file.Get_Enemy_Object_Info(enemy_type, 3),
+		file.Get_Enemy_Object_Info(enemy_type, 4), file.Get_Enemy_Object_Info(enemy_type, 5));
+	enemy.Set_Crash_Width(file.Get_Enemy_Object_Info(enemy_type, 6));
+	enemy.Set_Crash_Height(file.Get_Enemy_Object_Info(enemy_type, 7));
+
+	enemy.Set_Attack_Reaction_Range(file.Get_Enemy_Attack_Info(enemy.Get_Enemy_Type(),Attack_Type::A_Attack,Attack_Info::Attack_Reaction_Range),
+		file.Get_Enemy_Attack_Info(enemy.Get_Enemy_Type(), Attack_Type::A_SkillQ, Attack_Info::Attack_Reaction_Range),
+		file.Get_Enemy_Attack_Info(enemy.Get_Enemy_Type(), Attack_Type::A_SkillW, Attack_Info::Attack_Reaction_Range),
+		file.Get_Enemy_Attack_Info(enemy.Get_Enemy_Type(), Attack_Type::A_SkillE, Attack_Info::Attack_Reaction_Range),
+		file.Get_Enemy_Attack_Info(enemy.Get_Enemy_Type(), Attack_Type::A_SkillR, Attack_Info::Attack_Reaction_Range));
+
+	/*switch (enemy_type)
 	{
 	case Enemy_Type::Bird:
-		enemy.Create_Object_Info();
-		Reset_Object_Info(enemy.Get_Object_Info(), 1, 200, 0, 20, 0, 0);
-		enemy.Set_Crash_Width(80);
-		enemy.Set_Crash_Height(80);
 		enemy.Set_Attack_Reaction_Range(50, 0, 0, 0, 0);
 		break;
 	case Enemy_Type::Zadrom:
-		enemy.Create_Object_Info();
-		Reset_Object_Info(enemy.Get_Object_Info(), 1, 150, 0, 30, 0, 0);
-		enemy.Set_Crash_Width(50);
-		enemy.Set_Crash_Height(50);
 		enemy.Set_Attack_Reaction_Range(300, 0, 0, 0, 0);
 		break;
 	case Enemy_Type::Tolpi:
-		enemy.Create_Object_Info();
-		Reset_Object_Info(enemy.Get_Object_Info(), 1, 350, 0, 35, 5, 0);
-		enemy.Set_Crash_Width(90);
-		enemy.Set_Crash_Height(60);
 		enemy.Set_Attack_Reaction_Range(100, 250, 0, 0, 0);
+		break;
+	case Enemy_Type::Dark_Flower:
+		enemy.Set_Attack_Reaction_Range(300, 350, 350, 0, 0);
 		break;
 	default:
 		break;
-	}
+	}*/
 }
 
-void Paint_Enemy(HDC hdc, HDC bitdc, const Enemy& enemy) {
+void Paint_Enemy(HDC hdc, HDC bitdc, const File& file, const Enemy& enemy) {
 
-	for (int index = 0; index < 20; index++) {
+	/*for (int index = 0; index < 20; index++) {
 		if (&enemy.Get_Hit_Range_P_Const(index) != NULL) {
 			POINT pos[4];
 			pos[0] = enemy.Get_Hit_Range_P_Const(index).Get_Pos(0);
@@ -186,57 +167,58 @@ void Paint_Enemy(HDC hdc, HDC bitdc, const Enemy& enemy) {
 
 			Polygon(hdc, pos, 4);
 		}
-	}
+	}*/
 	
 	switch (enemy.Get_Enemy_Type())
 	{
 	case Enemy_Type::Bird:
-		Paint_Enemy_Detail(hdc, bitdc, enemy, 8, 8, 8, 0, 0, 0, 0, - 10, 0);
+		Paint_Enemy_Detail(hdc, bitdc, enemy, file);
 		break;
 	case Enemy_Type::Zadrom:
-		Paint_Enemy_Detail(hdc, bitdc, enemy, 8, 8, 8, 0, 0, 0, 0, - 35, 35);
+		Paint_Enemy_Detail(hdc, bitdc, enemy, file);
 		break;
 	case Enemy_Type::Tolpi:
-		Paint_Enemy_Detail(hdc, bitdc, enemy, 8, 8, 8, 8, 0, 0, 0, - 50, 20);
+		Paint_Enemy_Detail(hdc, bitdc, enemy, file);
+		break;
+	case Enemy_Type::Dark_Flower:
+		Paint_Enemy_Detail(hdc, bitdc, enemy, file);
 		break;
 	default:
 		break;
 	}
-
-	Paint_Hitting_Damage(hdc, enemy);
 
 	//Rectangle(hdc, enemy.Get_XPos(), enemy.Get_YPos() + enemy.Get_Height() - enemy.Get_Crash_Height(), enemy.Get_XPos() + enemy.Get_Crash_Width(), enemy.Get_YPos() + enemy.Get_Height());
 
 }
 
-void Paint_Enemy_Detail(HDC hdc, HDC bitdc, const Enemy& enemy, const int& stop, const int& move, const int& attack, const int& skillq, const int& skillw, const int& skille, const int& skillr, const int& x_move, const int& y_move) {
+void Paint_Enemy_Detail(HDC hdc, HDC bitdc, const Enemy& enemy, const File& file) {
 	switch (enemy.Get_Status())
 	{
 	case Enemy_Status::E_Stop:
-		SelectObject(bitdc, enemy.Get_Stop_Motion(enemy.Get_Direction(), enemy.Get_Ani_Count() / 2 % stop));
+		SelectObject(bitdc, enemy.Get_Stop_Motion(enemy.Get_Direction(), enemy.Get_Ani_Count() / 2 % file.Get_Enemy_Motion_Count(enemy.Get_Enemy_Type(), Enemy_Status::E_Stop)));
 		break;
 	case Enemy_Status::E_Move:
-		SelectObject(bitdc, enemy.Get_Move_Motion(enemy.Get_Direction(), enemy.Get_Ani_Count() / 2 % move));
+		SelectObject(bitdc, enemy.Get_Move_Motion(enemy.Get_Direction(), enemy.Get_Ani_Count() / 2 % file.Get_Enemy_Motion_Count(enemy.Get_Enemy_Type(), Enemy_Status::E_Move)));
 		break;
 	case Enemy_Status::E_Attack:
-		SelectObject(bitdc, enemy.Get_Attack_Motion(enemy.Get_Direction(), enemy.Get_Ani_Count() / 2 % attack));
+		SelectObject(bitdc, enemy.Get_Attack_Motion(enemy.Get_Direction(), enemy.Get_Ani_Count() / 2 % file.Get_Enemy_Motion_Count(enemy.Get_Enemy_Type(), Enemy_Status::E_Attack)));
 		break;
 	case Enemy_Status::E_SkillQ:
-		SelectObject(bitdc, enemy.Get_Enemy_Skill_Const().Get_Skill_Motion_Bitmap(0, enemy.Get_Direction(), enemy.Get_Ani_Count() / 2 % skillq));
+		SelectObject(bitdc, enemy.Get_Enemy_Skill_Const().Get_Skill_Motion_Bitmap(0, enemy.Get_Direction(), enemy.Get_Ani_Count() / 2 % file.Get_Enemy_Motion_Count(enemy.Get_Enemy_Type(), Enemy_Status::E_SkillQ)));
 		break;
 	case Enemy_Status::E_SkillW:
-		SelectObject(bitdc, enemy.Get_Enemy_Skill_Const().Get_Skill_Motion_Bitmap(1, enemy.Get_Direction(), enemy.Get_Ani_Count() / 2 % skillw));
+		SelectObject(bitdc, enemy.Get_Enemy_Skill_Const().Get_Skill_Motion_Bitmap(1, enemy.Get_Direction(), enemy.Get_Ani_Count() / 2 % file.Get_Enemy_Motion_Count(enemy.Get_Enemy_Type(), Enemy_Status::E_SkillW)));
 		break;
 	case Enemy_Status::E_SkillE:
-		SelectObject(bitdc, enemy.Get_Enemy_Skill_Const().Get_Skill_Motion_Bitmap(2, enemy.Get_Direction(), enemy.Get_Ani_Count() / 2 % skille));
+		SelectObject(bitdc, enemy.Get_Enemy_Skill_Const().Get_Skill_Motion_Bitmap(2, enemy.Get_Direction(), enemy.Get_Ani_Count() / 2 % file.Get_Enemy_Motion_Count(enemy.Get_Enemy_Type(), Enemy_Status::E_SkillE)));
 		break;
 	case Enemy_Status::E_SkillR:
-		SelectObject(bitdc, enemy.Get_Enemy_Skill_Const().Get_Skill_Motion_Bitmap(3, enemy.Get_Direction(), enemy.Get_Ani_Count() / 2 % skillr));
+		SelectObject(bitdc, enemy.Get_Enemy_Skill_Const().Get_Skill_Motion_Bitmap(3, enemy.Get_Direction(), enemy.Get_Ani_Count() / 2 % file.Get_Enemy_Motion_Count(enemy.Get_Enemy_Type(), Enemy_Status::E_SkillR)));
 		break;
 	default:
 		break;
 	}
-	TransparentBlt(hdc, enemy.Get_XPos() + x_move, enemy.Get_YPos() + y_move, enemy.Get_Width(), enemy.Get_Height(), bitdc, 0, 0, enemy.Get_Width(), enemy.Get_Height(), RGB(255, 255, 255));
+	TransparentBlt(hdc, enemy.Get_XPos() + file.Get_Enemy_Motion_Count(enemy.Get_Enemy_Type(), 8), enemy.Get_YPos() + file.Get_Enemy_Motion_Count(enemy.Get_Enemy_Type(), 9), enemy.Get_Width(), enemy.Get_Height(), bitdc, 0, 0, enemy.Get_Width(), enemy.Get_Height(), RGB(255, 255, 255));
 
 	//Paint_Enemy_Attack_Effect(hdc, bitdc, enemy, attack);
 	for (int index = 0; index < 20; index++) {
@@ -244,6 +226,8 @@ void Paint_Enemy_Detail(HDC hdc, HDC bitdc, const Enemy& enemy, const int& stop,
 			Paint_Hitting_Range(hdc, bitdc, enemy.Get_Hit_Range_P_Const(index));
 		}
 	}
+
+	Paint_Hitting_Damage(hdc, enemy, file.Get_Enemy_Motion_Count(enemy.Get_Enemy_Type(), 9));
 }
 
 /*void Paint_Enemy_Attack_Effect(HDC hdc, HDC bitdc, const Enemy& enemy, const int& effect) {

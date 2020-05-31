@@ -5,6 +5,7 @@ class Object;
 class Map_Village;
 class Map_Dungeon;
 class Hitting_Range_Polygon;
+class File;
 
 /*Move*/
 
@@ -15,8 +16,12 @@ bool Crash_Check_Enemy(const Move_Object& m_objcet, const Map_Dungeon& map_d, co
 
 /*Attack*/
 
-const bool Crash_Attack_Polygon(const Move_Object& attack_obj, const Move_Object& hit_object, const Hitting_Range_Polygon& hit_range_p);
+const bool Crash_Attack_Polygon(const Object& hit_object, const Hitting_Range_Polygon& hit_range_p);
 const bool Polygon_Damage_Enemy(const Move_Object& attack_obj, Move_Object& hit_obj, const Hitting_Range_Polygon& hit_range_p, const int& hit_dmg);
-void Create_Hitting_Point(Move_Object& m_object, const int& width_size, const int& height_size, const int& shape, const int& owner, const bool& move, const int& speed, const int& type, const int& attack_type, const int& delay, const double& attack_multiple);
+const bool Crash_Check_Attack(const Map_Dungeon& map_d, const Hitting_Range_Polygon& hit_range_p);
+void Create_Hitting_Point(Move_Object& attack_object, const int& width_size, const int& height_size, const int& shape, const int& owner, const bool& move, const int& speed, const int& type, const int& attack_type, const int& delay, const double& attack_multiple);
+//void Create_Hitting_Point_Guide(Move_Object& attack_object, const Move_Object& hit_object, const int& width_size, const int& height_size, const int& owner,  const int& type, const int& attack_type, const int& delay, const double& attack_multiple);
 void Create_Hitting_Polygon(const Move_Object& m_object, POINT* pos, const int& width_size, const int& height_size, const int& shape);
+const POINT Create_Guide_Speed(const Move_Object& attack_object, const Move_Object& hit_object, const int& delay);
 void Attack_End(Move_Object& m_objcet);
+

@@ -12,6 +12,7 @@
 #include "Object_Enemy.h"
 #include "Object_Npc.h"
 #include "Hitting_Range.h"
+#include "File.h"
 
 using namespace std;
 
@@ -33,7 +34,7 @@ bool Crash_Check_Object(const Move_Object& m_object, const Object& obj, const in
 }
 
 bool Crash_Check_Enemy(const Move_Object& m_objcet, const Map_Dungeon& map_d, const int& move_x, const int& move_y) {
-	for (int index = 0; index < 50; index++) {
+	for (int index = 0; index < 53; index++) {
 		if (&map_d.Get_Enemy_Const(index) != NULL && Crash_Check_Object(m_objcet, map_d.Get_Enemy_Const(index), move_x, move_y))
 			return true;
 	}
@@ -45,13 +46,12 @@ bool Crash_Check_Npc(const Move_Object& m_objcet, const Map_Village& map_v, cons
 		if (&map_v.Get_Npc_Const(npc_type) != NULL && Crash_Check_Object(m_objcet, map_v.Get_Npc_Const(npc_type), move_x, move_y))
 			return true;
 	}
-
 	return false;
 }
 
 /*Attack*/
 
-const bool Crash_Attack_Polygon(const Move_Object& attack_obj, const Move_Object& hit_object, const Hitting_Range_Polygon& hit_range_p) {
+const bool Crash_Attack_Polygon(const Object& hit_object, const Hitting_Range_Polygon& hit_range_p) {
 
 	//두점 사이의 벡터를 구합니다.
 	int vx = (hit_range_p.Get_Pos(2).x + hit_range_p.Get_Pos(0).x) / 2 - (hit_object.Get_XPos() + hit_object.Get_Crash_Width() / 2);
@@ -76,11 +76,11 @@ const bool Crash_Attack_Polygon(const Move_Object& attack_obj, const Move_Object
 	//히팅범위의 사영크기를 구합니다.
 	proj[2][Object_Direction::Right] = abs(abs(hit_range_p.Get_Pos(2).x + hit_range_p.Get_Pos(0).x) / 2 - abs(hit_range_p.Get_Pos(1).x + hit_range_p.Get_Pos(0).x) / 2) + abs(abs(hit_range_p.Get_Pos(2).x + hit_range_p.Get_Pos(0).x) / 2 - abs(hit_range_p.Get_Pos(2).x + hit_range_p.Get_Pos(1).x) / 2);
 	proj[2][Object_Direction::Up] = abs(abs(hit_range_p.Get_Pos(2).y + hit_range_p.Get_Pos(0).y) / 2 - abs(hit_range_p.Get_Pos(1).y + hit_range_p.Get_Pos(0).y) / 2) + abs(abs(hit_range_p.Get_Pos(2).y + hit_range_p.Get_Pos(0).y) / 2 - abs(hit_range_p.Get_Pos(2).y + hit_range_p.Get_Pos(1).y) / 2);
-	if (attack_obj.Get_Direction() % 4 == 3) {
+	if (hit_range_p.Get_Direction() % 4 == 3) {
 		proj[2][Object_Direction::UpRight] = (sqrt(pow((static_cast<double>(hit_range_p.Get_Pos(2).x) - static_cast<double>(hit_range_p.Get_Pos(1).x)), 2) + pow((static_cast<double>(hit_range_p.Get_Pos(2).y) - static_cast<double>(hit_range_p.Get_Pos(1).y)), 2))) / 2;
 		proj[2][Object_Direction::UpLeft] = (sqrt(pow((static_cast<double>(hit_range_p.Get_Pos(1).x) - static_cast<double>(hit_range_p.Get_Pos(0).x)), 2) + pow((static_cast<double>(hit_range_p.Get_Pos(1).y) - static_cast<double>(hit_range_p.Get_Pos(0).y)), 2))) / 2;
 	}
-	else if (attack_obj.Get_Direction() % 4 == 1) {
+	else if (hit_range_p.Get_Direction() % 4 == 1) {
 		proj[2][Object_Direction::UpRight] = (sqrt(pow((static_cast<double>(hit_range_p.Get_Pos(0).x) - static_cast<double>(hit_range_p.Get_Pos(1).x)), 2) + pow((static_cast<double>(hit_range_p.Get_Pos(0).y) - static_cast<double>(hit_range_p.Get_Pos(1).y)), 2))) / 2;
 		proj[2][Object_Direction::UpLeft] = (sqrt(pow((static_cast<double>(hit_range_p.Get_Pos(2).x) - static_cast<double>(hit_range_p.Get_Pos(1).x)), 2) + pow((static_cast<double>(hit_range_p.Get_Pos(2).y) - static_cast<double>(hit_range_p.Get_Pos(1).y)), 2))) / 2;
 	}
@@ -90,7 +90,7 @@ const bool Crash_Attack_Polygon(const Move_Object& attack_obj, const Move_Object
 	if (abs(proj[0][Object_Direction::Up]) > proj[2][Object_Direction::Up] + proj[1][Object_Direction::Up])
 		return false;
 
-	if (attack_obj.Get_Direction() % 2 == 1) {
+	if (hit_range_p.Get_Direction() % 2 == 1) {
 		if (abs(proj[0][Object_Direction::UpRight]) > proj[2][Object_Direction::UpRight] + proj[1][Object_Direction::UpRight])
 			return false;
 		if (abs(proj[0][Object_Direction::UpLeft]) > proj[2][Object_Direction::UpLeft] + proj[1][Object_Direction::UpLeft])
@@ -101,26 +101,42 @@ const bool Crash_Attack_Polygon(const Move_Object& attack_obj, const Move_Object
 }
 
 const bool Polygon_Damage_Enemy(const Move_Object& attack_obj, Move_Object& hit_obj, const Hitting_Range_Polygon& hit_range_p, const int& hit_dmg) {
-	if (Crash_Attack_Polygon(attack_obj, hit_obj, hit_range_p)) {
+	if (Crash_Attack_Polygon(hit_obj, hit_range_p)) {
 		Calcul_Hitting_Damage(attack_obj, hit_obj, hit_dmg, hit_range_p.Get_Owner());
 		return true;
 	}
 	return false;
 }
 
+const bool Crash_Check_Attack(const Map_Dungeon& map_d, const Hitting_Range_Polygon& hit_range_p) {
+	for (int index = 0; index < 60; index++) {
+		if (&map_d.Get_NM_Object_Const(index) != NULL) {
+			if (Crash_Attack_Polygon(map_d.Get_NM_Object_Const(index), hit_range_p))
+				return true;
+		}
+	}
+	return false;
+}
+
 //히팅 범위를 생성하는 함수
-void Create_Hitting_Point(Move_Object& m_object, const int& width_size, const int& height_size, const int& shape, const int& owner, const bool& move, const int& speed, const int& type, const int& attack_type, const int& delay, const double& attack_multiple) {
+void Create_Hitting_Point(Move_Object& attack_object, const int& width_size, const int& height_size, const int& shape, const int& owner, const bool& move, const int& speed, const int& type, const int& attack_type, const int& delay, const double& attack_multiple) {
 	for (int index = 0; index < 20; index++) {
-		if (&m_object.Get_Hit_Range_P_Const(index) == NULL) {
+		if (&attack_object.Get_Hit_Range_P_Const(index) == NULL) {
 			//폴리곤 생성
 
 			POINT pos[4];
-			Create_Hitting_Polygon(m_object, pos, width_size, height_size, shape);
-
-			m_object.Set_Hit_Range_Polygon(index, owner, move, m_object.Get_Direction(), Create_Speed(m_object.Get_Direction(), speed), type, attack_type, pos, delay, attack_multiple);
+			Create_Hitting_Polygon(attack_object, pos, width_size, height_size, shape);
+			attack_object.Set_Hit_Range_Polygon(index, owner, move, attack_object.Get_Direction(), false, Create_Speed(attack_object.Get_Direction(), speed), type, attack_type, pos, delay, attack_multiple);
 			return;
 		}
 	}
+}
+
+
+
+const POINT Create_Guide_Speed(const Move_Object& attack_object, const Move_Object& hit_object, const int& delay) {
+	return { ((hit_object.Get_XPos() + hit_object.Get_Crash_Width() / 2) - (attack_object.Get_XPos() + attack_object.Get_Crash_Width() / 2)) / delay,
+	((hit_object.Get_YPos() + hit_object.Get_Height() - hit_object.Get_Crash_Height() / 2) - (attack_object.Get_YPos() + attack_object.Get_Height() - attack_object.Get_Crash_Height() / 2)) / delay };
 }
 
 //공격 스킬등이 끝났을때 활용되는 함수
@@ -157,4 +173,3 @@ void Create_Hitting_Polygon(const Move_Object& m_object, POINT* pos, const int& 
 		break;
 	}
 }
-

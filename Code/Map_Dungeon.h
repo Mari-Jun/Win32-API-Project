@@ -4,10 +4,17 @@
 
 class Player;
 class Enemy;
+class Camera;
+class File;
 
 enum Dungeon1_Texture {
-	D1_Grass, D1_Rock
+	D1_Grass, D2_Grass, D1_Rock
 };
+
+enum Dungeon1_Object {
+	D1_Left_Rock1, D1_Left_Rock2, D1_Right_Rock1, D1_Right_Rock2, D1_Bottom_Rock, D1_Tree1, D1_Tree2 = 25
+};
+
 
 class Map_Dungeon : public Map {
 public:
@@ -19,20 +26,15 @@ public:
 
 	void Set_Dungeon_Type(const int& dungeon_type);
 
-	virtual void Set_NM_Object();
-	virtual void Set_Texture();
-
-	void Set_Enemy();
+	void Set_Dungeon1(File& file);
 
 	void Kill_Enemy(const int& index);
 
 private:
 	int dungeon_type;
-	//그냥 Enemy와 Boss Enemy로 나중에 변환
-	Enemy* enemy[50];
-
+	Enemy* enemy[53];
 };
 
-void Reset_Dungeon_Map(HDC hdc, Map_Dungeon& map_d, const int& dungeon_type);
-void Paint_Dungeon_Map_Texture(HDC hdc, HDC bitdc, const Map_Dungeon& map_d);
-void Paint_Dungeon_Map(HDC hdc, HDC bitdc, const Player& player, const Map_Dungeon& map_d);
+void Reset_Dungeon_Map(HDC hdc, Map_Dungeon& map_d, File& file, const int& dungeon_type);
+void Paint_Dungeon_Map_Texture(HDC hdc, HDC bitdc, const Map_Dungeon& map_d, const Camera& camera, const RECT c_rect);
+void Paint_Dungeon_Map(HDC hdc, HDC bitdc, const Player& player, const Map_Dungeon& map_d, const File& file, const Camera& camera, const RECT c_rect);

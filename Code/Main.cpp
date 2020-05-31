@@ -3,6 +3,7 @@
 #include "resource.h"
 #include "Source.h"
 #include "Game_Progress.h"
+#include "Object_Info.h"
 #include "Object_Player_Command.h"
 #include "Object_Player.h"
 #include "Object_Player_Interaction.h"
@@ -13,6 +14,7 @@
 #include "Map_Dungeon.h"
 #include "Interface.h"
 #include "Sound.h"
+#include "File.h"
 
 #pragma comment(lib, "msimg32.lib")
 #pragma comment(lib,"fmodL_vc.lib")
@@ -75,6 +77,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 	//클라이언트 사각형
 	static RECT c_rect;
 
+	//저장 파일
+	static File* file;
+
 	//게임 진행 객체
 	static Progress* progress;
 
@@ -87,6 +92,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 	//인터페이스 관련 객체
 	static Interaction_Box* it_box;
 	static Player_Interface* p_inter;
+	static Enemy_Interface* e_inter;
 
 	//맵 관련 객체
 	static Map_Village* map_v;	
@@ -107,13 +113,17 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 
 		damage_font = CreateFont(40, 20, 0, 0, FW_BOLD, FALSE, FALSE, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH, _T("휴먼매직체"));
 
+		//저장 파일 관련
+		file = Create_Class<File>();
+		Reset_File(*file);
+
 		//게임 진행 관련
 		progress = Create_Class<Progress>();
 		Reset_Progress(*progress, Class_Type::Warrior);
 
 		//플레이어 관련
 		player = Create_Class<Player>();
-		Reset_Player(*player, Warrior);
+		Reset_Player(*player, *file, Warrior);
 
 		//카메라 관련
 		camera = Create_Class<Camera>();
@@ -129,7 +139,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 		map_v = Create_Class<Map_Village>();
 		Reset_Village_Map(hdc, *map_v);
 
-		SetTimer(hwnd, Default_Timer, 30, NULL);
+		SetTimer(hwnd, Default_Timer, 10, NULL);
 
 		ReleaseDC(hwnd, hdc);
 
@@ -156,6 +166,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 		case '3':
 			Use_Item_Command(*player, wParam - '0');
 			break;
+		case 'o':
+			DialogBox(hInst, MAKEINTRESOURCE(IDD_DIALOG_OBJECT_INFO), hwnd, Object_Info_Dialog);
+			break;
 		default:
 			break;
 		}
@@ -170,16 +183,17 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 			switch (Change_Map_Select(*progress, *player, wParam))
 			{
 			case Map_Type::Dungeon1:
+				hdc = GetDC(hwnd);
 				Change_Map_Village_To(*map_v);
 				map_d = Create_Class<Map_Dungeon>();
-				Reset_Dungeon_Map(hdc, *map_d, Map_Type::Dungeon1);
+				Reset_Dungeon_Map(hdc, *map_d, *file, Map_Type::Dungeon1);
 				Change_Map_Reset_Player(*player, *progress);
-				//Move_Camera(*camera, *player, *map_v, c_rect);
-				//InvalidateRgn(hwnd, NULL, FALSE);
+				e_inter = Create_Class<Enemy_Interface>();
+				Reset_Enemy_Interface(*e_inter);
+				ReleaseDC(hwnd, hdc);
 				break;
 			default:
 				break;
-				
 			}
 		}
 		break;
@@ -206,7 +220,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 				Command_Player<Map_Dungeon>(*player, *map_d, *progress);
 				Move_Camera(*camera, *player, *map_d, c_rect);
 				//Enemy관련
-				Command_Enemy(*map_d, *player);
+				Command_Enemy(*map_d, *player, *camera, *file, c_rect);
 				break;
 			default:
 				break;
@@ -226,10 +240,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 		switch (progress->Get_Map_Type())
 		{
 		case Map_Type::Village1:
-			Paint_Village_Map(gamedc, bitdc, *player, *map_v);
+			Paint_Village_Map(gamedc, bitdc, *player, *map_v, *camera, c_rect);
 			break;
 		case Map_Type::Dungeon1:
-			Paint_Dungeon_Map(gamedc, bitdc, *player, *map_d);
+			Paint_Dungeon_Map(gamedc, bitdc, *player, *map_d, *file, *camera, c_rect);
 			break;
 		default:
 			break;
@@ -238,6 +252,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 		BitBlt(memdc, 0, 0, c_rect.right, c_rect.bottom, gamedc, camera->Get_Cam_Left(), camera->Get_Cam_Top(), SRCCOPY);
 
 		Paint_Player_Interface(memdc, bitdc, c_rect, *p_inter, *player);
+		if (progress->Get_Map_Type() != Map_Type::Village1)
+			Paint_Enemy_Interface(memdc, bitdc, c_rect, *e_inter, *map_d);
 		Paint_Player_Equipment(memdc, bitdc, *player);
 		
 		if (Paint_Interaction_Box(memdc, alphadc, bitdc, c_rect, *player, *it_box))

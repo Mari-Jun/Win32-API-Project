@@ -7,6 +7,7 @@ class Player_Item;
 class Player_Skill;
 class Progress;
 class Sound;
+class File;
 
 class Player : public Move_Object {
 public:
@@ -32,7 +33,7 @@ public:
 	void Set_Motion_Bitmap();
 
 	void Create_Player_Equipment();
-	void Create_Player_Skill();
+	void Create_Player_Skill(File& file);
 	void Create_Player_Item();
 	void Create_Player_Sound();
 
@@ -50,7 +51,7 @@ private:
 	HBITMAP attack_motion_bitmap[8][10];
 };
 
-void Reset_Player(Player& player, const int& class_type);
+void Reset_Player(Player& player, File& file, const int& class_type);
 void Paint_Player (HDC hdc, HDC bitdc, const Player& player);
 void Paint_Player_Equipment(HDC hdc, HDC bitdc, const Player& player);
 

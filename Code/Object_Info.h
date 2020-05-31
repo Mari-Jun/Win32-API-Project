@@ -36,3 +36,5 @@ private:
 };
 
 void Reset_Object_Info(Object_Info& o_info, const int& level, const int& hp, const int& mp, const int& attack, const int& defence, const int& fatal);
+
+INT_PTR CALLBACK Object_Info_Dialog(HWND hdlg, UINT iMsg, WPARAM wParam, LPARAM lParam);
