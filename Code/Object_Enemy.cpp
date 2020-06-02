@@ -8,6 +8,7 @@
 #include "Object_Skill.h"
 #include "Hitting_Range.h"
 #include "File.h"
+#include "Camera.h"
 
 using namespace std;
 
@@ -155,9 +156,13 @@ void Reset_Enemy(Enemy& enemy, const File& file, const int& enemy_type) {
 	}*/
 }
 
-void Paint_Enemy(HDC hdc, HDC bitdc, const File& file, const Enemy& enemy) {
+void Paint_Enemy(HDC hdc, HDC bitdc, const File& file, const Enemy& enemy, const Camera& camera, const RECT c_rect) {
 
-	/*for (int index = 0; index < 20; index++) {
+	if (camera.Get_Cam_Left() <= enemy.Get_XPos() + enemy.Get_Width() &&
+		camera.Get_Cam_Left() + c_rect.right >= enemy.Get_XPos() &&
+		camera.Get_Cam_Top() <= enemy.Get_YPos() + enemy.Get_Height() &&
+		camera.Get_Cam_Top() + c_rect.bottom >= enemy.Get_YPos()) {
+		/*for (int index = 0; index < 20; index++) {
 		if (&enemy.Get_Hit_Range_P_Const(index) != NULL) {
 			POINT pos[4];
 			pos[0] = enemy.Get_Hit_Range_P_Const(index).Get_Pos(0);
@@ -168,27 +173,11 @@ void Paint_Enemy(HDC hdc, HDC bitdc, const File& file, const Enemy& enemy) {
 			Polygon(hdc, pos, 4);
 		}
 	}*/
-	
-	switch (enemy.Get_Enemy_Type())
-	{
-	case Enemy_Type::Bird:
+
 		Paint_Enemy_Detail(hdc, bitdc, enemy, file);
-		break;
-	case Enemy_Type::Zadrom:
-		Paint_Enemy_Detail(hdc, bitdc, enemy, file);
-		break;
-	case Enemy_Type::Tolpi:
-		Paint_Enemy_Detail(hdc, bitdc, enemy, file);
-		break;
-	case Enemy_Type::Dark_Flower:
-		Paint_Enemy_Detail(hdc, bitdc, enemy, file);
-		break;
-	default:
-		break;
+
+		//Rectangle(hdc, enemy.Get_XPos(), enemy.Get_YPos() + enemy.Get_Height() - enemy.Get_Crash_Height(), enemy.Get_XPos() + enemy.Get_Crash_Width(), enemy.Get_YPos() + enemy.Get_Height());
 	}
-
-	//Rectangle(hdc, enemy.Get_XPos(), enemy.Get_YPos() + enemy.Get_Height() - enemy.Get_Crash_Height(), enemy.Get_XPos() + enemy.Get_Crash_Width(), enemy.Get_YPos() + enemy.Get_Height());
-
 }
 
 void Paint_Enemy_Detail(HDC hdc, HDC bitdc, const Enemy& enemy, const File& file) {

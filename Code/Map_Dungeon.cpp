@@ -57,11 +57,11 @@ void Map_Dungeon::Set_Dungeon1(File& file) {
 	Get_NM_Object(Dungeon1_Object::D1_Bottom_Rock).Set_Crash_Width(Get_Map_Rect().right);
 	Get_NM_Object(Dungeon1_Object::D1_Bottom_Rock).Set_Crash_Height(320);
 
-	Create_NM_Object(Dungeon1_Object::D1_Tree1);
+	/*Create_NM_Object(Dungeon1_Object::D1_Tree1);
 	Reset_Non_Move_Object(Get_NM_Object(Dungeon1_Object::D1_Tree1), 80, 1020, (HBITMAP)LoadImage(NULL, _T(".\\BitMap\\Map\\Dungeon1\\Tree1.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
 	Get_NM_Object(Dungeon1_Object::D1_Tree1).Set_Height(400);
 	Get_NM_Object(Dungeon1_Object::D1_Tree1).Set_Crash_Width(2720);
-	Get_NM_Object(Dungeon1_Object::D1_Tree1).Set_Crash_Height(300);
+	Get_NM_Object(Dungeon1_Object::D1_Tree1).Set_Crash_Height(300);*/
 
 
 	for (int index = Dungeon1_Object::D1_Tree1 + 1; index < 60; index++)
@@ -118,23 +118,23 @@ void Map_Dungeon::Set_Dungeon1(File& file) {
 		enemy[index] = Create_Class<Enemy>();
 		Reset_Enemy(*enemy[index], file, Enemy_Type::Bird);
 		Reset_Move_Object(*enemy[index], enemy_pos[index].x, enemy_pos[index].y, enemy[index]->Get_Motion_Size().bmWidth, enemy[index]->Get_Motion_Size().bmHeight, 8);
-	}*/
+	}
 
-	/*for (int index = 10; index < 20; index++) {
+	for (int index = 10; index < 20; index++) {
 		enemy[index] = Create_Class<Enemy>();
 		Reset_Enemy(*enemy[index], file, Enemy_Type::Zadrom);
 		Reset_Move_Object(*enemy[index], enemy_pos[index].x, enemy_pos[index].y, enemy[index]->Get_Motion_Size().bmWidth, enemy[index]->Get_Motion_Size().bmHeight, 6);
-	}*/
+	}
 
 	for (int index = 20; index < 25; index++) {
 		enemy[index] = Create_Class<Enemy>();
 		Reset_Enemy(*enemy[index], file, Enemy_Type::Tolpi);
 		Reset_Move_Object(*enemy[index], enemy_pos[index].x, enemy_pos[index].y, enemy[index]->Get_Motion_Size().bmWidth, enemy[index]->Get_Motion_Size().bmHeight, 6);
-	}
+	}*/
 
-	/*enemy[50] = Create_Class<Enemy>();
+	enemy[50] = Create_Class<Enemy>();
 	Reset_Enemy(*enemy[50], file, Enemy_Type::Dark_Flower);
-	Reset_Move_Object(*enemy[50], 1900, 1400, enemy[50]->Get_Motion_Size().bmWidth, enemy[50]->Get_Motion_Size().bmHeight, 0);*/
+	Reset_Move_Object(*enemy[50], 1900, 1400, enemy[50]->Get_Motion_Size().bmWidth, enemy[50]->Get_Motion_Size().bmHeight, 0);
 }
 
 void Map_Dungeon::Kill_Enemy(const int& index) {
@@ -252,10 +252,18 @@ void Paint_Dungeon_Map(HDC hdc, HDC bitdc, const Player& player, const Map_Dunge
 		//적 그리기
 		for (int index = 0; index < 53; index++) {
 			if (&map_d.Get_Enemy_Const(index) != NULL && y_pos == map_d.Get_Enemy_Const(index).Get_YPos() + map_d.Get_Enemy_Const(index).Get_Height())
-				Paint_Enemy(hdc, bitdc, file, map_d.Get_Enemy_Const(index));
+				Paint_Enemy(hdc, bitdc, file, map_d.Get_Enemy_Const(index), camera, c_rect);
 		}	
 
 		if (&player != NULL && y_pos == player.Get_YPos() + player.Get_Height())
 			Paint_Player(hdc, bitdc, player);
 	}
+}
+
+bool Check_Dungeon_Clear(const Map_Dungeon& map_d) {
+	for (int index = 50; index < 53; index++) {
+		if (&map_d.Get_Enemy_Const(index) != NULL)
+			return false;
+	}
+	return true;
 }

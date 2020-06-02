@@ -859,7 +859,7 @@ void Player_Equipment::Set_Font() {
 void Reset_Player_Equipment(Player_Equipment& p_equip, Object_Info& o_info) {
 	p_equip.Create_Equipment();
 	p_equip.Set_Pos({ 60,60 });
-	p_equip.Set_Gold(10000);
+	p_equip.Set_Gold(100);
 	p_equip.Set_Type_Select(Equipment_Type::T_HELMET);
 	for (int e_type = Equipment_Type::T_HELMET; e_type <= Equipment_Type::T_CLOAK; e_type++) {
 		p_equip.Set_Equipment_Detail_Select(e_type, 0);
@@ -902,7 +902,7 @@ void Paint_Player_Equipment(HDC hdc, HDC bitdc, const Player_Equipment& p_equip,
 	for (int e_type = Equipment_Type::T_HELMET; e_type <= Equipment_Type::T_CLOAK; e_type++) {
 		SelectObject(bitdc, p_equip.Get_Equipment_Bitmap(e_type, p_equip.Get_Equipment_Detail_Select(e_type)));
 		TransparentBlt(hdc, p_equip.Get_Pos().x + 30 + 377 * (e_type / 5), p_equip.Get_Pos().y + 30 + (e_type % 5) * 80, p_equip.Get_Equipment_Bitmap_Size().bmWidth, p_equip.Get_Equipment_Bitmap_Size().bmHeight,
-			bitdc, 0, 0, p_equip.Get_Equipment_Bitmap_Size().bmWidth, p_equip.Get_Equipment_Bitmap_Size().bmHeight, ((e_type <= Equipment_Type::T_WEAPON) ? RGB(0, 0, 0) : RGB(150, 150, 150)));
+			bitdc, 0, 0, p_equip.Get_Equipment_Bitmap_Size().bmWidth, p_equip.Get_Equipment_Bitmap_Size().bmHeight, RGB(0, 0, 0));
 	}
 
 	//장비 선택 테두리를 출력한다.

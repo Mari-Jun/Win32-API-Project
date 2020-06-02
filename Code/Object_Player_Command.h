@@ -39,6 +39,11 @@ void Command_Player(Player& player, T_Map& map, Progress& progress) {
 		player.Set_Ani_Count(0);
 
 	Move_Player(player, map, progress);
+
+	//스킬 쿨다운 감소
+	for (int index = Skill_Type::Skill_Q; index <= Skill_Type::Skill_R; index++)
+		if (player.Get_Player_Skill_Const().Get_Current_Delay(index) > 0)
+			player.Get_Player_Skill().Set_Current_Delay(index, player.Get_Player_Skill_Const().Get_Current_Delay(index) - 1);
 }
 
 template <>

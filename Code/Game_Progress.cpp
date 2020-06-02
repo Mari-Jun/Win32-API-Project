@@ -24,6 +24,10 @@ const int& Progress::Get_Quest_Num() const {
 	return quest_num;
 }
 
+const int& Progress::Get_Quest_Clear() const {
+	return quest_clear;
+}
+
 const HBITMAP& Progress::Get_Map_Select_Bitmap() const {
 	return map_select_bitmap;
 }
@@ -56,6 +60,10 @@ void Progress::Set_Quest_Num(const int& quest_num) {
 	this->quest_num = quest_num;
 }
 
+void Progress::Set_Quest_Clear(const int& quest_clear) {
+	this->quest_clear = quest_clear;
+}
+
 void Progress::Set_Bitmap_Font() {
 	map_select_bitmap = (HBITMAP)LoadImage(NULL, _T(".\\BitMap\\Interface\\Map_Select.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 	GetObject(map_select_bitmap, sizeof(BITMAP), &map_select_bitmap_size);
@@ -68,6 +76,7 @@ void Reset_Progress(Progress& progress, const int& player_class) {
 	progress.Set_Select_Map_Type(Map_Type::Dungeon1);
 	progress.Set_Map_Select(false);
 	progress.Set_Quest_Num(Quest_Name::No_Quest);
+	progress.Set_Quest_Clear(Quest_Name::No_Quest);
 	progress.Set_Bitmap_Font();
 }
 
@@ -125,4 +134,14 @@ int Change_Map_Select(Progress& progress, Player& player, const WPARAM wParam) {
 		break;
 	}
 	return 0;
+}
+
+void Change_Map_Dungeon_Clear(Progress& progress, Player& player) {
+	player.Set_Status(Player_Status::Stop);
+	progress.Set_Map_Type(Map_Type::Village1);
+}
+
+void Clear_Quest(Progress& progress) {
+	if (progress.Get_Quest_Clear() < progress.Get_Map_Type())
+		progress.Set_Quest_Clear(progress.Get_Quest_Clear() + 1);
 }

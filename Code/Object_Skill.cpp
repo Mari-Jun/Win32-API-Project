@@ -245,8 +245,6 @@ void Enemy_Skill::Set_Motion_Bitmap(const File& file, const int& type) {
 			std::wcout << str << std::endl;
 		}
 	}
-
-
 }
 
 void Enemy_Skill::Set_Delay(const File& file, const int& enemy_type) {
@@ -254,19 +252,6 @@ void Enemy_Skill::Set_Delay(const File& file, const int& enemy_type) {
 	Set_Skill_Delay(Skill_Type::Skill_W, file.Get_Enemy_Attack_Info(enemy_type, Attack_Type::A_SkillW, Attack_Info::Attack_Delay));
 	Set_Skill_Delay(Skill_Type::Skill_E, file.Get_Enemy_Attack_Info(enemy_type, Attack_Type::A_SkillE, Attack_Info::Attack_Delay));
 	Set_Skill_Delay(Skill_Type::Skill_R, file.Get_Enemy_Attack_Info(enemy_type, Attack_Type::A_SkillR, Attack_Info::Attack_Delay));
-
-	/*switch (enemy_type)
-	{
-	case Enemy_Type::Tolpi:
-		Set_Skill_Delay(Skill_Type::Skill_Q, 300);
-		break;
-	case Enemy_Type::Dark_Flower:
-		Set_Skill_Delay(Skill_Type::Skill_Q, 300);
-		Set_Skill_Delay(Skill_Type::Skill_W, 500);
-		break;
-	default:
-		break;
-	}*/
 }
 
 void Reset_Enemy_Skill(Enemy_Skill& e_skill, const File& file, const int& enemy_type) {

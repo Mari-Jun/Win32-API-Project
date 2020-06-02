@@ -3,6 +3,7 @@
 
 class Enemy_Skill;
 class File;
+class Camera;
 
 class Enemy :public Move_Object {
 public:
@@ -41,7 +42,7 @@ private:
 };
 
 void Reset_Enemy(Enemy& enemy, const File& file, const int& enemy_type);
-void Paint_Enemy(HDC hdc, HDC bitdc, const File& file, const Enemy& enemy);
+void Paint_Enemy(HDC hdc, HDC bitdc, const File& file, const Enemy& enemy, const Camera& camera, const RECT c_rect);
 void Paint_Enemy_Detail(HDC hdc, HDC bitdc, const Enemy& enemy, const File& file);
 //void Paint_Enemy_Attack_Effect(HDC hdc, HDC bitdc, const Enemy& enemy, const int& effect);
 

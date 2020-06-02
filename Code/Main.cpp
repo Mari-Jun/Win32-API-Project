@@ -93,6 +93,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 	static Interaction_Box* it_box;
 	static Player_Interface* p_inter;
 	static Enemy_Interface* e_inter;
+	static Clear_Interface* c_inter;
 
 	//맵 관련 객체
 	static Map_Village* map_v;	
@@ -139,7 +140,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 		map_v = Create_Class<Map_Village>();
 		Reset_Village_Map(hdc, *map_v);
 
-		SetTimer(hwnd, Default_Timer, 10, NULL);
+		SetTimer(hwnd, Timer_Name::Default_Timer, 10, NULL);
 
 		ReleaseDC(hwnd, hdc);
 
@@ -201,7 +202,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 		if (progress->Get_Map_Type() == Map_Type::Village1) {
 			switch (wParam)
 			{
-			case Default_Timer:
+			case Timer_Name::Default_Timer:
 				//Player 관련
 				Command_Player<Map_Village>(*player, *map_v, *progress);
 				Move_Camera(*camera, *player, *map_v, c_rect);
@@ -215,12 +216,32 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 		else {
 			switch (wParam)
 			{
-			case Default_Timer:
+			case Timer_Name::Default_Timer:
 				//Player 관련
 				Command_Player<Map_Dungeon>(*player, *map_d, *progress);
 				Move_Camera(*camera, *player, *map_d, c_rect);
 				//Enemy관련
 				Command_Enemy(*map_d, *player, *camera, *file, c_rect);
+				if (Check_Dungeon_Clear(*map_d) && c_inter == NULL) {
+					SetTimer(hwnd, Timer_Name::Clear_Timer, 10000, NULL);
+					c_inter = Create_Class<Clear_Interface>();
+					Reset_Clear_Interface(*c_inter, *player, *map_d);
+				}
+				break;
+			case Timer_Name::Clear_Timer:
+				//사운드 재생
+				Change_Map_To_Village(*map_v);
+
+				Delete_Class<Map_Dungeon>(&map_d);
+				Delete_Class<Clear_Interface>(&c_inter);
+				Delete_Class<Enemy_Interface>(&e_inter);
+
+				//progress변경
+				Clear_Quest(*progress);
+				Change_Map_Dungeon_Clear(*progress, *player);
+				Change_Map_Reset_Player(*player, *progress);
+				KillTimer(hwnd, Timer_Name::Clear_Timer);
+				
 				break;
 			default:
 				break;
@@ -252,13 +273,16 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 		BitBlt(memdc, 0, 0, c_rect.right, c_rect.bottom, gamedc, camera->Get_Cam_Left(), camera->Get_Cam_Top(), SRCCOPY);
 
 		Paint_Player_Interface(memdc, bitdc, c_rect, *p_inter, *player);
-		if (progress->Get_Map_Type() != Map_Type::Village1)
-			Paint_Enemy_Interface(memdc, bitdc, c_rect, *e_inter, *map_d);
+		if (progress->Get_Map_Type() != Map_Type::Village1) {
+			Paint_Enemy_Interface(memdc, bitdc, c_rect, *e_inter, *map_d, *camera);
+			if (c_inter != NULL)
+				Paint_Clear_Interface(memdc, bitdc, *c_inter, *player, *map_d, c_rect);
+		}
 		Paint_Player_Equipment(memdc, bitdc, *player);
 		
 		if (Paint_Interaction_Box(memdc, alphadc, bitdc, c_rect, *player, *it_box))
 			if (progress->Get_Map_Type() == Map_Type::Village1)
-				Show_Npc_Interaction(memdc, bitdc, *player, *map_v, *it_box);
+				Show_Npc_Interaction(memdc, bitdc, *player, *map_v, *it_box, *progress);
 
 		Paint_Map_Select(memdc, bitdc, *progress, c_rect);
 

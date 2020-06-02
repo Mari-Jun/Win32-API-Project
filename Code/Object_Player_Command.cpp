@@ -49,10 +49,10 @@ void Move_Player_Check(Move_Object& player, const Map_Village& map_v, Progress& 
 	if (&map_v.Get_Portal_Const() != NULL && Crash_Check_Object(player, map_v.Get_Portal_Const(), move_x, move_y)) {
 		//포탈과 충돌 했을 경우 던전 선택을 해야합니다.
 		//퀘스트 안받았을 경우는 포탈 못탑니다. 일단 주석처리 해놓겠습니다. 나중에 주석 풀어주세요.
-		//if (progress.Get_Quest_Num() != Quest_Name::No_Quest) {
+		if (progress.Get_Quest_Num() != Quest_Name::No_Quest) {
 		progress.Set_Map_Select(true);
 		player.Set_Status(Player_Status::Map_Selecting);
-		//}
+		}
 		return;
 	}
 
@@ -138,7 +138,7 @@ void CalCul_Player_Hitting_Point(Move_Object& attack_obj, Map_Dungeon& map_d) {
 
 void Skill_Player(Player& player, Map_Dungeon& map_d) {
 	//스킬 쿨다운 감소
-	for (int index = Skill_Type::Skill_Q; index <= Skill_Type::Skill_R; index++) 
+	for (int index = Skill_Type::Skill_Q; index <= Skill_Type::Skill_R; index++)
 		if (player.Get_Player_Skill_Const().Get_Current_Delay(index) > 0)
 			player.Get_Player_Skill().Set_Current_Delay(index, player.Get_Player_Skill_Const().Get_Current_Delay(index) - 1);
 

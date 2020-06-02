@@ -84,7 +84,7 @@ enum Quest_Name {
 };
 
 enum Timer_Name {
-	Default_Timer
+	Default_Timer, Clear_Timer
 };
 
 enum Hitting_Shape {

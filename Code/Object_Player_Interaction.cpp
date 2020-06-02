@@ -204,7 +204,7 @@ void Interaction_Command(Player& player, Map_Village& map_v, Interaction_Box& it
 							//게임 진행의 퀘스트 값을 1 올려준다.
 							progress.Set_Quest_Num(progress.Get_Quest_Num() + 1);
 						}
-						else if (map_v.Get_Npc_Const(npc_type).Get_Interaction_Count() == 7) {
+						else if (map_v.Get_Npc_Const(npc_type).Get_Interaction_Count() == 6) {
 							map_v.Get_Npc(npc_type).Set_interaction_Count(0);
 							player.Set_Status(Player_Status::Stop);
 							map_v.Get_Npc(npc_type).Set_Interaction(false);
@@ -232,7 +232,7 @@ bool Interaction_Range_Player_To_Npc(Player& player, const Npc& npc) {
 	return false;
 }
 
-void Show_Npc_Interaction(HDC hdc, HDC bitdc, const Player& player, const Map_Village& map_v, const Interaction_Box& it_box) {
+void Show_Npc_Interaction(HDC hdc, HDC bitdc, const Player& player, const Map_Village& map_v, const Interaction_Box& it_box, Progress& progress) {
 	SetBkMode(hdc, TRANSPARENT);
 	SetTextColor(hdc, RGB(255, 255, 255));
 	SelectObject(hdc, it_box.Get_Message_Box_Font(0));
@@ -242,12 +242,12 @@ void Show_Npc_Interaction(HDC hdc, HDC bitdc, const Player& player, const Map_Vi
 			switch (npc_type)
 			{
 			case Npc_Name::ELDER:
-				Show_Npc_Elder_Interaction(hdc, map_v.Get_Npc_Const(npc_type), it_box);
+				Show_Npc_Elder_Interaction(hdc, map_v.Get_Npc_Const(npc_type), it_box, progress);
 				if (it_box.Get_Dialog_Status() == 1)
 					Show_Dialog_Box(hdc, bitdc, it_box, Dialog_Type::Quest_Type);
 				break;
 			case Npc_Name::EQUIPMENT_SHOP:
-				Show_Npc_Equipment_Interaction(hdc, map_v.Get_Npc_Const(npc_type), it_box);
+				Show_Npc_Equipment_Interaction(hdc, map_v.Get_Npc_Const(npc_type), it_box, progress);
 				if (&map_v.Get_Shop_Const() != NULL) {
 					Paint_Shop(hdc, bitdc, player.Get_Player_Equipment_Const(), map_v.Get_Shop_Const());
 					if (it_box.Get_Dialog_Status() == 1)
@@ -257,7 +257,7 @@ void Show_Npc_Interaction(HDC hdc, HDC bitdc, const Player& player, const Map_Vi
 				}	
 				break;
 			case Npc_Name::WEAPON_SHOP:
-				Show_Npc_Weapon_Interaction(hdc, map_v.Get_Npc_Const(npc_type), it_box);
+				Show_Npc_Weapon_Interaction(hdc, map_v.Get_Npc_Const(npc_type), it_box, progress);
 				if (&map_v.Get_Shop_Const() != NULL) {
 					Paint_Shop(hdc, bitdc, player.Get_Player_Equipment_Const(), map_v.Get_Shop_Const());
 					if (it_box.Get_Dialog_Status() == 1)
@@ -267,30 +267,29 @@ void Show_Npc_Interaction(HDC hdc, HDC bitdc, const Player& player, const Map_Vi
 				}
 				break;
 			case Npc_Name::ITEM_SHOP:
-				Show_Npc_Item_Interaction(hdc, map_v.Get_Npc_Const(npc_type), it_box);
+				Show_Npc_Item_Interaction(hdc, map_v.Get_Npc_Const(npc_type), it_box, progress);
 				if (it_box.Get_Dialog_Status() == 1)
 					Show_Dialog_Box(hdc, bitdc, it_box, Dialog_Type::Heal_Type);
 				break;
 			case Npc_Name::LEGEND:
-				Show_Npc_Legend_Interaction(hdc, map_v.Get_Npc_Const(npc_type), it_box);
+				Show_Npc_Legend_Interaction(hdc, map_v.Get_Npc_Const(npc_type), it_box, progress);
 				break;
 			case Npc_Name::SOLDIER:
-				Show_Npc_Soldier_Interaction(hdc, map_v.Get_Npc_Const(npc_type), it_box);
+				Show_Npc_Soldier_Interaction(hdc, map_v.Get_Npc_Const(npc_type), it_box, progress);
 			default:
 				break;
 			}
 		}
 }
 
-void Show_Npc_Elder_Interaction(HDC hdc, const Npc& elder, const Interaction_Box& it_box) {
+void Show_Npc_Elder_Interaction(HDC hdc, const Npc& elder, const Interaction_Box& it_box, Progress& progress) {
 	SelectObject(hdc, it_box.Get_Message_Box_Font(1));
-	switch (elder.Get_Quest_Num())
-	{
-	case Quest_Name::No_Quest:
+
+	if (elder.Get_Quest_Num() == Quest_Name::No_Quest && (progress.Get_Quest_Num() != progress.Get_Quest_Clear())) {
 		TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 45, _T("촌장"), 2);
 		TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 90, _T("마을을 지켜야하는데..."), 13);
-		break;
-	case Quest_Name::Main_Quest1:
+	}
+	else if (elder.Get_Quest_Num() != Quest_Name::No_Quest) {
 		switch (elder.Get_Interaction_Count())
 		{
 		case 1:
@@ -313,22 +312,58 @@ void Show_Npc_Elder_Interaction(HDC hdc, const Npc& elder, const Interaction_Box
 			TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 45, _T("촌장"), 2);
 			TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 90, _T("고맙네, 청년"), 7);
 			break;
-		case 7:
+		case 6:
 			TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 45, _T("촌장"), 2);
 			TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 90, _T("에휴,, 요즘것들은.."), 12);
 			break;
 		default:
 			break;
 		}
-		break;
-	default:
-		break;
 	}
-	
+	else {
+		TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 45, _T("촌장"), 2);
+		TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 90, _T("끄아아아악"), 5);
+	}
+
+	/*if (progress.Get_Quest_Num() == Quest_Name::No_Quest && progress.Get_Quest_Clear() == Quest_Name::No_Quest && elder.Get_Quest_Num() == Quest_Name::Main_Quest1) {
+		switch (elder.Get_Interaction_Count())
+		{
+		case 1:
+			TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 45, _T("촌장"), 2);
+			TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 90, _T("쿨럭.. 쿨럭.."), 9);
+			break;
+		case 2:
+			TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 45, _T("촌장"), 2);
+			TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 90, _T("응? 자네는 누군가?"), 11);
+			break;
+		case 3:
+			TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 45, _T("임시이름"), 4);
+			TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 90, _T("....."), 11);
+			break;
+		case 4:
+			TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 45, _T("촌장"), 2);
+			TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 90, _T("그렇군.. 마침 잘됬구만"), 13);
+			break;
+		case 5:
+			TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 45, _T("촌장"), 2);
+			TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 90, _T("고맙네, 청년"), 7);
+			break;
+		case 6:
+			TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 45, _T("촌장"), 2);
+			TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 90, _T("에휴,, 요즘것들은.."), 12);
+			break;
+		default:
+			break;
+		}
+	}
+	else {
+		TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 45, _T("촌장"), 2);
+		TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 90, _T("마을을 지켜야하는데..."), 13);
+	}*/
 }
 
 
-void Show_Npc_Equipment_Interaction(HDC hdc, const Npc& equip, const Interaction_Box& it_box) {
+void Show_Npc_Equipment_Interaction(HDC hdc, const Npc& equip, const Interaction_Box& it_box, Progress& progress) {
 	TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 45, _T("장비 상인"), 5);
 
 	SelectObject(hdc, it_box.Get_Message_Box_Font(1));
@@ -346,7 +381,7 @@ void Show_Npc_Equipment_Interaction(HDC hdc, const Npc& equip, const Interaction
 	
 }
 
-void Show_Npc_Weapon_Interaction(HDC hdc, const Npc& weapon, const Interaction_Box& it_box) {
+void Show_Npc_Weapon_Interaction(HDC hdc, const Npc& weapon, const Interaction_Box& it_box, Progress& progress) {
 	TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 45, _T("무기/장신구 상인"), 9);
 
 	SelectObject(hdc, it_box.Get_Message_Box_Font(1));
@@ -364,21 +399,21 @@ void Show_Npc_Weapon_Interaction(HDC hdc, const Npc& weapon, const Interaction_B
 
 }
 
-void Show_Npc_Item_Interaction(HDC hdc, const Npc& item, const Interaction_Box& it_box) {
+void Show_Npc_Item_Interaction(HDC hdc, const Npc& item, const Interaction_Box& it_box, Progress& progress) {
 	TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 45, _T("치유 술사"), 5);
 
 	SelectObject(hdc, it_box.Get_Message_Box_Font(1));
 	TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 90, _T("당신에게 가호가 있기를.."), 14);
 }
 
-void Show_Npc_Legend_Interaction(HDC hdc, const Npc& Legend, const Interaction_Box& it_box) {
+void Show_Npc_Legend_Interaction(HDC hdc, const Npc& Legend, const Interaction_Box& it_box, Progress& progress) {
 	TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 45, _T("퇴역한 수비대장"), 8);
 
 	SelectObject(hdc, it_box.Get_Message_Box_Font(1));
 	TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 90, _T("크윽.. 내가 10년만 젊었어도..."), 20);
 }
 
-void Show_Npc_Soldier_Interaction(HDC hdc, const Npc& Soldier, const Interaction_Box& it_box) {
+void Show_Npc_Soldier_Interaction(HDC hdc, const Npc& Soldier, const Interaction_Box& it_box, Progress& progress) {
 	TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 45, _T("군인"), 2);
 
 	SelectObject(hdc, it_box.Get_Message_Box_Font(1));
@@ -475,7 +510,7 @@ void Interaction_Dialog_Select(Player& player, Map_Village& map_v, Interaction_B
 		it_box.Set_Dialog_Status(0);
 		for (int npc_type = Npc_Name::ELDER; npc_type <= Npc_Name::SOLDIER; npc_type++)
 			if (map_v.Get_Npc_Const(npc_type).Is_Interaction())
-				map_v.Get_Npc(npc_type).Set_interaction_Count(map_v.Get_Npc_Const(npc_type).Get_Interaction_Count() + 3);
+				map_v.Get_Npc(npc_type).Set_interaction_Count(map_v.Get_Npc_Const(npc_type).Get_Interaction_Count() + 2);
 		break;
 	case 1:
 		//확인을 선택한 경우

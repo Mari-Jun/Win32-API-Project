@@ -159,7 +159,7 @@ void Reset_Player(Player& player, File& file, const int& class_type) {
 	player.Set_Motion_Bitmap();
 	Reset_Move_Object(player, 400, 500, player.Get_Motion_Size().bmWidth, player.Get_Motion_Size().bmHeight, 6);
 	player.Create_Object_Info();
-	Reset_Object_Info(player.Get_Object_Info(), 1, 100, 100, 10, 0, 0);
+	Reset_Object_Info(player.Get_Object_Info(), 1, 100, 100, 500, 0, 0);
 	player.Set_Class_Type(class_type);
 	player.Create_Player_Equipment();
 	player.Create_Player_Skill(file);
