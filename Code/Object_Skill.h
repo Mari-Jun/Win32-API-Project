@@ -10,20 +10,17 @@ public:
 	virtual ~Object_Skill();
 
 	const HBITMAP& Get_Skill_Motion_Bitmap(const int& skill_type, const int& direction, const int& index) const;
-	const HBITMAP& Get_Skill_Effect_Bitmap(const int& skill_type, const int& direction, const int& index) const;
 	const int& Get_Current_Delay(const int& index) const;
 	const int& Get_Skill_Delay(const int& index) const;
 
 	virtual void Set_Motion_Bitmap(const File& file, const int& type) = 0;
 	void Set_Bitmap(const int& skill, const int& direction, const int& index, const HBITMAP& bitmap);
-	void Set_Effect_Bitmap(const int& skill, const int& direction, const int& index, const HBITMAP& bitmap);
 	void Set_Current_Delay(const int& index, const int& current_delay);
 	void Set_Skill_Delay(const int& index, const int& skill_delay);
 	
 
 private:
 	HBITMAP skill_motion_bitmap[4][8][30];
-	HBITMAP skill_effect_bitmap[4][8][30];
 	int current_delay[4];
 	int skill_delay[4];
 };
@@ -56,6 +53,7 @@ void Change_Player_Info_Use_Skill(Player& player, const int& status_type, const 
 class Enemy_Skill : public Object_Skill {
 public:
 	virtual void Set_Motion_Bitmap(const File& file, const int& type);
+
 	void Set_Delay(const File& file, const int& enemy_type);
 };
 

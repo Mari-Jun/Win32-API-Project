@@ -10,12 +10,17 @@
 #include "Shop.h"
 #include "Item.h"
 #include "Sound.h"
+#include "File.h"
 
 Interaction_Box::~Interaction_Box() {
 	DeleteObject(message_box);
 }
 
 const RECT& Interaction_Box::Get_Messsage_Box_Rect() const {
+	return mb_rect;
+}
+
+RECT Interaction_Box::Get_Messsage_Box_Rect_Ori() const {
 	return mb_rect;
 }
 
@@ -193,10 +198,10 @@ void Interaction_Command(Player& player, Map_Village& map_v, Interaction_Box& it
 					switch (map_v.Get_Npc_Const(npc_type).Get_Quest_Num())
 					{
 					case Quest_Name::Main_Quest1:
-						if (map_v.Get_Npc_Const(npc_type).Get_Interaction_Count() == 4) {
+						if (map_v.Get_Npc_Const(npc_type).Get_Interaction_Count() == 7) {
 							it_box.Set_Dialog_Status(it_box.Get_Dialog_Status() + 1);
 						}
-						else if (map_v.Get_Npc_Const(npc_type).Get_Interaction_Count() == 5) {
+						else if (map_v.Get_Npc_Const(npc_type).Get_Interaction_Count() == 8) {
 							map_v.Get_Npc(npc_type).Set_interaction_Count(0);
 							map_v.Get_Npc(npc_type).Set_Quest_Num(Quest_Name::No_Quest);
 							player.Set_Status(Player_Status::Stop);
@@ -204,7 +209,7 @@ void Interaction_Command(Player& player, Map_Village& map_v, Interaction_Box& it
 							//게임 진행의 퀘스트 값을 1 올려준다.
 							progress.Set_Quest_Num(progress.Get_Quest_Num() + 1);
 						}
-						else if (map_v.Get_Npc_Const(npc_type).Get_Interaction_Count() == 6) {
+						else if (map_v.Get_Npc_Const(npc_type).Get_Interaction_Count() == 9) {
 							map_v.Get_Npc(npc_type).Set_interaction_Count(0);
 							player.Set_Status(Player_Status::Stop);
 							map_v.Get_Npc(npc_type).Set_Interaction(false);
@@ -232,7 +237,7 @@ bool Interaction_Range_Player_To_Npc(Player& player, const Npc& npc) {
 	return false;
 }
 
-void Show_Npc_Interaction(HDC hdc, HDC bitdc, const Player& player, const Map_Village& map_v, const Interaction_Box& it_box, Progress& progress) {
+void Show_Npc_Interaction(HDC hdc, HDC bitdc, const Player& player, const Map_Village& map_v, const Interaction_Box& it_box, Progress& progress, const File& file) {
 	SetBkMode(hdc, TRANSPARENT);
 	SetTextColor(hdc, RGB(255, 255, 255));
 	SelectObject(hdc, it_box.Get_Message_Box_Font(0));
@@ -242,7 +247,7 @@ void Show_Npc_Interaction(HDC hdc, HDC bitdc, const Player& player, const Map_Vi
 			switch (npc_type)
 			{
 			case Npc_Name::ELDER:
-				Show_Npc_Elder_Interaction(hdc, map_v.Get_Npc_Const(npc_type), it_box, progress);
+				Show_Npc_Elder_Interaction(hdc, map_v.Get_Npc_Const(npc_type), it_box, progress, file);
 				if (it_box.Get_Dialog_Status() == 1)
 					Show_Dialog_Box(hdc, bitdc, it_box, Dialog_Type::Quest_Type);
 				break;
@@ -282,84 +287,51 @@ void Show_Npc_Interaction(HDC hdc, HDC bitdc, const Player& player, const Map_Vi
 		}
 }
 
-void Show_Npc_Elder_Interaction(HDC hdc, const Npc& elder, const Interaction_Box& it_box, Progress& progress) {
+void Show_Npc_Elder_Interaction(HDC hdc, const Npc& elder, const Interaction_Box& it_box, Progress& progress, const File& file) {
 	SelectObject(hdc, it_box.Get_Message_Box_Font(1));
 
+	TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 45, _T("촌장"), 2);
 	if (elder.Get_Quest_Num() == Quest_Name::No_Quest && (progress.Get_Quest_Num() != progress.Get_Quest_Clear())) {
-		TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 45, _T("촌장"), 2);
 		TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 90, _T("마을을 지켜야하는데..."), 13);
 	}
 	else if (elder.Get_Quest_Num() != Quest_Name::No_Quest) {
 		switch (elder.Get_Interaction_Count())
 		{
 		case 1:
-			TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 45, _T("촌장"), 2);
 			TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 90, _T("쿨럭.. 쿨럭.."), 9);
 			break;
 		case 2:
-			TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 45, _T("촌장"), 2);
-			TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 90, _T("응? 자네는 누군가?"), 11);
+			TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 90, _T("오오.. 드디어 왔는가.."), 14);
 			break;
 		case 3:
-			TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 45, _T("임시이름"), 4);
-			TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 90, _T("....."), 11);
+			TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 90, _T("어서 빨리 마을 밖의 마물들을 무찔러주게"), 22);
 			break;
 		case 4:
-			TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 45, _T("촌장"), 2);
-			TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 90, _T("그렇군.. 마침 잘됬구만"), 13);
+			TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 90, _T("싫다고 해도 어쩔수 없네.."), 15);
 			break;
 		case 5:
-			TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 45, _T("촌장"), 2);
-			TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 90, _T("고맙네, 청년"), 7);
+			TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 90, _T("이 마을을 빠져나가려면 당연한 절차지.."), 22);
 			break;
 		case 6:
-			TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 45, _T("촌장"), 2);
-			TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 90, _T("에휴,, 요즘것들은.."), 12);
+			TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 90, _T("아.. 죽기전에 산책하는 것이 소원인데.."), 23);
+			break;
+		case 7:
+			TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 90, _T("어떤가 도와주겠나?"), 9);
+			break;
+		case 8:
+			TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 90, _T("고맙네.."), 5);
+			break;
+		case 9:
+			TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 90, _T("?"), 1);
 			break;
 		default:
 			break;
 		}
 	}
 	else {
-		TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 45, _T("촌장"), 2);
+
 		TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 90, _T("끄아아아악"), 5);
 	}
-
-	/*if (progress.Get_Quest_Num() == Quest_Name::No_Quest && progress.Get_Quest_Clear() == Quest_Name::No_Quest && elder.Get_Quest_Num() == Quest_Name::Main_Quest1) {
-		switch (elder.Get_Interaction_Count())
-		{
-		case 1:
-			TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 45, _T("촌장"), 2);
-			TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 90, _T("쿨럭.. 쿨럭.."), 9);
-			break;
-		case 2:
-			TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 45, _T("촌장"), 2);
-			TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 90, _T("응? 자네는 누군가?"), 11);
-			break;
-		case 3:
-			TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 45, _T("임시이름"), 4);
-			TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 90, _T("....."), 11);
-			break;
-		case 4:
-			TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 45, _T("촌장"), 2);
-			TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 90, _T("그렇군.. 마침 잘됬구만"), 13);
-			break;
-		case 5:
-			TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 45, _T("촌장"), 2);
-			TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 90, _T("고맙네, 청년"), 7);
-			break;
-		case 6:
-			TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 45, _T("촌장"), 2);
-			TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 90, _T("에휴,, 요즘것들은.."), 12);
-			break;
-		default:
-			break;
-		}
-	}
-	else {
-		TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 45, _T("촌장"), 2);
-		TextOut(hdc, it_box.Get_Messsage_Box_Rect().left + 100, it_box.Get_Messsage_Box_Rect().top + 90, _T("마을을 지켜야하는데..."), 13);
-	}*/
 }
 
 

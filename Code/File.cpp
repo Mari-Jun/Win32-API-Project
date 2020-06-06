@@ -28,6 +28,10 @@ const double& File::Get_Enemy_Attack_Multiple_Info(const int& enemy_type, const 
 	return Enemy_Attack_Multiple_Info[enemy_type][attack_type];
 }
 
+const wchar_t& File::Get_Quest_Talk(const int& quest_type, const int& before, const int& index) const {
+	return *Quest_Talk[quest_type][before][index];
+}
+
 void File::Set_Enemy_Object_Info() {
 	string str;
 	string result;
@@ -61,7 +65,7 @@ void File::Set_Enemy_Object_Info() {
 		}
 	}
 
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < 11; i++) {
 		for (int j = 0; j < 8; j++)
 			cout << Enemy_Object_Info[i][j] << ' ';
 		cout << endl;
@@ -76,7 +80,7 @@ void File::Set_Enemy_Motion() {
 	wstring wstr;
 	fstream fs;
 
-	fs.open(_T(".\\File\\Enemy_Info.csv"), ios::in);
+	fs.open(_T(".\\File\\Enemy_Motion_Info.csv"), ios::in);
 
 	int type = 0;
 	int status = 0;
@@ -91,7 +95,7 @@ void File::Set_Enemy_Motion() {
 			else {
 				wstr = wstring(str.begin(), str.end());
 				Enemy_Motion_Text[type][status++] = _wcsdup(wstr.c_str());
-				if (status == 8) {
+				if (status == 7) {
 					getline(fs, str, ',');
 					Enemy_Motion_Count[type][status] = stoi(str);
 					getline(fs, str, ',');
@@ -104,13 +108,6 @@ void File::Set_Enemy_Motion() {
 		}		
 	}
 
-	for (int i = 0; i < 4; i++) {
-		for (int j = 0; j < 8; j++) {
-			if (Enemy_Motion_Count[i][j] != 0)
-				wcout << Enemy_Motion_Text[i][j] << endl;
-		}
-		cout << endl;
-	}
 	fs.close();
 }
 
@@ -148,7 +145,7 @@ void File::Set_Enemy_Attack_Info() {
 		enemy_type++;
 	}
 
-	for (int enemy_type = 0; enemy_type < 4; enemy_type++) {
+	for (int enemy_type = 0; enemy_type < 6; enemy_type++) {
 		for (attack_type = Attack_Type::A_Attack; attack_type <= Attack_Type::A_SkillR; attack_type++) {
 			for (attack_info = Attack_Info::Attack_Delay; attack_info <= Attack_Info::Attack_Multiple; attack_info++) {
 				if (attack_info != Attack_Info::Attack_Multiple)
@@ -162,8 +159,38 @@ void File::Set_Enemy_Attack_Info() {
 	fs.close();
 }
 
+void File::Set_Quest_Talk() {
+	wstring wstr;
+	wifstream fs;
+
+	fs.open(_T(".\\File\\Quest.txt"), ios::in);
+
+	int quest_num = Quest_Name::Main_Quest1;
+	int quest_after = 0;
+	while (!fs.eof()) {
+
+		getline(fs, wstr);
+
+		int max_talk = stoi(wstr);
+		
+		for (int index = 0; index < max_talk; index++) {
+			getline(fs, wstr);
+			wcout << wstr << endl;
+			Quest_Talk[quest_num - 1][quest_after][index] = _wcsdup(wstr.c_str());
+			wcout << Quest_Talk[quest_num - 1][quest_after][index] << endl;
+		}
+	}
+
+	fs.close();
+
+	for (int i = 0; i < 10; i++)
+		wcout << Quest_Talk[0][0][i] << endl;
+}
+
+
 void Reset_File(File& file) {
 	file.Set_Enemy_Object_Info();
 	file.Set_Enemy_Motion();
 	file.Set_Enemy_Attack_Info();
+	//file.Set_Quest_Talk();
 }

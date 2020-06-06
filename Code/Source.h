@@ -59,7 +59,8 @@ enum Attack_Info {
 };
 
 enum Enemy_Type {
-	Bird, Zadrom, Tolpi, Dark_Flower
+	Bird, Zadrom, Tolpi, Dark_Flower, Heke, Baocar, Huba, Huba2, Grave, Riff, Sama, Mobre, Selnarg, Zeffel, Zarue, Normous,
+	Venueba, Diphtheloyd, Vagullion, Alnada, Magiste, Selnade, Seean, Sizarian, Jestona, Liagty1, Liagty2, Liagty3, Dularn
 };
 
 enum Skill_Type {

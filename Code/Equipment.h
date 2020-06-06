@@ -44,7 +44,7 @@ enum Book_Type {
 };
 
 enum Cloak_Type {
-	DEFUALT_CLOAK, GRAY_CLOAK, BLUE_CLOAK, RED_CLOAK
+	DEFUALT_CLOAK, GRAY_CLOAK = 2, BLUE_CLOAK, RED_CLOAK
 };
 
 class E_Helmet {

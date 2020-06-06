@@ -224,9 +224,9 @@ void Calcul_Hitting_Damage(const Move_Object& attack_obj, Move_Object& hit_obj, 
 		dmg_range = 5;
 
 	if (critical <= attack_obj.Get_Object_Info_Const().Get_Fatal())
-		hit_obj.Set_Hitting_Damage((hit_dmg - hit_obj.Get_Object_Info_Const().Get_Defence() + ((rand() % 2 == 0) ? rand() % dmg_range : -rand() % dmg_range)) * 2);
+		hit_obj.Set_Hitting_Damage(((hit_dmg + ((rand() % 2 == 0) ? rand() % dmg_range : -rand() % dmg_range)) * 2) * (200 - hit_obj.Get_Object_Info_Const().Get_Defence()) / 200);
 	else
-		hit_obj.Set_Hitting_Damage(hit_dmg - hit_obj.Get_Object_Info_Const().Get_Defence() + ((rand() % 2 == 0) ? rand() % dmg_range : -rand() % dmg_range));
+		hit_obj.Set_Hitting_Damage((hit_dmg + ((rand() % 2 == 0) ? rand() % dmg_range : -rand() % dmg_range)) * (200 - hit_obj.Get_Object_Info_Const().Get_Defence()) / 200);
 
 
 	//치명타 넣어야함

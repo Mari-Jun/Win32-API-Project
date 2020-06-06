@@ -859,7 +859,7 @@ void Player_Equipment::Set_Font() {
 void Reset_Player_Equipment(Player_Equipment& p_equip, Object_Info& o_info) {
 	p_equip.Create_Equipment();
 	p_equip.Set_Pos({ 60,60 });
-	p_equip.Set_Gold(100);
+	p_equip.Set_Gold(100000);
 	p_equip.Set_Type_Select(Equipment_Type::T_HELMET);
 	for (int e_type = Equipment_Type::T_HELMET; e_type <= Equipment_Type::T_CLOAK; e_type++) {
 		p_equip.Set_Equipment_Detail_Select(e_type, 0);

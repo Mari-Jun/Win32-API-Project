@@ -92,55 +92,56 @@ void Move_Enemy_Check(Move_Object& enemy, const Map_Dungeon& map_d, const Player
 void Move_Enemy(Map_Dungeon& map_d, const Player& player, const int& index) {
 
 	//플레이어 근처에 있을 경우의 움직임
-	if (Reaction_Range_Check(map_d.Get_Enemy_Const(index), player, 400)) {
+	if (map_d.Get_Enemy_Const(index).Get_Status() == Enemy_Status::E_Move || map_d.Get_Enemy_Const(index).Get_Status() == Enemy_Status::E_Stop) {
+		if (Reaction_Range_Check(map_d.Get_Enemy_Const(index), player, 400)) {
 
-		//가만히 있는 경우 움직여준다.
-		if (map_d.Get_Enemy(index).Get_Status() == Enemy_Status::E_Stop) {
-			map_d.Get_Enemy(index).Set_Ani_Count(0);
-			map_d.Get_Enemy(index).Set_Status(Enemy_Status::E_Move);
-		}
-
-		//적이 왼쪽에 있을 경우
-		if (map_d.Get_Enemy_Const(index).Get_XPos() + map_d.Get_Enemy_Const(index).Get_Crash_Width() <= player.Get_XPos()) {
-			if (map_d.Get_Enemy_Const(index).Get_YPos() + map_d.Get_Enemy_Const(index).Get_Height() <= player.Get_YPos() + player.Get_Height() - player.Get_Crash_Height())
-				map_d.Get_Enemy(index).Set_Direction(Object_Direction::DownRight);
-			else if (map_d.Get_Enemy_Const(index).Get_YPos() + map_d.Get_Enemy_Const(index).Get_Height() - map_d.Get_Enemy_Const(index).Get_Crash_Height() >= player.Get_YPos() + player.Get_Height())
-				map_d.Get_Enemy(index).Set_Direction(Object_Direction::UpRight);
-			else
-				map_d.Get_Enemy(index).Set_Direction(Object_Direction::Right);
-		}
-		//적이 오른쪽에 있을 경우
-		else if (map_d.Get_Enemy_Const(index).Get_XPos() >= player.Get_XPos() + player.Get_Crash_Width()) {
-			if (map_d.Get_Enemy_Const(index).Get_YPos() + map_d.Get_Enemy_Const(index).Get_Height() <= player.Get_YPos() + player.Get_Height() - player.Get_Crash_Height())
-				map_d.Get_Enemy(index).Set_Direction(Object_Direction::DownLeft);
-			else if (map_d.Get_Enemy_Const(index).Get_YPos() + map_d.Get_Enemy_Const(index).Get_Height() - map_d.Get_Enemy_Const(index).Get_Crash_Height() >= player.Get_YPos() + player.Get_Height())
-				map_d.Get_Enemy(index).Set_Direction(Object_Direction::UpLeft);
-			else
-				map_d.Get_Enemy(index).Set_Direction(Object_Direction::Left);
-		}
-		else {
-			if (map_d.Get_Enemy_Const(index).Get_YPos() + map_d.Get_Enemy_Const(index).Get_Height() <= player.Get_YPos() + player.Get_Height() - player.Get_Crash_Height())
-				map_d.Get_Enemy(index).Set_Direction(Object_Direction::Down);
-			else
-				map_d.Get_Enemy(index).Set_Direction(Object_Direction::Up);
-		}
-	}
-	else {
-		//플레이어 근처에 있지 않을 경우의 움직임
-		if (map_d.Get_Enemy_Const(index).Get_Ani_Count() % 40 == 0) {
-			int r = rand() % 9;
-			if (r == 9)
-				map_d.Get_Enemy(index).Set_Status(Enemy_Status::E_Stop);
-			else {
+			//가만히 있는 경우 움직여준다.
+			if (map_d.Get_Enemy(index).Get_Status() == Enemy_Status::E_Stop) {
+				map_d.Get_Enemy(index).Set_Ani_Count(0);
 				map_d.Get_Enemy(index).Set_Status(Enemy_Status::E_Move);
-				map_d.Get_Enemy(index).Set_Direction(rand() % 8);
+			}
+
+			//적이 왼쪽에 있을 경우
+			if (map_d.Get_Enemy_Const(index).Get_XPos() + map_d.Get_Enemy_Const(index).Get_Crash_Width() <= player.Get_XPos()) {
+				if (map_d.Get_Enemy_Const(index).Get_YPos() + map_d.Get_Enemy_Const(index).Get_Height() <= player.Get_YPos() + player.Get_Height() - player.Get_Crash_Height())
+					map_d.Get_Enemy(index).Set_Direction(Object_Direction::DownRight);
+				else if (map_d.Get_Enemy_Const(index).Get_YPos() + map_d.Get_Enemy_Const(index).Get_Height() - map_d.Get_Enemy_Const(index).Get_Crash_Height() >= player.Get_YPos() + player.Get_Height())
+					map_d.Get_Enemy(index).Set_Direction(Object_Direction::UpRight);
+				else
+					map_d.Get_Enemy(index).Set_Direction(Object_Direction::Right);
+			}
+			//적이 오른쪽에 있을 경우
+			else if (map_d.Get_Enemy_Const(index).Get_XPos() >= player.Get_XPos() + player.Get_Crash_Width()) {
+				if (map_d.Get_Enemy_Const(index).Get_YPos() + map_d.Get_Enemy_Const(index).Get_Height() <= player.Get_YPos() + player.Get_Height() - player.Get_Crash_Height())
+					map_d.Get_Enemy(index).Set_Direction(Object_Direction::DownLeft);
+				else if (map_d.Get_Enemy_Const(index).Get_YPos() + map_d.Get_Enemy_Const(index).Get_Height() - map_d.Get_Enemy_Const(index).Get_Crash_Height() >= player.Get_YPos() + player.Get_Height())
+					map_d.Get_Enemy(index).Set_Direction(Object_Direction::UpLeft);
+				else
+					map_d.Get_Enemy(index).Set_Direction(Object_Direction::Left);
+			}
+			else {
+				if (map_d.Get_Enemy_Const(index).Get_YPos() + map_d.Get_Enemy_Const(index).Get_Height() <= player.Get_YPos() + player.Get_Height() - player.Get_Crash_Height())
+					map_d.Get_Enemy(index).Set_Direction(Object_Direction::Down);
+				else
+					map_d.Get_Enemy(index).Set_Direction(Object_Direction::Up);
 			}
 		}
-
+		else {
+			//플레이어 근처에 있지 않을 경우의 움직임
+			if (map_d.Get_Enemy_Const(index).Get_Ani_Count() % 40 == 0) {
+				int r = rand() % 9;
+				if (r == 9)
+					map_d.Get_Enemy(index).Set_Status(Enemy_Status::E_Stop);
+				else {
+					map_d.Get_Enemy(index).Set_Status(Enemy_Status::E_Move);
+					map_d.Get_Enemy(index).Set_Direction(rand() % 8);
+				}
+			}
+		}
 	}
 
 	//움직이는 중일 경우
-	if (map_d.Get_Enemy_Const(index).Get_Status() == Enemy_Status::E_Move) {
+	if (map_d.Get_Enemy_Const(index).Get_Status() != Enemy_Status::E_Stop) {
 		switch (map_d.Get_Enemy_Const(index).Get_Direction())
 		{
 		case Object_Direction::Right:
@@ -205,6 +206,7 @@ void Attack_Select(Enemy& enemy, const Player& player) {
 }
 
 void Create_Hitting_Point(Enemy& enemy, const Player& player, const File& file, const int& owner, const int& type, const int& attack_type) {
+
 	for (int index = 0; index < 20; index++) {
 		if (&enemy.Get_Hit_Range_P_Const(index) == NULL) {
 			//폴리곤 생성
@@ -222,8 +224,9 @@ void Create_Hitting_Point(Enemy& enemy, const Player& player, const File& file, 
 					file.Get_Enemy_Attack_Info(enemy.Get_Enemy_Type(), attack_type, Attack_Info::Attack_Range_Y),
 					file.Get_Enemy_Attack_Info(enemy.Get_Enemy_Type(), attack_type, Attack_Info::Attack_Shape));
 				enemy.Set_Hit_Range_Polygon(index, owner, file.Get_Enemy_Attack_Info(enemy.Get_Enemy_Type(), attack_type, Attack_Info::Attack_Move), enemy.Get_Direction(),
-					false, Create_Speed(enemy.Get_Direction(), file.Get_Enemy_Attack_Info(enemy.Get_Enemy_Type(), attack_type, Attack_Info::Attack_Speed)), type, attack_type,
-					pos, file.Get_Enemy_Attack_Info(enemy.Get_Enemy_Type(), attack_type, Attack_Info::Attack_Hit_Delay), file.Get_Enemy_Attack_Multiple_Info(enemy.Get_Enemy_Type(), attack_type));
+					false, Create_Speed(enemy.Get_Direction(), file.Get_Enemy_Attack_Info(enemy.Get_Enemy_Type(), attack_type, Attack_Info::Attack_Speed)), type, attack_type, pos,
+					(file.Get_Enemy_Attack_Info(enemy.Get_Enemy_Type(), attack_type, Attack_Info::Attack_Move) == 1) ? file.Get_Enemy_Attack_Info(enemy.Get_Enemy_Type(), attack_type, Attack_Info::Attack_Hit_Delay) : 1, 
+					file.Get_Enemy_Attack_Multiple_Info(enemy.Get_Enemy_Type(), attack_type));
 			}
 			return;
 		}
@@ -236,7 +239,7 @@ void Attack_Enemy_End(Enemy& enemy, const int& attack_delay) {
 }
 
 void Skill_Enemy_End(Enemy& enemy, const int& index, const int& attack_delay) {
-	Attack_Enemy_End(enemy, attack_delay);
+	Attack_End(enemy);
 	enemy.Get_Enemy_Skill().Set_Current_Delay(index, enemy.Get_Enemy_Skill_Const().Get_Skill_Delay(index));
 }
 
@@ -250,19 +253,11 @@ void CalCul_Enemy_Hitting_Point(Map_Dungeon& map_d, Move_Object& attack_obj, Pla
 				Polygon_Damage_Enemy(attack_obj, player, attack_obj.Get_Hit_Range_P_Const(index), attack_obj.Get_Object_Info_Const().Get_Attack() * attack_obj.Get_Hit_Range_P_Const(index).Get_Attack_Multiple());
 				attack_obj.Delete_Hit_Range_Polygon(index);
 			}
-			else if (attack_obj.Get_Hit_Range_P_Const(index).Is_Move()) {
+			else if (attack_obj.Get_Hit_Range_P_Const(index).Is_Move() || attack_obj.Get_Hit_Range_P_Const(index).Is_Guide()) {
 				if (Polygon_Damage_Enemy(attack_obj, player, attack_obj.Get_Hit_Range_P_Const(index), attack_obj.Get_Object_Info_Const().Get_Attack() * attack_obj.Get_Hit_Range_P_Const(index).Get_Attack_Multiple())
 					|| Crash_Check_Attack(map_d, attack_obj.Get_Hit_Range_P_Const(index)) || attack_obj.Get_Hit_Range_P_Const(index).Get_Delay() == 0)
 					attack_obj.Delete_Hit_Range_Polygon(index);
 				//플레이어와 부딪히지 않았고 삭제 딜레이도 시간이 있으니 움직여줍니다.
-				else
-					Move_Hitting_Range_Polygon(attack_obj.Get_Hit_Range_P(index));
-			}
-			else if (attack_obj.Get_Hit_Range_P_Const(index).Is_Guide()) {
-				if (attack_obj.Get_Hit_Range_P_Const(index).Get_Delay() == 0) {
-					Polygon_Damage_Enemy(attack_obj, player, attack_obj.Get_Hit_Range_P_Const(index), attack_obj.Get_Object_Info_Const().Get_Attack() * attack_obj.Get_Hit_Range_P_Const(index).Get_Attack_Multiple());
-					attack_obj.Delete_Hit_Range_Polygon(index);
-				}
 				else
 					Move_Hitting_Range_Polygon(attack_obj.Get_Hit_Range_P(index));
 			}

@@ -27,6 +27,7 @@ public:
 	void Set_Dungeon_Type(const int& dungeon_type);
 
 	void Set_Dungeon1(File& file);
+	void Set_Dungeon2(File& file);
 
 	void Kill_Enemy(const int& index);
 

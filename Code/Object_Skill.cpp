@@ -10,10 +10,8 @@
 Object_Skill::Object_Skill() {
 	for (int type = 0; type < 4; type++) 
 		for (int direction = 0; direction < 8; direction++) 
-			for (int index = 0; index < 20; index++) {
+			for (int index = 0; index < 20; index++) 
 				skill_motion_bitmap[type][direction][index] = NULL;
-				skill_effect_bitmap[type][direction][index] = NULL;
-			}
 				
 	for (int index = 0; index < 4; index++) {
 		current_delay[index] = 0;
@@ -24,20 +22,13 @@ Object_Skill::Object_Skill() {
 Object_Skill::~Object_Skill() {
 	for (int type = 0; type < 4; type++) 
 		for (int direction = 0; direction < 8; direction++) 
-			for (int index = 0; index < 20; index++) {
+			for (int index = 0; index < 20; index++) 
 				DeleteObject(skill_motion_bitmap[type][direction][index]);
-				DeleteObject(skill_effect_bitmap[type][direction][index]);
-			}
-				
 }
 
 
 const HBITMAP& Object_Skill::Get_Skill_Motion_Bitmap(const int& skill_type, const int& direction, const int& index) const {
 	return skill_motion_bitmap[skill_type][direction][index];
-}
-
-const HBITMAP& Object_Skill::Get_Skill_Effect_Bitmap(const int& skill_type, const int& direction, const int& index) const {
-	return skill_effect_bitmap[skill_type][direction][index];
 }
 
 const int& Object_Skill::Get_Current_Delay(const int& index) const {
@@ -50,10 +41,6 @@ const int& Object_Skill::Get_Skill_Delay(const int& index) const {
 
 void Object_Skill::Set_Bitmap(const int& skill, const int& direction, const int& index, const HBITMAP& bitmap) {
 	skill_motion_bitmap[skill][direction][index] = bitmap;
-}
-
-void Object_Skill::Set_Effect_Bitmap(const int& skill, const int& direction, const int& index, const HBITMAP& bitmap) {
-	skill_effect_bitmap[skill][direction][index] = bitmap;
 }
 
 void  Object_Skill::Set_Current_Delay(const int& index, const int& current_delay) {

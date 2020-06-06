@@ -6,11 +6,13 @@ class Npc;
 class Map_Village;
 class Progress;
 class Sound;
+class File;
 
 class Interaction_Box {
 public:
 	~Interaction_Box();
 	const RECT& Get_Messsage_Box_Rect() const;
+	RECT Get_Messsage_Box_Rect_Ori() const;
 	const HBITMAP& Get_Message_Box() const;
 	const BITMAP& Get_Message_Box_Size() const;
 	const HFONT& Get_Message_Box_Font(const int& index) const;
@@ -50,8 +52,8 @@ bool Paint_Interaction_Box(HDC hdc, HDC bit2dc, HDC bitdc, RECT c_rect, Player& 
 void Interaction_Command(Player& player, Map_Village& map_v, Interaction_Box& it_box, Progress& progress);
 bool Interaction_Range_Player_To_Npc(Player& player, const Npc& npc);
 
-void Show_Npc_Interaction(HDC hdc, HDC bitdc, const Player& player, const Map_Village& map_v, const Interaction_Box& it_box, Progress& progress);
-void Show_Npc_Elder_Interaction(HDC hdc, const Npc& elder, const Interaction_Box& it_box, Progress& progress);
+void Show_Npc_Interaction(HDC hdc, HDC bitdc, const Player& player, const Map_Village& map_v, const Interaction_Box& it_box, Progress& progress, const File& file);
+void Show_Npc_Elder_Interaction(HDC hdc, const Npc& elder, const Interaction_Box& it_box, Progress& progress, const File& file);
 void Show_Npc_Equipment_Interaction(HDC hdc, const Npc& equip, const Interaction_Box& it_box, Progress& progress);
 void Show_Npc_Weapon_Interaction(HDC hdc, const Npc& weapon, const Interaction_Box& it_box, Progress& progress);
 void Show_Npc_Item_Interaction(HDC hdc, const Npc& item, const Interaction_Box& it_box, Progress& progress);

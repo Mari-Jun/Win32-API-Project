@@ -96,6 +96,28 @@ void Hitting_Range::Set_Range_Bitmap(const int& owner, const int& type, const in
 					range_bitmap[direction] = (HBITMAP)LoadImage(NULL, _T(".\\BitMap\\Monster\\Boss1\\SkillW\\Effect1.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 			}
 			break;
+		case Enemy_Type::Huba:
+			if (attack_type == Attack_Type::A_Attack) {
+				for (int direction = Object_Direction::Right; direction <= Object_Direction::DownRight; direction++) {
+					wsprintf(str, _T(".\\BitMap\\Monster\\M6\\Attack\\Huba_Attack_Effect%d.bmp"), direction + 1);
+					range_bitmap[direction] = (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+				}
+			}
+			break;
+		case Enemy_Type::Huba2:
+			if (attack_type == Attack_Type::A_Attack) {
+				for (int direction = Object_Direction::Right; direction <= Object_Direction::DownRight; direction++) {
+					wsprintf(str, _T(".\\BitMap\\Monster\\M7\\Attack\\Huba_Attack_Effect%d.bmp"), direction + 1);
+					range_bitmap[direction] = (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+				}
+			}
+			break;
+		case Enemy_Type::Mobre:
+			if (attack_type == Attack_Type::A_Attack) {
+				for (int direction = Object_Direction::Right; direction <= Object_Direction::DownRight; direction++)
+					range_bitmap[direction] = (HBITMAP)LoadImage(NULL, _T(".\\BitMap\\Monster\\M10\\Attack\\Mobre_Attack_Effect1.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+			}
+			break;
 		default:
 			break;
 		}
@@ -167,11 +189,11 @@ void Move_Hitting_Range_Polygon(Hitting_Range_Polygon& hit_range_p) {
 }
 
 void Paint_Hitting_Range(HDC hdc, HDC bitdc, const Hitting_Range_Polygon& hit_range_p) {
-	if (hit_range_p.Is_Move() || hit_range_p.Is_Guide()) {
+	if (hit_range_p.Get_Range_Bitmap(hit_range_p.Get_Direction()) != NULL) {
 		SelectObject(bitdc, hit_range_p.Get_Range_Bitmap(hit_range_p.Get_Direction()));
 		POINT pos;
 		pos = { (hit_range_p.Get_Pos(0).x + hit_range_p.Get_Pos(2).x) / 2, (hit_range_p.Get_Pos(0).y + hit_range_p.Get_Pos(2).y) / 2 };
 		TransparentBlt(hdc, pos.x - hit_range_p.Get_Range_Bitmap_Size().bmWidth / 2, pos.y - hit_range_p.Get_Range_Bitmap_Size().bmHeight / 2, hit_range_p.Get_Range_Bitmap_Size().bmWidth, hit_range_p.Get_Range_Bitmap_Size().bmHeight,
-			bitdc, 0, 0, hit_range_p.Get_Range_Bitmap_Size().bmWidth, hit_range_p.Get_Range_Bitmap_Size().bmHeight, RGB(255, 255, 255));
+			bitdc, 0, 0, hit_range_p.Get_Range_Bitmap_Size().bmWidth, hit_range_p.Get_Range_Bitmap_Size().bmHeight, RGB(150, 150, 150));
 	}
 }

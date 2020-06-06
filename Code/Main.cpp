@@ -140,7 +140,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 		map_v = Create_Class<Map_Village>();
 		Reset_Village_Map(hdc, *map_v);
 
-		SetTimer(hwnd, Timer_Name::Default_Timer, 10, NULL);
+		SetTimer(hwnd, Timer_Name::Default_Timer, 30, NULL);
 
 		ReleaseDC(hwnd, hdc);
 
@@ -184,10 +184,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 			switch (Change_Map_Select(*progress, *player, wParam))
 			{
 			case Map_Type::Dungeon1:
+			case Map_Type::Dungeon2:
 				hdc = GetDC(hwnd);
 				Change_Map_Village_To(*map_v);
 				map_d = Create_Class<Map_Dungeon>();
-				Reset_Dungeon_Map(hdc, *map_d, *file, Map_Type::Dungeon1);
+				Reset_Dungeon_Map(hdc, *map_d, *file, progress->Get_Map_Type());
 				Change_Map_Reset_Player(*player, *progress);
 				e_inter = Create_Class<Enemy_Interface>();
 				Reset_Enemy_Interface(*e_inter);
@@ -264,6 +265,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 			Paint_Village_Map(gamedc, bitdc, *player, *map_v, *camera, c_rect);
 			break;
 		case Map_Type::Dungeon1:
+		case Map_Type::Dungeon2:
 			Paint_Dungeon_Map(gamedc, bitdc, *player, *map_d, *file, *camera, c_rect);
 			break;
 		default:
@@ -282,7 +284,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 		
 		if (Paint_Interaction_Box(memdc, alphadc, bitdc, c_rect, *player, *it_box))
 			if (progress->Get_Map_Type() == Map_Type::Village1)
-				Show_Npc_Interaction(memdc, bitdc, *player, *map_v, *it_box, *progress);
+				Show_Npc_Interaction(memdc, bitdc, *player, *map_v, *it_box, *progress, *file);
 
 		Paint_Map_Select(memdc, bitdc, *progress, c_rect);
 

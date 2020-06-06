@@ -35,8 +35,8 @@ private:
 	Enemy_Skill* e_skill;
 	BITMAP motion_size;
 	BITMAP attack_effect_size;
-	HBITMAP stop_motion_bitmap[8][10];
-	HBITMAP move_motion_bitmap[8][10];
+	HBITMAP stop_motion_bitmap[8][20];
+	HBITMAP move_motion_bitmap[8][20];
 	HBITMAP attack_motion_bitmap[8][20];
 	HBITMAP attack_effect_bitmap[8][20];
 };

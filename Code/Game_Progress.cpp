@@ -75,7 +75,7 @@ void Reset_Progress(Progress& progress, const int& player_class) {
 	progress.Set_Map_Type(Map_Type::Village1);
 	progress.Set_Select_Map_Type(Map_Type::Dungeon1);
 	progress.Set_Map_Select(false);
-	progress.Set_Quest_Num(Quest_Name::No_Quest);
+	progress.Set_Quest_Num(Quest_Name::No_Quest + 2);
 	progress.Set_Quest_Clear(Quest_Name::No_Quest);
 	progress.Set_Bitmap_Font();
 }
@@ -92,10 +92,10 @@ void Paint_Map_Select(HDC hdc, HDC bitdc, const Progress& progress, const RECT c
 	switch (progress.Get_Select_Map_Type())
 	{
 	case Map_Type::Dungeon1:
-		TextOut(hdc, c_rect.right / 2 - progress.Get_Map_Select_Bitmap_Size().bmWidth / 2 + 80, c_rect.bottom / 2 - progress.Get_Map_Select_Bitmap_Size().bmHeight / 2 + 35, _T("¿Ü°û Áö¿ª"), 5);
+		TextOut(hdc, c_rect.right / 2 - progress.Get_Map_Select_Bitmap_Size().bmWidth / 2 + 80, c_rect.bottom / 2 - progress.Get_Map_Select_Bitmap_Size().bmHeight / 2 + 35, _T("¼öÇ® Áö¿ª"), 5);
 		break;
 	case Map_Type::Dungeon2:
-		TextOut(hdc, c_rect.right / 2 - progress.Get_Map_Select_Bitmap_Size().bmWidth / 2 + 80, c_rect.bottom / 2 - progress.Get_Map_Select_Bitmap_Size().bmHeight / 2 + 35, _T("¼öÇ® Áö¿ª"), 5);
+		TextOut(hdc, c_rect.right / 2 - progress.Get_Map_Select_Bitmap_Size().bmWidth / 2 + 80, c_rect.bottom / 2 - progress.Get_Map_Select_Bitmap_Size().bmHeight / 2 + 35, _T("¿Ü°û Áö¿ª"), 5);
 		break;
 	case Map_Type::Dungeon3:
 		TextOut(hdc, c_rect.right / 2 - progress.Get_Map_Select_Bitmap_Size().bmWidth / 2 + 80, c_rect.bottom / 2 - progress.Get_Map_Select_Bitmap_Size().bmHeight / 2 + 35, _T("´ÏÆR Áö¿ª"), 5);
