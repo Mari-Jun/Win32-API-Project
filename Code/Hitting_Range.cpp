@@ -118,6 +118,40 @@ void Hitting_Range::Set_Range_Bitmap(const int& owner, const int& type, const in
 					range_bitmap[direction] = (HBITMAP)LoadImage(NULL, _T(".\\BitMap\\Monster\\M10\\Attack\\Mobre_Attack_Effect1.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 			}
 			break;
+		case Enemy_Type::Zeffel:
+			if (attack_type == Attack_Type::A_SkillW) {
+				for (int direction = Object_Direction::Right; direction <= Object_Direction::DownRight; direction++)
+					range_bitmap[direction] = (HBITMAP)LoadImage(NULL, _T(".\\BitMap\\Monster\\Boss3\\SkillW\\Zeffel_SkillW_Effect.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+			}
+			break;
+		case Enemy_Type::Diphtheloyd:
+			if (attack_type == Attack_Type::A_Attack) {
+				for (int direction = Object_Direction::Right; direction <= Object_Direction::DownRight; direction++) {
+					wsprintf(str, _T(".\\BitMap\\Monster\\M15\\Attack\\Diphtheloyd_Attack_Effect%d.bmp"), direction + 1);
+					range_bitmap[direction] = (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+				}
+			}
+			break;
+		case Enemy_Type::Vagullion:
+			if (attack_type == Attack_Type::A_SkillQ) {
+				for (int direction = Object_Direction::Right; direction <= Object_Direction::DownRight; direction++) {
+					wsprintf(str, _T(".\\BitMap\\Monster\\Boss4\\SkillQ\\Vagullion_SkillQ_Effect%d.bmp"), direction + 1);
+					range_bitmap[direction] = (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+				}
+			}
+			break;
+		case Enemy_Type::Seean:
+			if (attack_type == Attack_Type::A_Attack) {
+				for (int direction = Object_Direction::Right; direction <= Object_Direction::DownRight; direction++)
+					range_bitmap[direction] = (HBITMAP)LoadImage(NULL, _T(".\\BitMap\\Monster\\M19\\Attack\\Seean_Attack_Effect.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+			}
+			break;
+		case Enemy_Type::Sizarian:
+			if (attack_type == Attack_Type::A_Attack) {
+				for (int direction = Object_Direction::Right; direction <= Object_Direction::DownRight; direction++)
+					range_bitmap[direction] = (HBITMAP)LoadImage(NULL, _T(".\\BitMap\\Monster\\M20\\Attack\\Sizarian_Attack_Effect1.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+			}
+			break;
 		default:
 			break;
 		}
@@ -189,6 +223,9 @@ void Move_Hitting_Range_Polygon(Hitting_Range_Polygon& hit_range_p) {
 }
 
 void Paint_Hitting_Range(HDC hdc, HDC bitdc, const Hitting_Range_Polygon& hit_range_p) {
+
+	//내일 고쳐주자 형태에 따라 다르게 해야함
+
 	if (hit_range_p.Get_Range_Bitmap(hit_range_p.Get_Direction()) != NULL) {
 		SelectObject(bitdc, hit_range_p.Get_Range_Bitmap(hit_range_p.Get_Direction()));
 		POINT pos;

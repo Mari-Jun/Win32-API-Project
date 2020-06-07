@@ -102,7 +102,7 @@ void Move_Enemy(Map_Dungeon& map_d, const Player& player, const int& index) {
 			}
 
 			//적이 왼쪽에 있을 경우
-			if (map_d.Get_Enemy_Const(index).Get_XPos() + map_d.Get_Enemy_Const(index).Get_Crash_Width() <= player.Get_XPos()) {
+			if (map_d.Get_Enemy_Const(index).Get_XPos() + map_d.Get_Enemy_Const(index).Get_Crash_Width() * 3 / 4 <= player.Get_XPos()) {
 				if (map_d.Get_Enemy_Const(index).Get_YPos() + map_d.Get_Enemy_Const(index).Get_Height() <= player.Get_YPos() + player.Get_Height() - player.Get_Crash_Height())
 					map_d.Get_Enemy(index).Set_Direction(Object_Direction::DownRight);
 				else if (map_d.Get_Enemy_Const(index).Get_YPos() + map_d.Get_Enemy_Const(index).Get_Height() - map_d.Get_Enemy_Const(index).Get_Crash_Height() >= player.Get_YPos() + player.Get_Height())
@@ -111,7 +111,7 @@ void Move_Enemy(Map_Dungeon& map_d, const Player& player, const int& index) {
 					map_d.Get_Enemy(index).Set_Direction(Object_Direction::Right);
 			}
 			//적이 오른쪽에 있을 경우
-			else if (map_d.Get_Enemy_Const(index).Get_XPos() >= player.Get_XPos() + player.Get_Crash_Width()) {
+			else if (map_d.Get_Enemy_Const(index).Get_XPos() + map_d.Get_Enemy_Const(index).Get_Crash_Width() / 4 >= player.Get_XPos() + player.Get_Crash_Width()) {
 				if (map_d.Get_Enemy_Const(index).Get_YPos() + map_d.Get_Enemy_Const(index).Get_Height() <= player.Get_YPos() + player.Get_Height() - player.Get_Crash_Height())
 					map_d.Get_Enemy(index).Set_Direction(Object_Direction::DownLeft);
 				else if (map_d.Get_Enemy_Const(index).Get_YPos() + map_d.Get_Enemy_Const(index).Get_Height() - map_d.Get_Enemy_Const(index).Get_Crash_Height() >= player.Get_YPos() + player.Get_Height())
@@ -212,7 +212,7 @@ void Create_Hitting_Point(Enemy& enemy, const Player& player, const File& file, 
 			//폴리곤 생성
 
 			POINT pos[4];
-			if (file.Get_Enemy_Attack_Info(enemy.Get_Enemy_Type(), attack_type, Attack_Info::Attack_Guide) == 1) {
+			if (file.Get_Enemy_Attack_Info(enemy.Get_Enemy_Type(), attack_type, Attack_Info::Attack_Move) == 0 && file.Get_Enemy_Attack_Info(enemy.Get_Enemy_Type(), attack_type, Attack_Info::Attack_Guide) == 1) {
 				Create_Hitting_Polygon(enemy, pos, file.Get_Enemy_Attack_Info(enemy.Get_Enemy_Type(), attack_type, Attack_Info::Attack_Range_X),
 					file.Get_Enemy_Attack_Info(enemy.Get_Enemy_Type(), attack_type, Attack_Info::Attack_Range_Y), Hitting_Shape::ROUND);
 				enemy.Set_Hit_Range_Polygon(index, owner, false, enemy.Get_Direction(), true,
@@ -224,7 +224,8 @@ void Create_Hitting_Point(Enemy& enemy, const Player& player, const File& file, 
 					file.Get_Enemy_Attack_Info(enemy.Get_Enemy_Type(), attack_type, Attack_Info::Attack_Range_Y),
 					file.Get_Enemy_Attack_Info(enemy.Get_Enemy_Type(), attack_type, Attack_Info::Attack_Shape));
 				enemy.Set_Hit_Range_Polygon(index, owner, file.Get_Enemy_Attack_Info(enemy.Get_Enemy_Type(), attack_type, Attack_Info::Attack_Move), enemy.Get_Direction(),
-					false, Create_Speed(enemy.Get_Direction(), file.Get_Enemy_Attack_Info(enemy.Get_Enemy_Type(), attack_type, Attack_Info::Attack_Speed)), type, attack_type, pos,
+					file.Get_Enemy_Attack_Info(enemy.Get_Enemy_Type(), attack_type, Attack_Info::Attack_Guide), 
+					Create_Speed(enemy.Get_Direction(), file.Get_Enemy_Attack_Info(enemy.Get_Enemy_Type(), attack_type, Attack_Info::Attack_Speed)), type, attack_type, pos,
 					(file.Get_Enemy_Attack_Info(enemy.Get_Enemy_Type(), attack_type, Attack_Info::Attack_Move) == 1) ? file.Get_Enemy_Attack_Info(enemy.Get_Enemy_Type(), attack_type, Attack_Info::Attack_Hit_Delay) : 1, 
 					file.Get_Enemy_Attack_Multiple_Info(enemy.Get_Enemy_Type(), attack_type));
 			}
@@ -252,6 +253,12 @@ void CalCul_Enemy_Hitting_Point(Map_Dungeon& map_d, Move_Object& attack_obj, Pla
 			if (!attack_obj.Get_Hit_Range_P_Const(index).Is_Move() && attack_obj.Get_Hit_Range_P_Const(index).Get_Delay() == 0) {
 				Polygon_Damage_Enemy(attack_obj, player, attack_obj.Get_Hit_Range_P_Const(index), attack_obj.Get_Object_Info_Const().Get_Attack() * attack_obj.Get_Hit_Range_P_Const(index).Get_Attack_Multiple());
 				attack_obj.Delete_Hit_Range_Polygon(index);
+			}
+			else if (attack_obj.Get_Hit_Range_P_Const(index).Is_Move() && attack_obj.Get_Hit_Range_P_Const(index).Is_Guide()) {
+				if (attack_obj.Get_Hit_Range_P_Const(index).Get_Delay() == 0) {
+					Polygon_Damage_Enemy(attack_obj, player, attack_obj.Get_Hit_Range_P_Const(index), attack_obj.Get_Object_Info_Const().Get_Attack() * attack_obj.Get_Hit_Range_P_Const(index).Get_Attack_Multiple());
+					attack_obj.Delete_Hit_Range_Polygon(index);
+				}
 			}
 			else if (attack_obj.Get_Hit_Range_P_Const(index).Is_Move() || attack_obj.Get_Hit_Range_P_Const(index).Is_Guide()) {
 				if (Polygon_Damage_Enemy(attack_obj, player, attack_obj.Get_Hit_Range_P_Const(index), attack_obj.Get_Object_Info_Const().Get_Attack() * attack_obj.Get_Hit_Range_P_Const(index).Get_Attack_Multiple())

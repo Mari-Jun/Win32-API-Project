@@ -194,16 +194,53 @@ void Map_Dungeon::Set_Dungeon2(File& file) {
 		Reset_Move_Object(*enemy[index], enemy_pos[index].x, enemy_pos[index].y, enemy[index]->Get_Motion_Size().bmWidth, enemy[index]->Get_Motion_Size().bmHeight, 0);
 	}*/
 
-	for (int index = 0; index < 5; index++) {
+	/*for (int index = 0; index < 5; index++) {
 		enemy[index] = Create_Class<Enemy>();
 		Reset_Enemy(*enemy[index], file, Enemy_Type::Venueba);
 		Reset_Move_Object(*enemy[index], enemy_pos[index].x, enemy_pos[index].y, enemy[index]->Get_Motion_Size().bmWidth, enemy[index]->Get_Motion_Size().bmHeight, 6);
-	}
+	}*/
 
+	/*for (int index = 0; index < 5; index++) {
+		enemy[index] = Create_Class<Enemy>();
+		Reset_Enemy(*enemy[index], file, Enemy_Type::Diphtheloyd);
+		Reset_Move_Object(*enemy[index], enemy_pos[index].x, enemy_pos[index].y, enemy[index]->Get_Motion_Size().bmWidth, enemy[index]->Get_Motion_Size().bmHeight, 10);
+	}*/
+
+	/*for (int index = 0; index < 5; index++) {
+		enemy[index] = Create_Class<Enemy>();
+		Reset_Enemy(*enemy[index], file, Enemy_Type::Alnada);
+		Reset_Move_Object(*enemy[index], enemy_pos[index].x, enemy_pos[index].y, enemy[index]->Get_Motion_Size().bmWidth, enemy[index]->Get_Motion_Size().bmHeight, 8);
+	}*/
+
+	/*for (int index = 0; index < 5; index++) {
+		enemy[index] = Create_Class<Enemy>();
+		Reset_Enemy(*enemy[index], file, Enemy_Type::Magiste);
+		Reset_Move_Object(*enemy[index], enemy_pos[index].x, enemy_pos[index].y, enemy[index]->Get_Motion_Size().bmWidth, enemy[index]->Get_Motion_Size().bmHeight, 8);
+	}*/
+
+	/*for (int index = 0; index < 5; index++) {
+		enemy[index] = Create_Class<Enemy>();
+		Reset_Enemy(*enemy[index], file, Enemy_Type::Selnade);
+		Reset_Move_Object(*enemy[index], enemy_pos[index].x, enemy_pos[index].y, enemy[index]->Get_Motion_Size().bmWidth, enemy[index]->Get_Motion_Size().bmHeight, 8);
+	}*/
+
+	/*for (int index = 0; index < 5; index++) {
+		enemy[index] = Create_Class<Enemy>();
+		Reset_Enemy(*enemy[index], file, Enemy_Type::Seean);
+		Reset_Move_Object(*enemy[index], enemy_pos[index].x, enemy_pos[index].y, enemy[index]->Get_Motion_Size().bmWidth, enemy[index]->Get_Motion_Size().bmHeight, 8);
+	}*/
+
+	/*for (int index = 0; index < 5; index++) {
+		enemy[index] = Create_Class<Enemy>();
+		Reset_Enemy(*enemy[index], file, Enemy_Type::Jestona);
+		Reset_Move_Object(*enemy[index], enemy_pos[index].x, enemy_pos[index].y, enemy[index]->Get_Motion_Size().bmWidth, enemy[index]->Get_Motion_Size().bmHeight, 8);
+	}*/
 
 	enemy[50] = Create_Class<Enemy>();
-	Reset_Enemy(*enemy[50], file, Enemy_Type::Grave);
-	Reset_Move_Object(*enemy[50], 1900, 1400, enemy[50]->Get_Motion_Size().bmWidth, enemy[50]->Get_Motion_Size().bmHeight, 8);
+	Reset_Enemy(*enemy[50], file, Enemy_Type::Vagullion);
+	//Reset_Move_Object(*enemy[50], 1900, 1400, enemy[50]->Get_Motion_Size().bmWidth, enemy[50]->Get_Motion_Size().bmHeight, 8);
+	//Reset_Move_Object(*enemy[50], 1900, 1400, enemy[50]->Get_Motion_Size().bmWidth, enemy[50]->Get_Motion_Size().bmHeight, 12);
+	Reset_Move_Object(*enemy[50], 1900, 1400, enemy[50]->Get_Motion_Size().bmWidth, enemy[50]->Get_Motion_Size().bmHeight, 6);
 }
 
 void Map_Dungeon::Kill_Enemy(const int& index) {

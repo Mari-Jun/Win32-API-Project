@@ -223,7 +223,7 @@ void Paint_Player(HDC hdc, HDC bitdc, const Player& player) {
 		break;
 	}
 
-	TransparentBlt(hdc, player.Get_XPos() - 98, player.Get_YPos() + 14, player.Get_Motion_Size().bmWidth, player.Get_Motion_Size().bmHeight, bitdc, 0, 0, player.Get_Motion_Size().bmWidth, player.Get_Motion_Size().bmHeight, RGB(255, 255, 255));
+	TransparentBlt(hdc, player.Get_XPos() - 98, player.Get_YPos() + 14, player.Get_Motion_Size().bmWidth, player.Get_Motion_Size().bmHeight, bitdc, 0, 0, player.Get_Motion_Size().bmWidth, player.Get_Motion_Size().bmHeight, RGB(150, 150, 150));
 
 	Paint_Hitting_Damage(hdc, player, 0);
 

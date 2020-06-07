@@ -163,40 +163,40 @@ void Paint_Enemy(HDC hdc, HDC bitdc, const File& file, const Enemy& enemy, const
 }
 
 void Paint_Enemy_Detail(HDC hdc, HDC bitdc, const Enemy& enemy, const File& file) {
-	switch (enemy.Get_Status())
-	{
-	case Enemy_Status::E_Stop:
-		SelectObject(bitdc, enemy.Get_Stop_Motion(enemy.Get_Direction(), enemy.Get_Ani_Count() / 2 % file.Get_Enemy_Motion_Count(enemy.Get_Enemy_Type(), Enemy_Status::E_Stop)));
-		break;
-	case Enemy_Status::E_Move:
-		SelectObject(bitdc, enemy.Get_Move_Motion(enemy.Get_Direction(), enemy.Get_Ani_Count() / 2 % file.Get_Enemy_Motion_Count(enemy.Get_Enemy_Type(), Enemy_Status::E_Move)));
-		break;
-	case Enemy_Status::E_Attack:
-		SelectObject(bitdc, enemy.Get_Attack_Motion(enemy.Get_Direction(), enemy.Get_Ani_Count() / 2 % file.Get_Enemy_Motion_Count(enemy.Get_Enemy_Type(), Enemy_Status::E_Attack)));
-		break;
-	case Enemy_Status::E_SkillQ:
-		SelectObject(bitdc, enemy.Get_Enemy_Skill_Const().Get_Skill_Motion_Bitmap(Skill_Type::Skill_Q, enemy.Get_Direction(), enemy.Get_Ani_Count() / 2 % file.Get_Enemy_Motion_Count(enemy.Get_Enemy_Type(), Enemy_Status::E_SkillQ)));
-		break;
-	case Enemy_Status::E_SkillW:
-		SelectObject(bitdc, enemy.Get_Enemy_Skill_Const().Get_Skill_Motion_Bitmap(Skill_Type::Skill_W, enemy.Get_Direction(), enemy.Get_Ani_Count() / 2 % file.Get_Enemy_Motion_Count(enemy.Get_Enemy_Type(), Enemy_Status::E_SkillW)));
-		break;
-	case Enemy_Status::E_SkillE:
-		SelectObject(bitdc, enemy.Get_Enemy_Skill_Const().Get_Skill_Motion_Bitmap(Skill_Type::Skill_E, enemy.Get_Direction(), enemy.Get_Ani_Count() / 2 % file.Get_Enemy_Motion_Count(enemy.Get_Enemy_Type(), Enemy_Status::E_SkillE)));
-		break;
-	case Enemy_Status::E_SkillR:
-		SelectObject(bitdc, enemy.Get_Enemy_Skill_Const().Get_Skill_Motion_Bitmap(Skill_Type::Skill_R, enemy.Get_Direction(), enemy.Get_Ani_Count() / 2 % file.Get_Enemy_Motion_Count(enemy.Get_Enemy_Type(), Enemy_Status::E_SkillR)));
-		break;
-	default:
-		break;
-	}
-	TransparentBlt(hdc, enemy.Get_XPos() + file.Get_Enemy_Motion_Count(enemy.Get_Enemy_Type(), 7), enemy.Get_YPos() + file.Get_Enemy_Motion_Count(enemy.Get_Enemy_Type(), 8), enemy.Get_Width(), enemy.Get_Height(), bitdc, 0, 0, enemy.Get_Width(), enemy.Get_Height(), RGB(150, 150, 150));
 
-	//Paint_Enemy_Attack_Effect(hdc, bitdc, enemy, attack);
 	for (int index = 0; index < 20; index++) {
 		if (&enemy.Get_Hit_Range_P_Const(index) != NULL) {
 			Paint_Hitting_Range(hdc, bitdc, enemy.Get_Hit_Range_P_Const(index));
 		}
 	}
+
+	switch (enemy.Get_Status())
+	{
+	case Enemy_Status::E_Stop:
+		SelectObject(bitdc, enemy.Get_Stop_Motion(enemy.Get_Direction(), enemy.Get_Ani_Count() / 3 % file.Get_Enemy_Motion_Count(enemy.Get_Enemy_Type(), Enemy_Status::E_Stop)));
+		break;
+	case Enemy_Status::E_Move:
+		SelectObject(bitdc, enemy.Get_Move_Motion(enemy.Get_Direction(), enemy.Get_Ani_Count() / 3 % file.Get_Enemy_Motion_Count(enemy.Get_Enemy_Type(), Enemy_Status::E_Move)));
+		break;
+	case Enemy_Status::E_Attack:
+		SelectObject(bitdc, enemy.Get_Attack_Motion(enemy.Get_Direction(), enemy.Get_Ani_Count() / 3 % file.Get_Enemy_Motion_Count(enemy.Get_Enemy_Type(), Enemy_Status::E_Attack)));
+		break;
+	case Enemy_Status::E_SkillQ:
+		SelectObject(bitdc, enemy.Get_Enemy_Skill_Const().Get_Skill_Motion_Bitmap(Skill_Type::Skill_Q, enemy.Get_Direction(), enemy.Get_Ani_Count() / 3 % file.Get_Enemy_Motion_Count(enemy.Get_Enemy_Type(), Enemy_Status::E_SkillQ)));
+		break;
+	case Enemy_Status::E_SkillW:
+		SelectObject(bitdc, enemy.Get_Enemy_Skill_Const().Get_Skill_Motion_Bitmap(Skill_Type::Skill_W, enemy.Get_Direction(), enemy.Get_Ani_Count() / 3 % file.Get_Enemy_Motion_Count(enemy.Get_Enemy_Type(), Enemy_Status::E_SkillW)));
+		break;
+	case Enemy_Status::E_SkillE:
+		SelectObject(bitdc, enemy.Get_Enemy_Skill_Const().Get_Skill_Motion_Bitmap(Skill_Type::Skill_E, enemy.Get_Direction(), enemy.Get_Ani_Count() / 3 % file.Get_Enemy_Motion_Count(enemy.Get_Enemy_Type(), Enemy_Status::E_SkillE)));
+		break;
+	case Enemy_Status::E_SkillR:
+		SelectObject(bitdc, enemy.Get_Enemy_Skill_Const().Get_Skill_Motion_Bitmap(Skill_Type::Skill_R, enemy.Get_Direction(), enemy.Get_Ani_Count() / 3 % file.Get_Enemy_Motion_Count(enemy.Get_Enemy_Type(), Enemy_Status::E_SkillR)));
+		break;
+	default:
+		break;
+	}
+	TransparentBlt(hdc, enemy.Get_XPos() + file.Get_Enemy_Motion_Count(enemy.Get_Enemy_Type(), 7), enemy.Get_YPos() + file.Get_Enemy_Motion_Count(enemy.Get_Enemy_Type(), 8), enemy.Get_Width(), enemy.Get_Height(), bitdc, 0, 0, enemy.Get_Width(), enemy.Get_Height(), RGB(150, 150, 150));	
 
 	Paint_Hitting_Damage(hdc, enemy, file.Get_Enemy_Motion_Count(enemy.Get_Enemy_Type(), 8));
 }
