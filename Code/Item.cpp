@@ -120,10 +120,11 @@ void Use_Mp_Potion(Player_Item& p_item, Object_Info& o_info) {
 		o_info.Set_Mp(((o_info.Get_Mp() < o_info.Get_Max_Mp() / 2) ? o_info.Get_Mp() + o_info.Get_Max_Mp() / 2 : o_info.Get_Max_Mp()));
 	}
 }
-void Use_Panacea(Player_Item& p_item, Move_Object& m_object) {
-	//상태이상상태에서 회복합니다.
+void Use_Panacea(Player_Item& p_item, Object_Info& o_info) {
+	//체력과 마나의 50%를 회복합니다.
 	if (p_item.Get_Panacea() > 0) {
 		p_item.Set_Panacea(p_item.Get_Panacea() - 1);
-		m_object.Set_Status(Player_Status::Stop);
+		o_info.Set_Hp(((o_info.Get_Hp() < o_info.Get_Max_Hp() / 4) ? o_info.Get_Hp() + o_info.Get_Max_Hp() * 3 / 4 : o_info.Get_Max_Hp()));
+		o_info.Set_Mp(((o_info.Get_Mp() < o_info.Get_Max_Mp() / 4) ? o_info.Get_Mp() + o_info.Get_Max_Mp() * 3 / 4 : o_info.Get_Max_Mp()));
 	}
 }

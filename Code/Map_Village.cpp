@@ -317,5 +317,6 @@ void Change_Map_Village_To(Map_Village& map_v) {
 }
 
 void Change_Map_To_Village(Map_Village& map_v) {
+	map_v.Get_Village_Sound().AllSoundStop();
 	map_v.Get_Village_Sound().Play_Sound(Village_Sound::BackGround_Village_Sound);
 }

@@ -159,7 +159,7 @@ void Reset_Player(Player& player, File& file, const int& class_type) {
 	player.Set_Motion_Bitmap();
 	Reset_Move_Object(player, 400, 500, player.Get_Motion_Size().bmWidth, player.Get_Motion_Size().bmHeight, 6);
 	player.Create_Object_Info();
-	Reset_Object_Info(player.Get_Object_Info(), 1, 100, 100, 10, 0, 0);
+	Reset_Object_Info(player.Get_Object_Info(), 1, 100, 100, 0, 0, 0);
 	player.Set_Class_Type(class_type);
 	player.Create_Player_Equipment();
 	player.Create_Player_Skill(file);
@@ -272,7 +272,7 @@ void Use_Item_Command(Player& player, WPARAM wParam) {
 			Use_Mp_Potion(player.Get_Player_Item(), player.Get_Object_Info());
 			break;
 		case Player_Item_Type::Panacea:
-			Use_Panacea(player.Get_Player_Item(), player);
+			Use_Panacea(player.Get_Player_Item(), player.Get_Object_Info());
 			break;
 		default:
 			break;
@@ -295,8 +295,28 @@ void Change_Map_Reset_Player(Player& player, const Progress& progress) {
 		break;
 	case Map_Type::Dungeon2:
 		player.Set_Speed(10);
-		player.Set_XPos(100);
-		player.Set_YPos(100);
+		player.Set_XPos(40);
+		player.Set_YPos(40);
+		break;
+	case Map_Type::Dungeon3:
+		player.Set_Speed(10);
+		player.Set_XPos(700);
+		player.Set_YPos(60);
+		break;
+	case Map_Type::Dungeon4:
+		player.Set_Speed(10);
+		player.Set_XPos(4100);
+		player.Set_YPos(3900);
+		break;
+	case Map_Type::Dungeon5:
+		player.Set_Speed(10);
+		player.Set_XPos(40);
+		player.Set_YPos(40);
+		break;
+	case Map_Type::Dungeon6:
+		player.Set_Speed(10);
+		player.Set_XPos(40);
+		player.Set_YPos(40);
 		break;
 	default:
 		break;

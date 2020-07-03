@@ -20,7 +20,7 @@ public:
 	
 
 private:
-	HBITMAP skill_motion_bitmap[4][8][30];
+	HBITMAP skill_motion_bitmap[4][8][35];
 	int current_delay[4];
 	int skill_delay[4];
 };

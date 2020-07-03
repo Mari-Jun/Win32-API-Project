@@ -13,14 +13,28 @@
 #include "Sound.h"
 
 template <>
-void Command_Player(Player& player, Map_Dungeon& map_d, Progress& progress) {
-	if (player.Get_Status() == Player_Status::Die || player.Get_Status() == Player_Status::Interaction || player.Get_Status() == Player_Status::Inventory || player.Get_Status() == Player_Status::Shopping ||
+bool Command_Player(Player& player, Map_Dungeon& map_d, Progress& progress) {
+	if (player.Get_Status() == Player_Status::Interaction || player.Get_Status() == Player_Status::Inventory || player.Get_Status() == Player_Status::Shopping ||
 		player.Get_Status() == Player_Status::Map_Selecting)
-		return;
+		return false;
 
 	player.Set_Ani_Count(player.Get_Ani_Count() + 1);
 	if (player.Get_Ani_Count() == 800)
 		player.Set_Ani_Count(0);
+
+	if (player.Get_Object_Info_Const().Get_Hp() < 0 && player.Get_Status() != Player_Status::Die) {
+		player.Set_Ani_Count(0);
+		player.Set_Status(Player_Status::Die);
+	}
+
+	if (player.Get_Status() == Player_Status::Die) {
+		if (player.Get_Ani_Count() == 16) {
+			player.Get_Object_Info().Set_Hp(1);
+			player.Set_Hitting_Damage_Count(-1);
+			return true;
+		}
+		return false;
+	}
 
 	if (player.Get_Status() != Player_Status::SkillQ && player.Get_Status() != Player_Status::SkillW &&
 		player.Get_Status() != Player_Status::SkillE && player.Get_Status() != Player_Status::SkillR)
@@ -33,6 +47,8 @@ void Command_Player(Player& player, Map_Dungeon& map_d, Progress& progress) {
 	Move_Player(player, map_d, progress);
 
 	Hit_Player(player);
+
+	return false;
 }
 
 void Move_Player_Check(Move_Object& player, const Map_Village& map_v, Progress& progress, const int& move_x, const int& move_y) {
@@ -49,10 +65,10 @@ void Move_Player_Check(Move_Object& player, const Map_Village& map_v, Progress& 
 	if (&map_v.Get_Portal_Const() != NULL && Crash_Check_Object(player, map_v.Get_Portal_Const(), move_x, move_y)) {
 		//포탈과 충돌 했을 경우 던전 선택을 해야합니다.
 		//퀘스트 안받았을 경우는 포탈 못탑니다. 일단 주석처리 해놓겠습니다. 나중에 주석 풀어주세요.
-		//if (progress.Get_Quest_Num() != Quest_Name::No_Quest) {
-		progress.Set_Map_Select(true);
-		player.Set_Status(Player_Status::Map_Selecting);
-		//}
+		if (progress.Get_Quest_Num() != Quest_Name::No_Quest) {
+			progress.Set_Map_Select(true);
+			player.Set_Status(Player_Status::Map_Selecting);
+		}
 		return;
 	}
 
@@ -192,11 +208,4 @@ void Skill_Player(Player& player, Map_Dungeon& map_d) {
 
 void Hit_Player(Player& player) {
 	Count_Up_Hitting_Damage_Count(player);
-	Player_Kill_Check(player);
-}
-
-void Player_Kill_Check(Player& player) {
-	if (player.Get_Object_Info_Const().Get_Hp() < 0) {
-		//일단 미구현
-	}
 }

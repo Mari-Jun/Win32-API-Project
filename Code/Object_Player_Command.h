@@ -24,15 +24,13 @@ void Skill_Player(Player& player, Map_Dungeon& map_d);
 
 /*Player Hit*/
 void Hit_Player(Player& player);
-void Player_Kill_Check(Player& player);
-
 
 template <typename T_Map>
-void Command_Player(Player& player, T_Map& map, Progress& progress) {
+bool Command_Player(Player& player, T_Map& map, Progress& progress) {
 
-	if (player.Get_Status() == Player_Status::Die || player.Get_Status() == Player_Status::Interaction || player.Get_Status() == Player_Status::Inventory || player.Get_Status() == Player_Status::Shopping ||
+	if (player.Get_Status() == Player_Status::Interaction || player.Get_Status() == Player_Status::Inventory || player.Get_Status() == Player_Status::Shopping ||
 		player.Get_Status() == Player_Status::Map_Selecting)
-		return;
+		return false;
 
 	player.Set_Ani_Count(player.Get_Ani_Count() + 1);
 	if (player.Get_Ani_Count() == 800)
@@ -44,10 +42,12 @@ void Command_Player(Player& player, T_Map& map, Progress& progress) {
 	for (int index = Skill_Type::Skill_Q; index <= Skill_Type::Skill_R; index++)
 		if (player.Get_Player_Skill_Const().Get_Current_Delay(index) > 0)
 			player.Get_Player_Skill().Set_Current_Delay(index, player.Get_Player_Skill_Const().Get_Current_Delay(index) - 1);
+
+	return false;
 }
 
 template <>
-void Command_Player(Player& player, Map_Dungeon& map_d, Progress& progress);
+bool Command_Player(Player& player, Map_Dungeon& map_d, Progress& progress);
 
 template <typename T_Map>
 void Move_Player(Move_Object& player, const T_Map& map, Progress& progress) {

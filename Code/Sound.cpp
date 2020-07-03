@@ -25,6 +25,9 @@ void Sound::Create_Map_Sound(const int& map_type) {
 	//sprintf_s(str, ".\\Sound\\BKMusic%d.mp3", i + 1);
 	switch (map_type)
 	{
+	case Map_Type::Type_Main_Page:
+		FMOD_System_CreateStream(system, ".\\Sound\\Background\\Main_Page.mp3", FMOD_LOOP_NORMAL, 0, &sound[7]);
+		break;
 	case Map_Type::Village1:
 		FMOD_System_CreateStream(system, ".\\Sound\\Background\\Village1.mp3", FMOD_LOOP_NORMAL, 0, &sound[Village_Sound::BackGround_Village_Sound]);
 		FMOD_System_CreateStream(system, ".\\Sound\\Npc\\Elder.mp3", FMOD_LOOP_OFF, 0, &sound[Village_Sound::Elder_Sound]);
@@ -33,7 +36,23 @@ void Sound::Create_Map_Sound(const int& map_type) {
 		FMOD_System_CreateStream(system, ".\\Sound\\Npc\\Item.mp3", FMOD_LOOP_OFF, 0, &sound[Village_Sound::Item_Shop_Sound]);
 		FMOD_System_CreateStream(system, ".\\Sound\\Npc\\Legend.mp3", FMOD_LOOP_OFF, 0, &sound[Village_Sound::Legend_Sound]);
 		break;
-	default:
+	case Map_Type::Dungeon1:
+		FMOD_System_CreateStream(system, ".\\Sound\\Background\\Dungeon1.mp3", FMOD_LOOP_NORMAL, 0, &sound[8]);
+		break;
+	case Map_Type::Dungeon2:
+		FMOD_System_CreateStream(system, ".\\Sound\\Background\\Dungeon2.mp3", FMOD_LOOP_NORMAL, 0, &sound[9]);
+		break;
+	case Map_Type::Dungeon3:
+		FMOD_System_CreateStream(system, ".\\Sound\\Background\\Dungeon3.mp3", FMOD_LOOP_NORMAL, 0, &sound[10]);
+		break;
+	case Map_Type::Dungeon4:
+		FMOD_System_CreateStream(system, ".\\Sound\\Background\\Dungeon4.mp3", FMOD_LOOP_NORMAL, 0, &sound[11]);
+		break;
+	case Map_Type::Dungeon5:
+		FMOD_System_CreateStream(system, ".\\Sound\\Background\\Dungeon5.mp3", FMOD_LOOP_NORMAL, 0, &sound[12]);
+		break;
+	case Map_Type::Dungeon6:
+		FMOD_System_CreateStream(system, ".\\Sound\\Background\\Dungeon6.mp3", FMOD_LOOP_NORMAL, 0, &sound[13]);
 		break;
 	}
 }
@@ -62,8 +81,11 @@ void Sound::Play_Sound(const int& sound_type) {
 }
 
 void Sound::AllSoundStop() {
-	for (int index = 0; index < 20; index++)
+	for (int index = 0; index < 20; index++) {
 		FMOD_Channel_Stop(channel[index]);
+		//FMOD_Sound_Release(sound[index]);
+	}
+		
 }
 
 void Create_Enemy_Sound(const int& enemy_type) {

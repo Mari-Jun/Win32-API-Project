@@ -20,7 +20,7 @@ using namespace std;
 
 bool Crash_Check_Map(const Move_Object& m_object, const Map& map, const int& move_x, const int& move_y) {
 	if (m_object.Get_XPos() + move_x >= map.Get_Map_Rect().left && m_object.Get_XPos() + m_object.Get_Crash_Width() + move_x <= map.Get_Map_Rect().right &&
-		m_object.Get_YPos() + move_y >= map.Get_Map_Rect().top && m_object.Get_YPos() + m_object.Get_Height() + move_y <= map.Get_Map_Rect().bottom)
+		m_object.Get_YPos() + m_object.Get_Height() - m_object.Get_Crash_Height() + move_y >= map.Get_Map_Rect().top && m_object.Get_YPos() + m_object.Get_Height() + move_y <= map.Get_Map_Rect().bottom)
 		return false;
 	return true;
 }

@@ -4,6 +4,10 @@
 #include "Source.h"
 #include "Object_Player.h"
 
+const int& Progress::Get_Page_Type() const {
+	return page_type;
+}
+
 const int& Progress::Get_Player_Class() const {
 	return player_class;
 }
@@ -40,6 +44,10 @@ const HFONT& Progress::Get_Font() const {
 	return map_font;
 }
 
+void Progress::Set_Page_Type(const int& page_type) {
+	this->page_type = page_type;
+}
+
 void Progress::Set_Player_Class(const int& player_class) {
 	this->player_class = player_class;
 }
@@ -71,13 +79,19 @@ void Progress::Set_Bitmap_Font() {
 }
 
 void Reset_Progress(Progress& progress, const int& player_class) {
+	progress.Set_Page_Type(Page_Type::T_Main_Page);
 	progress.Set_Player_Class(player_class);
 	progress.Set_Map_Type(Map_Type::Village1);
 	progress.Set_Select_Map_Type(Map_Type::Dungeon1);
 	progress.Set_Map_Select(false);
-	progress.Set_Quest_Num(Quest_Name::No_Quest + 2);
+	//¹Ø ³ªÁß¿¡ ±³Ã¼ ÇÊ¿äÇÔ
+	progress.Set_Quest_Num(Quest_Name::No_Quest);
 	progress.Set_Quest_Clear(Quest_Name::No_Quest);
 	progress.Set_Bitmap_Font();
+}
+
+void Change_Page_Type(Progress& progress, const int& page_type) {
+	progress.Set_Page_Type(page_type);
 }
 
 void Paint_Map_Select(HDC hdc, HDC bitdc, const Progress& progress, const RECT c_rect) {
@@ -98,7 +112,16 @@ void Paint_Map_Select(HDC hdc, HDC bitdc, const Progress& progress, const RECT c
 		TextOut(hdc, c_rect.right / 2 - progress.Get_Map_Select_Bitmap_Size().bmWidth / 2 + 80, c_rect.bottom / 2 - progress.Get_Map_Select_Bitmap_Size().bmHeight / 2 + 35, _T("¿Ü°û Áö¿ª"), 5);
 		break;
 	case Map_Type::Dungeon3:
-		TextOut(hdc, c_rect.right / 2 - progress.Get_Map_Select_Bitmap_Size().bmWidth / 2 + 80, c_rect.bottom / 2 - progress.Get_Map_Select_Bitmap_Size().bmHeight / 2 + 35, _T("´ÏÆR Áö¿ª"), 5);
+		TextOut(hdc, c_rect.right / 2 - progress.Get_Map_Select_Bitmap_Size().bmWidth / 2 + 80, c_rect.bottom / 2 - progress.Get_Map_Select_Bitmap_Size().bmHeight / 2 + 35, _T("°­Ã¶ Á¦ÀÛ¼Ò"), 6);
+		break;
+	case Map_Type::Dungeon4:
+		TextOut(hdc, c_rect.right / 2 - progress.Get_Map_Select_Bitmap_Size().bmWidth / 2 + 80, c_rect.bottom / 2 - progress.Get_Map_Select_Bitmap_Size().bmHeight / 2 + 35, _T("½Åºñ·Î¿î À¯¼º"), 7);
+		break;
+	case Map_Type::Dungeon5:
+		TextOut(hdc, c_rect.right / 2 - progress.Get_Map_Select_Bitmap_Size().bmWidth / 2 + 80, c_rect.bottom / 2 - progress.Get_Map_Select_Bitmap_Size().bmHeight / 2 + 35, _T("´Ù½Ã ÅÂ¾î³­ ½£"), 8);
+		break;
+	case Map_Type::Dungeon6:
+		TextOut(hdc, c_rect.right / 2 - progress.Get_Map_Select_Bitmap_Size().bmWidth / 2 + 80, c_rect.bottom / 2 - progress.Get_Map_Select_Bitmap_Size().bmHeight / 2 + 35, _T("¾ÏÈæ °ø°£"), 5);
 		break;
 	default:
 		break;
@@ -141,7 +164,15 @@ void Change_Map_Dungeon_Clear(Progress& progress, Player& player) {
 	progress.Set_Map_Type(Map_Type::Village1);
 }
 
+void Change_Map_Player_Die(Progress& progress, Player& player) {
+	player.Set_Status(Player_Status::Stop);
+	progress.Set_Map_Type(Map_Type::Village1);
+}
+
 void Clear_Quest(Progress& progress) {
-	if (progress.Get_Quest_Clear() < progress.Get_Map_Type())
+	if (progress.Get_Quest_Clear() < progress.Get_Map_Type()) {
 		progress.Set_Quest_Clear(progress.Get_Quest_Clear() + 1);
+		progress.Set_Quest_Num(progress.Get_Quest_Num() + 1);
+	}
+		
 }

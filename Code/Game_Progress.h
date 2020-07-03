@@ -5,6 +5,7 @@ class Player;
 
 class Progress {
 public:
+	const int& Get_Page_Type() const;
 	const int& Get_Player_Class() const;
 	const int& Get_Map_Type() const;
 	const int& Get_Select_Map_Type() const;
@@ -15,6 +16,7 @@ public:
 	const BITMAP& Get_Map_Select_Bitmap_Size() const;
 	const HFONT& Get_Font() const;
 
+	void Set_Page_Type(const int& page_type);
 	void Set_Player_Class(const int& player_class);
 	void Set_Map_Type(const int& map_type);
 	void Set_Select_Map_Type(const int& select_map_type);
@@ -24,6 +26,7 @@ public:
 	void Set_Bitmap_Font();
 
 private:
+	int page_type;
 	int player_class;
 	int map_type;
 	int select_map_type;
@@ -37,7 +40,9 @@ private:
 
 void Reset_Progress(Progress& progress, const int& player_class);
 void Paint_Map_Select(HDC hdc, HDC bitdc, const Progress& progress, const RECT c_rect);
+void Change_Page_Type(Progress& progress, const int& page_type);
 int Change_Map_Select(Progress& progress, Player& player, const WPARAM wParam);
 void Change_Map_Dungeon_Clear(Progress& progress, Player& player);
+void Change_Map_Player_Die(Progress& progress, Player& player);
 void Clear_Quest(Progress& progress);
 

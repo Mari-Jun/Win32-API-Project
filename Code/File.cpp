@@ -1,6 +1,5 @@
 #include <windows.h>
 #include <tchar.h>
-#include <iostream>
 #include <fstream>
 #include <string>
 #include "Source.h"
@@ -64,13 +63,6 @@ void File::Set_Enemy_Object_Info() {
 			}
 		}
 	}
-
-	for (int i = 0; i < 11; i++) {
-		for (int j = 0; j < 8; j++)
-			cout << Enemy_Object_Info[i][j] << ' ';
-		cout << endl;
-	}
-
 	
 	fs.close();
 }
@@ -145,17 +137,6 @@ void File::Set_Enemy_Attack_Info() {
 		enemy_type++;
 	}
 
-	for (int enemy_type = 0; enemy_type < 6; enemy_type++) {
-		for (attack_type = Attack_Type::A_Attack; attack_type <= Attack_Type::A_SkillR; attack_type++) {
-			for (attack_info = Attack_Info::Attack_Delay; attack_info <= Attack_Info::Attack_Multiple; attack_info++) {
-				if (attack_info != Attack_Info::Attack_Multiple)
-					cout << Enemy_Attack_Info[enemy_type][attack_type][attack_info] << ' ';
-				else
-					cout << Enemy_Attack_Multiple_Info[enemy_type][attack_type] << endl;
-			}
-		}
-		cout << endl;
-	}
 	fs.close();
 }
 
@@ -175,16 +156,11 @@ void File::Set_Quest_Talk() {
 		
 		for (int index = 0; index < max_talk; index++) {
 			getline(fs, wstr);
-			wcout << wstr << endl;
 			Quest_Talk[quest_num - 1][quest_after][index] = _wcsdup(wstr.c_str());
-			wcout << Quest_Talk[quest_num - 1][quest_after][index] << endl;
 		}
 	}
 
 	fs.close();
-
-	for (int i = 0; i < 10; i++)
-		wcout << Quest_Talk[0][0][i] << endl;
 }
 
 

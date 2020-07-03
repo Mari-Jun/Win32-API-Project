@@ -20,16 +20,19 @@ void E_Helmet::Set_Helmet() {
 	defence[Helmet_Type::DEFUALT_HELMET] = 2;
 
 	mp[Helmet_Type::SHOP_HELMET1] = 50;
-	defence[Helmet_Type::SHOP_HELMET1] = 4;
+	defence[Helmet_Type::SHOP_HELMET1] = 5;
 
-	mp[Helmet_Type::SHOP_HELMET2] = 100;
-	defence[Helmet_Type::SHOP_HELMET2] = 11;
+	mp[Helmet_Type::SHOP_HELMET2] = 75;
+	defence[Helmet_Type::SHOP_HELMET2] = 10;
 
-	mp[Helmet_Type::SHOP_HELMET3] = 150;
-	defence[Helmet_Type::SHOP_HELMET3] = 20;
+	mp[Helmet_Type::SHOP_HELMET3] = 100;
+	defence[Helmet_Type::SHOP_HELMET3] = 16;
 
-	mp[Helmet_Type::SHOP_HELMET4] = 200;
+	mp[Helmet_Type::SHOP_HELMET4] = 125;
 	defence[Helmet_Type::SHOP_HELMET4] = 25;
+
+	mp[Helmet_Type::LEGEND_HELMET] = 200;
+	defence[Helmet_Type::LEGEND_HELMET] = 30;
 }
 
 void Reset_Helmet(E_Helmet& e_helmet) {
@@ -53,6 +56,9 @@ void Paint_Helmet_Info(HDC hdc, const E_Helmet& helmet, const POINT& pos, const 
 		break;
 	case Helmet_Type::SHOP_HELMET4:
 		TextOut(hdc, pos.x, pos.y, _T("강철 투구"), 5);
+		break;
+	case Helmet_Type::LEGEND_HELMET:
+		TextOut(hdc, pos.x, pos.y, _T("전설의 투구"), 6);
 		break;
 	default:
 		break;
@@ -82,20 +88,23 @@ const int& E_Armor::Get_Defence(const int& armor_type) const {
 }
 
 void E_Armor::Set_Armor() {
-	hp[Armor_Type::DEFUALT_ARMOR] = 15;
-	defence[Armor_Type::DEFUALT_ARMOR] = 10;
+	hp[Armor_Type::DEFUALT_ARMOR] = 100;
+	defence[Armor_Type::DEFUALT_ARMOR] = 5;
 
-	hp[Armor_Type::SHOP_ARMOR1] = 33;
-	defence[Armor_Type::SHOP_ARMOR1] = 20;
+	hp[Armor_Type::SHOP_ARMOR1] = 200;
+	defence[Armor_Type::SHOP_ARMOR1] = 15;
 
-	hp[Armor_Type::SHOP_ARMOR2] = 102;
-	defence[Armor_Type::SHOP_ARMOR2] = 40;
+	hp[Armor_Type::SHOP_ARMOR2] = 450;
+	defence[Armor_Type::SHOP_ARMOR2] = 33;
 
-	hp[Armor_Type::SHOP_ARMOR3] = 196;
-	defence[Armor_Type::SHOP_ARMOR3] = 60;
+	hp[Armor_Type::SHOP_ARMOR3] = 600;
+	defence[Armor_Type::SHOP_ARMOR3] = 49;
 
-	hp[Armor_Type::SHOP_ARMOR4] = 300;
-	defence[Armor_Type::SHOP_ARMOR4] = 70;
+	hp[Armor_Type::SHOP_ARMOR4] = 1000;
+	defence[Armor_Type::SHOP_ARMOR4] = 68;
+
+	hp[Armor_Type::LEGEND_ARMOR] = 1650;
+	defence[Armor_Type::LEGEND_ARMOR] = 75;
 }
 
 void Reset_Armor(E_Armor& e_armor) {
@@ -119,6 +128,9 @@ void Paint_Armor_Info(HDC hdc, const E_Armor& e_armor, const POINT& pos, const i
 		break;
 	case Armor_Type::SHOP_ARMOR4:
 		TextOut(hdc, pos.x, pos.y, _T("강철 아머"), 5);
+		break;
+	case Armor_Type::LEGEND_ARMOR:
+		TextOut(hdc, pos.x, pos.y, _T("전설의 아머"), 6);
 		break;
 	default:
 		break;
@@ -148,20 +160,23 @@ const int& E_Pant::Get_Defence(const int& pant_type) const {
 }
 
 void E_Pant::Set_Pant() {
-	hp[Pant_Type::DEFUALT_PANT] = 30;
-	defence[Pant_Type::DEFUALT_PANT] = 5;
+	hp[Pant_Type::DEFUALT_PANT] = 150;
+	defence[Pant_Type::DEFUALT_PANT] = 3;
 
-	hp[Pant_Type::SHOP_PANT1] = 58;
+	hp[Pant_Type::SHOP_PANT1] = 400;
 	defence[Pant_Type::SHOP_PANT1] = 10;
 
-	hp[Pant_Type::SHOP_PANT2] = 144;
-	defence[Pant_Type::SHOP_PANT2] = 24;
+	hp[Pant_Type::SHOP_PANT2] = 700;
+	defence[Pant_Type::SHOP_PANT2] = 17;
 
-	hp[Pant_Type::SHOP_PANT3] = 250;
-	defence[Pant_Type::SHOP_PANT3] = 40;
+	hp[Pant_Type::SHOP_PANT3] = 1200;
+	defence[Pant_Type::SHOP_PANT3] = 25;
 
-	hp[Pant_Type::SHOP_PANT4] = 350;
-	defence[Pant_Type::SHOP_PANT4] = 50;
+	hp[Pant_Type::SHOP_PANT4] = 1650;
+	defence[Pant_Type::SHOP_PANT4] = 37;
+
+	hp[Pant_Type::LEGEND_PANT] = 2000;
+	defence[Pant_Type::LEGEND_PANT] = 45;
 }
 
 void Reset_Pant(E_Pant& e_pant) {
@@ -185,6 +200,9 @@ void Paint_Pant_Info(HDC hdc, const E_Pant& e_pant, const POINT& pos, const int&
 		break;
 	case Pant_Type::SHOP_PANT4:
 		TextOut(hdc, pos.x, pos.y, _T("강철 팬츠"), 5);
+		break;
+	case Pant_Type::LEGEND_PANT:
+		TextOut(hdc, pos.x, pos.y, _T("전설의 팬츠"), 6);
 		break;
 	default:
 		break;
@@ -217,17 +235,20 @@ void E_Glove::Set_Glove() {
 	attack[Glove_Type::DEFUALT_GLOVE] = 5;
 	fatal[Glove_Type::DEFUALT_GLOVE] = 1;
 
-	attack[Glove_Type::SHOP_GLOVE1] = 8;
-	fatal[Glove_Type::SHOP_GLOVE1] = 2;
+	attack[Glove_Type::SHOP_GLOVE1] = 12;
+	fatal[Glove_Type::SHOP_GLOVE1] = 3;
 
-	attack[Glove_Type::SHOP_GLOVE2] = 16;
-	fatal[Glove_Type::SHOP_GLOVE2] = 4;
+	attack[Glove_Type::SHOP_GLOVE2] = 20;
+	fatal[Glove_Type::SHOP_GLOVE2] = 5;
 
-	attack[Glove_Type::SHOP_GLOVE3] = 24;
-	fatal[Glove_Type::SHOP_GLOVE3] = 6;
+	attack[Glove_Type::SHOP_GLOVE3] = 30;
+	fatal[Glove_Type::SHOP_GLOVE3] = 8;
 
-	attack[Glove_Type::SHOP_GLOVE4] = 28;
-	fatal[Glove_Type::SHOP_GLOVE4] = 7;
+	attack[Glove_Type::SHOP_GLOVE4] = 50;
+	fatal[Glove_Type::SHOP_GLOVE4] = 12;
+
+	attack[Glove_Type::LEGEND_GLOVE] = 70;
+	fatal[Glove_Type::LEGEND_GLOVE] = 15;
 }
 
 void Reset_Glove(E_Glove& e_glove) {
@@ -251,6 +272,9 @@ void Paint_Glove_Info(HDC hdc, const E_Glove& e_glove, const POINT& pos, const i
 		break;
 	case Glove_Type::SHOP_GLOVE4:
 		TextOut(hdc, pos.x, pos.y, _T("강철 장갑"), 5);
+		break;
+	case Glove_Type::LEGEND_GLOVE:
+		TextOut(hdc, pos.x, pos.y, _T("전설의 장갑"), 6);
 		break;
 	default:
 		break;
@@ -278,20 +302,23 @@ const int& E_Shoe::Get_Mp(const int& shoe_type) const {
 }
 
 void E_Shoe::Set_Shoe() {
-	hp[Shoe_Type::DEFUALT_SHOE] = 10;
+	hp[Shoe_Type::DEFUALT_SHOE] = 50;
 	mp[Shoe_Type::DEFUALT_SHOE] = 10;
 
-	hp[Shoe_Type::SHOP_SHOE1] = 20;
+	hp[Shoe_Type::SHOP_SHOE1] = 100;
 	mp[Shoe_Type::SHOP_SHOE1] = 20;
 
-	hp[Shoe_Type::SHOP_SHOE2] = 40;
-	mp[Shoe_Type::SHOP_SHOE2] = 40;
+	hp[Shoe_Type::SHOP_SHOE2] = 150;
+	mp[Shoe_Type::SHOP_SHOE2] = 25;
 
-	hp[Shoe_Type::SHOP_SHOE3] = 60;
-	mp[Shoe_Type::SHOP_SHOE3] = 60;
+	hp[Shoe_Type::SHOP_SHOE3] = 200;
+	mp[Shoe_Type::SHOP_SHOE3] = 30;
 
-	hp[Shoe_Type::SHOP_SHOE4] = 70;
-	mp[Shoe_Type::SHOP_SHOE4] = 70;
+	hp[Shoe_Type::SHOP_SHOE4] = 250;
+	mp[Shoe_Type::SHOP_SHOE4] = 40;
+
+	hp[Shoe_Type::LEGEND_SHOE] = 500;
+	mp[Shoe_Type::LEGEND_SHOE] = 50;
 }
 
 void Reset_Shoe(E_Shoe& e_shoe) {
@@ -348,20 +375,23 @@ void E_Weapon::Set_Weapon(const int& class_type) {
 	switch (class_type)
 	{
 	case Class_Type::Warrior:
-		attack[Weapon_Type::DEFUALT_WEAPON] = 20;
-		fatal[Weapon_Type::DEFUALT_WEAPON] = 3;
+		attack[Weapon_Type::DEFUALT_WEAPON] = 35;
+		fatal[Weapon_Type::DEFUALT_WEAPON] = 2;
 
-		attack[Weapon_Type::SHOP_WEAPON1] = 35;
-		fatal[Weapon_Type::SHOP_WEAPON1] = 5;
+		attack[Weapon_Type::SHOP_WEAPON1] = 68;
+		fatal[Weapon_Type::SHOP_WEAPON1] = 4;
 
-		attack[Weapon_Type::SHOP_WEAPON2] = 64;
-		fatal[Weapon_Type::SHOP_WEAPON2] = 10;
+		attack[Weapon_Type::SHOP_WEAPON2] = 110;
+		fatal[Weapon_Type::SHOP_WEAPON2] = 9;
 
-		attack[Weapon_Type::SHOP_WEAPON3] = 100;
-		fatal[Weapon_Type::SHOP_WEAPON3] = 15;
+		attack[Weapon_Type::SHOP_WEAPON3] = 174;
+		fatal[Weapon_Type::SHOP_WEAPON3] = 14;
 
-		attack[Weapon_Type::SHOP_WEAPON4] = 125;
-		fatal[Weapon_Type::SHOP_WEAPON4] = 20;
+		attack[Weapon_Type::SHOP_WEAPON4] = 240;
+		fatal[Weapon_Type::SHOP_WEAPON4] = 18;
+
+		attack[Weapon_Type::LEGEND_WEAPON] = 370;
+		fatal[Weapon_Type::LEGEND_WEAPON] = 30;
 		break;
 	default:
 		break;
@@ -388,6 +418,9 @@ void Paint_Weapon_Info(HDC hdc, const E_Weapon& e_weapon, const POINT& pos, cons
 		TextOut(hdc, pos.x, pos.y, _T("붉은 눈의 검"), 7);
 		break;
 	case Weapon_Type::SHOP_WEAPON4:
+		TextOut(hdc, pos.x, pos.y, _T("서리의 검"), 5);
+		break;
+	case Weapon_Type::LEGEND_WEAPON:
 		TextOut(hdc, pos.x, pos.y, _T("전설의 검"), 5);
 		break;
 	default:
@@ -413,15 +446,12 @@ const int& E_Amulet::Get_Hp(const int& amulet_type) const {
 }
 
 void E_Amulet::Set_Amulet() {
-	hp[Amulet_Type::DEFUALT_AMULET] = 20;
-
-	hp[Amulet_Type::SHOP_AMULET1] = 40;
-
-	hp[Amulet_Type::SHOP_AMULET2] = 80;
-
-	hp[Amulet_Type::SHOP_AMULET3] = 120;
-
-	hp[Amulet_Type::SHOP_AMULET4] = 140;
+	hp[Amulet_Type::DEFUALT_AMULET] = 100;
+	hp[Amulet_Type::SHOP_AMULET1] = 200;
+	hp[Amulet_Type::SHOP_AMULET2] = 300;
+	hp[Amulet_Type::SHOP_AMULET3] = 400;
+	hp[Amulet_Type::SHOP_AMULET4] = 500;
+	hp[Amulet_Type::LEGEND_AMULET] = 750;
 }
 
 void Reset_Amulet(E_Amulet& e_amulet) {
@@ -445,6 +475,9 @@ void Paint_Amulet_Info(HDC hdc, const E_Amulet& e_amulet, const POINT& pos, cons
 	case Amulet_Type::SHOP_AMULET4:
 		TextOut(hdc, pos.x, pos.y, _T("붉은 진주 목걸이"), 9);
 		break;
+	case Amulet_Type::LEGEND_AMULET:
+		TextOut(hdc, pos.x, pos.y, _T("전설의 목걸이"), 7);
+		break;
 	default:
 		break;
 	}
@@ -464,11 +497,12 @@ const int& E_Ring::Get_Fatal(const int& ring_type) const {
 }
 
 void E_Ring::Set_Ring() {
-	fatal[Ring_Type::DEFUALT_RING] = 1;
-	fatal[Ring_Type::SHOP_RING1] = 2;
-	fatal[Ring_Type::SHOP_RING2] = 4;
-	fatal[Ring_Type::SHOP_RING3] = 6;
-	fatal[Ring_Type::SHOP_RING4] = 7;
+	fatal[Ring_Type::DEFUALT_RING] = 2;
+	fatal[Ring_Type::SHOP_RING1] = 4;
+	fatal[Ring_Type::SHOP_RING2] = 6;
+	fatal[Ring_Type::SHOP_RING3] = 8;
+	fatal[Ring_Type::SHOP_RING4] = 10;
+	fatal[Ring_Type::LEGEND_RING] = 15;
 }
 
 void Reset_Ring(E_Ring& e_ring) {
@@ -493,6 +527,9 @@ void Paint_Ring_Info(HDC hdc, const E_Ring& e_ring, const POINT& pos, const int&
 	case Ring_Type::SHOP_RING4:
 		TextOut(hdc, pos.x, pos.y, _T("에메랄드 반지"), 7);
 		break;
+	case Ring_Type::LEGEND_RING:
+		TextOut(hdc, pos.x, pos.y, _T("전설의 반지"), 6);
+		break;
 	default:
 		break;
 	}
@@ -513,11 +550,12 @@ const int& E_Book::Get_Mp(const int& book_type) const {
 }
 
 void E_Book::Set_Book() {
-	mp[Book_Type::DEFUALT_BOOK] = 10;
-	mp[Book_Type::SHOP_BOOK1] = 20;
-	mp[Book_Type::SHOP_BOOK2] = 40;
-	mp[Book_Type::SHOP_BOOK3] = 60;
-	mp[Book_Type::SHOP_BOOK4] = 70;
+	mp[Book_Type::DEFUALT_BOOK] = 15;
+	mp[Book_Type::SHOP_BOOK1] = 30;
+	mp[Book_Type::SHOP_BOOK2] = 50;
+	mp[Book_Type::SHOP_BOOK3] = 70;
+	mp[Book_Type::SHOP_BOOK4] = 85;
+	mp[Book_Type::LEGEND_BOOK] = 150;
 }
 
 void Reset_Book(E_Book& e_book) {
@@ -542,6 +580,9 @@ void Paint_Book_Info(HDC hdc, const E_Book& e_book, const POINT& pos, const int&
 	case Book_Type::SHOP_BOOK4:
 		TextOut(hdc, pos.x, pos.y, _T("전문가 마법서"), 7);
 		break;
+	case Book_Type::LEGEND_BOOK:
+		TextOut(hdc, pos.x, pos.y, _T("전설의 마법서"), 7);
+		break;
 	default:
 		break;
 	}
@@ -563,10 +604,12 @@ const int& E_Cloak::Get_Attack(const int& cloak_type) const {
 }
 
 void E_Cloak::Set_Cloak() {
-	attack[Cloak_Type::DEFUALT_CLOAK] = 5;
+	attack[Cloak_Type::DEFUALT_CLOAK] = 10;
 	attack[Cloak_Type::GRAY_CLOAK] = 20;
-	attack[Cloak_Type::BLUE_CLOAK] = 50;
-	attack[Cloak_Type::RED_CLOAK] = 100;
+	attack[Cloak_Type::BLUE_CLOAK] = 30;
+	attack[Cloak_Type::RED_CLOAK] = 40;
+	attack[Cloak_Type::YELLOW_CLOAK] = 50;
+	attack[Cloak_Type::LEGEND_CLOAK] = 60;
 }
 
 void Reset_Cloak(E_Cloak& e_cloak) {
@@ -576,16 +619,22 @@ void Reset_Cloak(E_Cloak& e_cloak) {
 void Paint_Cloak_Info(HDC hdc, const E_Cloak& e_cloak, const POINT& pos, const int& cloak_type, const HFONT font) {
 	switch (cloak_type)
 	{
-	case Book_Type::DEFUALT_BOOK:
+	case Cloak_Type::DEFUALT_CLOAK:
 		TextOut(hdc, pos.x, pos.y, _T("허름한 망토"), 6);
 		break;
-	case Book_Type::SHOP_BOOK1:
+	case Cloak_Type::GRAY_CLOAK:
 		TextOut(hdc, pos.x, pos.y, _T("견습생의 망토"), 7);
 		break;
-	case Book_Type::SHOP_BOOK2:
+	case Cloak_Type::BLUE_CLOAK:
 		TextOut(hdc, pos.x, pos.y, _T("수비대장의 망토"), 8);
 		break;
-	case Book_Type::SHOP_BOOK3:
+	case Cloak_Type::RED_CLOAK:
+		TextOut(hdc, pos.x, pos.y, _T("붉은눈의 망토"), 7);
+		break;
+	case Cloak_Type::YELLOW_CLOAK:
+		TextOut(hdc, pos.x, pos.y, _T("황금빛 망토"), 6);
+		break;
+	case Cloak_Type::LEGEND_CLOAK:
 		TextOut(hdc, pos.x, pos.y, _T("전설의 망토"), 6);
 		break;
 	default:
@@ -600,7 +649,6 @@ void Paint_Cloak_Info(HDC hdc, const E_Cloak& e_cloak, const POINT& pos, const i
 void Readjust_Info_By_Cloak(const E_Cloak& e_cloak, Object_Info& o_info, const int& cloak_type, const bool& New) {
 	o_info.Set_Attack(o_info.Get_Attack() + (New ? e_cloak.Get_Attack(cloak_type) : -e_cloak.Get_Attack(cloak_type)));
 }
-
 
 /*player equipment*/
 
@@ -617,7 +665,7 @@ Player_Equipment::~Player_Equipment() {
 	Delete_Class<E_Cloak>(&cloak);
 	DeleteObject(equipment_interface_bitmap);
 	for (int e_type = Equipment_Type::T_HELMET; e_type <= Equipment_Type::T_CLOAK; e_type++)
-		for (int i = 0; i < 10; i++)
+		for (int i = 0; i < 6; i++)
 			DeleteObject(equipment_bitmap[e_type][i]);
 	DeleteObject(equipment_select_bitmap[0]);
 	DeleteObject(equipment_select_bitmap[1]);
@@ -794,52 +842,52 @@ void Player_Equipment::Set_Bitmap() {
 	equipment_interface_bitmap = (HBITMAP)LoadImage(NULL, _T(".\\BitMap\\Interface\\Inventory\\Inventory.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 	GetObject(equipment_interface_bitmap, sizeof(BITMAP), &equipment_interface_bitmap_size);
 	
-	for (int h_type = Helmet_Type::DEFUALT_HELMET; h_type <= Helmet_Type::SHOP_HELMET4; h_type++) {
+	for (int h_type = Helmet_Type::DEFUALT_HELMET; h_type <= Helmet_Type::LEGEND_HELMET; h_type++) {
 		wchar_t str[50];
 		wsprintf(str, _T(".\\BitMap\\Equipment\\Helmet\\Helmet%d.bmp"), h_type + 1);
 		equipment_bitmap[Equipment_Type::T_HELMET][h_type] = (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 	}
-	for (int a_type = Armor_Type::DEFUALT_ARMOR; a_type <= Armor_Type::SHOP_ARMOR4; a_type++) {
+	for (int a_type = Armor_Type::DEFUALT_ARMOR; a_type <= Armor_Type::LEGEND_ARMOR; a_type++) {
 		wchar_t str[50];
 		wsprintf(str, _T(".\\BitMap\\Equipment\\Armor\\Armor%d.bmp"), a_type + 1);
 		equipment_bitmap[Equipment_Type::T_ARMOR][a_type] = (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 	}
-	for (int p_type = Pant_Type::DEFUALT_PANT; p_type <= Pant_Type::SHOP_PANT4; p_type++) {
+	for (int p_type = Pant_Type::DEFUALT_PANT; p_type <= Pant_Type::LEGEND_PANT; p_type++) {
 		wchar_t str[50];
 		wsprintf(str, _T(".\\BitMap\\Equipment\\Pant\\Pant%d.bmp"), p_type + 1);
 		equipment_bitmap[Equipment_Type::T_PANT][p_type] = (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 	}
-	for (int g_type = Glove_Type::DEFUALT_GLOVE; g_type <= Glove_Type::SHOP_GLOVE4; g_type++) {
+	for (int g_type = Glove_Type::DEFUALT_GLOVE; g_type <= Glove_Type::LEGEND_GLOVE; g_type++) {
 		wchar_t str[50];
 		wsprintf(str, _T(".\\BitMap\\Equipment\\Glove\\Glove%d.bmp"), g_type + 1);
 		equipment_bitmap[Equipment_Type::T_GLOVE][g_type] = (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 	}
-	for (int s_type = Shoe_Type::DEFUALT_SHOE; s_type <= Shoe_Type::SHOP_SHOE4; s_type++) {
+	for (int s_type = Shoe_Type::DEFUALT_SHOE; s_type <= Shoe_Type::LEGEND_SHOE; s_type++) {
 		wchar_t str[50];
 		wsprintf(str, _T(".\\BitMap\\Equipment\\Shoe\\Shoe%d.bmp"), s_type + 1);
 		equipment_bitmap[Equipment_Type::T_SHOE][s_type] = (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 	}
-	for (int w_type = Weapon_Type::DEFUALT_WEAPON; w_type <= Weapon_Type::SHOP_WEAPON4; w_type++) {
+	for (int w_type = Weapon_Type::DEFUALT_WEAPON; w_type <= Weapon_Type::LEGEND_WEAPON; w_type++) {
 		wchar_t str[50];
 		wsprintf(str, _T(".\\BitMap\\Equipment\\Sword\\Sword%d.bmp"), w_type + 1);
 		equipment_bitmap[Equipment_Type::T_WEAPON][w_type] = (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 	}
-	for (int a_type = Amulet_Type::DEFUALT_AMULET; a_type <= Amulet_Type::SHOP_AMULET4; a_type++) {
+	for (int a_type = Amulet_Type::DEFUALT_AMULET; a_type <= Amulet_Type::LEGEND_AMULET; a_type++) {
 		wchar_t str[50];
 		wsprintf(str, _T(".\\BitMap\\Equipment\\Amulet\\Amulet%d.bmp"), a_type + 1);
 		equipment_bitmap[Equipment_Type::T_AMULET][a_type] = (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 	}
-	for (int r_type = Ring_Type::DEFUALT_RING; r_type <= Ring_Type::SHOP_RING4; r_type++) {
+	for (int r_type = Ring_Type::DEFUALT_RING; r_type <= Ring_Type::LEGEND_RING; r_type++) {
 		wchar_t str[50];
 		wsprintf(str, _T(".\\BitMap\\Equipment\\Ring\\Ring%d.bmp"), r_type + 1);
 		equipment_bitmap[Equipment_Type::T_RING][r_type] = (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 	}
-	for (int b_type = Book_Type::DEFUALT_BOOK; b_type <= Book_Type::SHOP_BOOK4; b_type++) {
+	for (int b_type = Book_Type::DEFUALT_BOOK; b_type <= Book_Type::LEGEND_BOOK; b_type++) {
 		wchar_t str[50];
 		wsprintf(str, _T(".\\BitMap\\Equipment\\Book\\Book%d.bmp"), b_type + 1);
 		equipment_bitmap[Equipment_Type::T_BOOK][b_type] = (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 	}
-	for (int c_type = Cloak_Type::DEFUALT_CLOAK; c_type <= Cloak_Type::RED_CLOAK; c_type++) {
+	for (int c_type = Cloak_Type::DEFUALT_CLOAK; c_type <= Cloak_Type::LEGEND_CLOAK; c_type++) {
 		wchar_t str[50];
 		wsprintf(str, _T(".\\BitMap\\Equipment\\Cloak\\Cloak%d.bmp"), c_type + 1);
 		equipment_bitmap[Equipment_Type::T_CLOAK][c_type] = (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
@@ -859,7 +907,7 @@ void Player_Equipment::Set_Font() {
 void Reset_Player_Equipment(Player_Equipment& p_equip, Object_Info& o_info) {
 	p_equip.Create_Equipment();
 	p_equip.Set_Pos({ 60,60 });
-	p_equip.Set_Gold(100000);
+	p_equip.Set_Gold(300);
 	p_equip.Set_Type_Select(Equipment_Type::T_HELMET);
 	for (int e_type = Equipment_Type::T_HELMET; e_type <= Equipment_Type::T_CLOAK; e_type++) {
 		p_equip.Set_Equipment_Detail_Select(e_type, 0);
@@ -1021,15 +1069,16 @@ void Change_Select_Equipment_Detail(Player_Equipment& p_equip, Object_Info& o_in
 			}
 		}
 		else {
-			if (p_equip.Get_Type_Select() != Equipment_Type::T_CLOAK) {
-				if (p_equip.Get_Equipment_Detail_Select(p_equip.Get_Type_Select()) < 10) {
-					for (int index = p_equip.Get_Equipment_Detail_Select(p_equip.Get_Type_Select()) + 1; index < 10; index++) {
-						if (p_equip.Is_Own(p_equip.Get_Type_Select(), index)) {
-							p_equip.Set_Equipment_Detail_Select(p_equip.Get_Type_Select(), index);
-							break;
-						}
+			if (p_equip.Get_Equipment_Detail_Select(p_equip.Get_Type_Select()) < 10) {
+				for (int index = p_equip.Get_Equipment_Detail_Select(p_equip.Get_Type_Select()) + 1; index < 6; index++) {
+					if (p_equip.Is_Own(p_equip.Get_Type_Select(), index)) {
+						p_equip.Set_Equipment_Detail_Select(p_equip.Get_Type_Select(), index);
+						break;
 					}
 				}
+			}
+			/*if (p_equip.Get_Type_Select() != Equipment_Type::T_CLOAK) {
+			
 			}
 			//망토는 10까지 없다.
 			else {
@@ -1041,7 +1090,7 @@ void Change_Select_Equipment_Detail(Player_Equipment& p_equip, Object_Info& o_in
 						}
 					}
 				}
-			}
+			}*/
 		}
 	
 

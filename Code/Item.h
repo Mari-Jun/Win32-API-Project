@@ -40,4 +40,4 @@ void Paint_Player_Item(HDC hdc, HDC bitdc, const Player_Item& p_item, const RECT
 void Recharge_Item(Player_Item& p_item);
 void Use_Hp_Potion(Player_Item& p_item, Object_Info& o_info);
 void Use_Mp_Potion(Player_Item& p_item, Object_Info& o_info);
-void Use_Panacea(Player_Item& p_item, Move_Object& m_object);
+void Use_Panacea(Player_Item& p_item, Object_Info& o_info);

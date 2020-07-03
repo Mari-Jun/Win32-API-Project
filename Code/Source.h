@@ -18,12 +18,16 @@ void Delete_Class(T** t) {
 	}
 }
 
+enum Page_Type {
+	T_Main_Page, T_Game_Page, T_Help_Page, T_Credit_Page, T_Loading_Page
+};
+
 enum Player_Select {
 	Class_Warrior
 };
 
 enum Map_Type {
-	Village1, Dungeon1, Dungeon2, Dungeon3, Dungeon4
+	Type_Main_Page = -1, Village1, Dungeon1, Dungeon2, Dungeon3, Dungeon4, Dungeon5, Dungeon6
 };
 
 enum Command_Key {
@@ -85,9 +89,17 @@ enum Quest_Name {
 };
 
 enum Timer_Name {
-	Default_Timer, Clear_Timer
+	Default_Timer, Clear_Timer, Loading_Timer
 };
 
 enum Hitting_Shape {
 	FRONT, ROUND
+};
+
+enum Button_Sort {
+	LEFT_SORT = 1, MIDDLE_SORT, RIGHT_SORT
+};
+
+enum Main_Page_Select {
+	M_Start, M_Help, M_Credit, M_Quit
 };

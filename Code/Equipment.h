@@ -8,43 +8,43 @@ enum Equipment_Type {
 };
 
 enum Helmet_Type {
-	DEFUALT_HELMET, SHOP_HELMET1, SHOP_HELMET2, SHOP_HELMET3, SHOP_HELMET4
+	DEFUALT_HELMET, SHOP_HELMET1, SHOP_HELMET2, SHOP_HELMET3, SHOP_HELMET4, LEGEND_HELMET
 };
 
 enum Armor_Type {
-	DEFUALT_ARMOR, SHOP_ARMOR1, SHOP_ARMOR2, SHOP_ARMOR3, SHOP_ARMOR4
+	DEFUALT_ARMOR, SHOP_ARMOR1, SHOP_ARMOR2, SHOP_ARMOR3, SHOP_ARMOR4, LEGEND_ARMOR
 };
 
 enum Pant_Type {
-	DEFUALT_PANT, SHOP_PANT1, SHOP_PANT2, SHOP_PANT3, SHOP_PANT4
+	DEFUALT_PANT, SHOP_PANT1, SHOP_PANT2, SHOP_PANT3, SHOP_PANT4, LEGEND_PANT
 };
 
 enum Glove_Type {
-	DEFUALT_GLOVE, SHOP_GLOVE1, SHOP_GLOVE2, SHOP_GLOVE3, SHOP_GLOVE4
+	DEFUALT_GLOVE, SHOP_GLOVE1, SHOP_GLOVE2, SHOP_GLOVE3, SHOP_GLOVE4, LEGEND_GLOVE
 };
 
 enum Shoe_Type {
-	DEFUALT_SHOE, SHOP_SHOE1, SHOP_SHOE2, SHOP_SHOE3, SHOP_SHOE4
+	DEFUALT_SHOE, SHOP_SHOE1, SHOP_SHOE2, SHOP_SHOE3, SHOP_SHOE4, LEGEND_SHOE
 };
 
 enum Weapon_Type {
-	DEFUALT_WEAPON, SHOP_WEAPON1, SHOP_WEAPON2, SHOP_WEAPON3, SHOP_WEAPON4
+	DEFUALT_WEAPON, SHOP_WEAPON1, SHOP_WEAPON2, SHOP_WEAPON3, SHOP_WEAPON4, LEGEND_WEAPON
 };
 
 enum Amulet_Type {
-	DEFUALT_AMULET, SHOP_AMULET1, SHOP_AMULET2, SHOP_AMULET3, SHOP_AMULET4
+	DEFUALT_AMULET, SHOP_AMULET1, SHOP_AMULET2, SHOP_AMULET3, SHOP_AMULET4, LEGEND_AMULET
 };
 
 enum Ring_Type {
-	DEFUALT_RING, SHOP_RING1, SHOP_RING2, SHOP_RING3, SHOP_RING4
+	DEFUALT_RING, SHOP_RING1, SHOP_RING2, SHOP_RING3, SHOP_RING4, LEGEND_RING
 };
 
 enum Book_Type {
-	DEFUALT_BOOK, SHOP_BOOK1, SHOP_BOOK2, SHOP_BOOK3, SHOP_BOOK4
+	DEFUALT_BOOK, SHOP_BOOK1, SHOP_BOOK2, SHOP_BOOK3, SHOP_BOOK4, LEGEND_BOOK
 };
 
 enum Cloak_Type {
-	DEFUALT_CLOAK, GRAY_CLOAK = 2, BLUE_CLOAK, RED_CLOAK
+	DEFUALT_CLOAK, GRAY_CLOAK, BLUE_CLOAK, RED_CLOAK, YELLOW_CLOAK, LEGEND_CLOAK
 };
 
 class E_Helmet {
@@ -54,8 +54,8 @@ public:
 
 	void Set_Helmet();
 private:
-	int mp[10];
-	int defence[10];
+	int mp[6];
+	int defence[6];
 };
 
 void Reset_Helmet(E_Helmet& e_helmet);
@@ -69,8 +69,8 @@ public:
 
 	void Set_Armor();
 private:
-	int hp[10];
-	int defence[10];
+	int hp[6];
+	int defence[6];
 };
 
 void Reset_Armor(E_Armor& e_armor);
@@ -84,8 +84,8 @@ public:
 
 	void Set_Pant();
 private:
-	int hp[10];
-	int defence[10];
+	int hp[6];
+	int defence[6];
 };
 
 void Reset_Pant(E_Pant& e_pant);
@@ -99,8 +99,8 @@ public:
 
 	void Set_Glove();
 private:
-	int attack[10];
-	int fatal[10];
+	int attack[6];
+	int fatal[6];
 };
 
 void Reset_Glove(E_Glove& e_glove);
@@ -114,8 +114,8 @@ public:
 
 	void Set_Shoe();
 private:
-	int hp[10];
-	int mp[10];
+	int hp[6];
+	int mp[6];
 };
 
 void Reset_Shoe(E_Shoe& e_shoe);
@@ -129,8 +129,8 @@ public:
 
 	void Set_Weapon(const int& class_type);
 private:
-	int attack[10];
-	int fatal[10];
+	int attack[6];
+	int fatal[6];
 };
 
 void Reset_Weapon(E_Weapon& e_weapon, const int& class_type);
@@ -143,7 +143,7 @@ public:
 
 	void Set_Amulet();
 private:
-	int hp[10];
+	int hp[6];
 };
 
 void Reset_Amulet(E_Amulet& e_amulet);
@@ -156,7 +156,7 @@ public:
 
 	void Set_Ring();
 private:
-	int fatal[10];
+	int fatal[6];
 };
 
 void Reset_Ring(E_Ring& e_ring);
@@ -169,7 +169,7 @@ public:
 
 	void Set_Book();
 private:
-	int mp[10];
+	int mp[6];
 };
 
 void Reset_Book(E_Book& e_book);
@@ -182,7 +182,7 @@ public:
 
 	void Set_Cloak();
 private:
-	int attack[4];
+	int attack[6];
 };
 
 void Reset_Cloak(E_Cloak& e_cloak);
@@ -261,12 +261,12 @@ private:
 	int equipment_type_select;
 	int equipment_detail_select[10];
 	bool equipment_change_select;
-	bool own[10][10];
+	bool own[10][6];
 
 
 	HBITMAP equipment_interface_bitmap;
 	BITMAP equipment_interface_bitmap_size;
-	HBITMAP equipment_bitmap[10][10];
+	HBITMAP equipment_bitmap[10][6];
 	HBITMAP equipment_select_bitmap[2];
 	BITMAP equipment_bitmap_size;
 	

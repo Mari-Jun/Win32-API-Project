@@ -54,4 +54,4 @@ private:
 
 void Reset_Hitting_Range_Polygon(Hitting_Range_Polygon& hit_range_p, const int& onwer, const bool& move, const int& direction, const bool& guide, const POINT& speed, const int& type, const int& attack_type, const POINT pos[4], const int& delay, const double& attack_multiple);
 void Move_Hitting_Range_Polygon(Hitting_Range_Polygon& hit_range_p);
-void Paint_Hitting_Range(HDC hdc, HDC bitdc, const Hitting_Range_Polygon& hit_range_p);
+void Paint_Hitting_Range(HDC hdc, HDC bitdc, const Hitting_Range_Polygon& hit_range_p, const int& shape);

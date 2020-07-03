@@ -214,22 +214,18 @@ void Enemy_Skill::Set_Motion_Bitmap(const File& file, const int& type) {
 		for (int index = 0; index < file.Get_Enemy_Motion_Count(type, Enemy_Status::E_SkillQ); index++) {
 			wsprintf(str, file.Get_Enemy_Motion_Text(type, Enemy_Status::E_SkillQ), direction * file.Get_Enemy_Motion_Count(type, Enemy_Status::E_SkillQ) + index + 1);
 			Set_Bitmap(Skill_Type::Skill_Q, direction, index, (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
-			std::wcout << str << std::endl;
 		}
 		for (int index = 0; index < file.Get_Enemy_Motion_Count(type, Enemy_Status::E_SkillW); index++) {
 			wsprintf(str, file.Get_Enemy_Motion_Text(type, Enemy_Status::E_SkillW), direction * file.Get_Enemy_Motion_Count(type, Enemy_Status::E_SkillW) + index + 1);
 			Set_Bitmap(Skill_Type::Skill_W, direction, index, (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
-			std::wcout << str << std::endl;
 		}
 		for (int index = 0; index < file.Get_Enemy_Motion_Count(type, Enemy_Status::E_SkillE); index++) {
 			wsprintf(str, file.Get_Enemy_Motion_Text(type, Enemy_Status::E_SkillE), direction * file.Get_Enemy_Motion_Count(type, Enemy_Status::E_SkillE) + index + 1);
 			Set_Bitmap(Skill_Type::Skill_E, direction, index, (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
-			std::wcout << str << std::endl;
 		}
 		for (int index = 0; index < file.Get_Enemy_Motion_Count(type, Enemy_Status::E_SkillR); index++) {
 			wsprintf(str, file.Get_Enemy_Motion_Text(type, Enemy_Status::E_SkillR), direction * file.Get_Enemy_Motion_Count(type, Enemy_Status::E_SkillR) + index + 1);
 			Set_Bitmap(Skill_Type::Skill_R, direction, index, (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
-			std::wcout << str << std::endl;
 		}
 	}
 }

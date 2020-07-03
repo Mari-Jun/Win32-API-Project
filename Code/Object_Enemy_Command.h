@@ -16,6 +16,8 @@ bool Reaction_Range_Check(const Move_Object& enemy, const Player& player, const 
 
 /*Enemy Move*/
 void Move_Enemy_Check(Move_Object& enemy, const Map_Dungeon& map_d, const Player& player, const int& index, const int& move_x, const int& move_y);
+void Move_Enemy_Base(Map_Dungeon& map_d, const Player& player, const int& index);
+void Set_Enemy_Direction(Map_Dungeon& map_d, const Player& player, const int& index);
 void Move_Enemy(Map_Dungeon& map_d, const Player& player, const int& index);
 
 /*Enemy Attack*/

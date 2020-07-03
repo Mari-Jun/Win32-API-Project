@@ -26,7 +26,8 @@ void Command_Enemy(Map_Dungeon& map_d, Player& player, const Camera& camera, con
 			if (map_d.Get_Enemy_Const(index).Get_Ani_Count() == 800)
 				map_d.Get_Enemy(index).Set_Ani_Count(0);
 
-			Move_Enemy(map_d, player, index);
+			if (map_d.Get_Enemy_Const(index).Get_Status() == Enemy_Status::E_Move || map_d.Get_Enemy_Const(index).Get_Status() == Enemy_Status::E_Stop)
+				Move_Enemy_Base(map_d, player, index);
 
 			if (map_d.Get_Enemy_Const(index).Get_Attack_Delay() != 0)
 				map_d.Get_Enemy(index).Set_Attack_Delay(map_d.Get_Enemy_Const(index).Get_Attack_Delay() - 1);
@@ -89,58 +90,61 @@ void Move_Enemy_Check(Move_Object& enemy, const Map_Dungeon& map_d, const Player
 	enemy.Set_YPos(enemy.Get_YPos() + move_y);
 }
 
-void Move_Enemy(Map_Dungeon& map_d, const Player& player, const int& index) {
+void Move_Enemy_Base(Map_Dungeon& map_d, const Player& player, const int& index) {
+	Set_Enemy_Direction(map_d, player, index);
+	Move_Enemy(map_d, player, index);
+}
 
+void Set_Enemy_Direction(Map_Dungeon& map_d, const Player& player, const int& index) {
 	//플레이어 근처에 있을 경우의 움직임
-	if (map_d.Get_Enemy_Const(index).Get_Status() == Enemy_Status::E_Move || map_d.Get_Enemy_Const(index).Get_Status() == Enemy_Status::E_Stop) {
-		if (Reaction_Range_Check(map_d.Get_Enemy_Const(index), player, 400)) {
+	if (Reaction_Range_Check(map_d.Get_Enemy_Const(index), player, 400)) {
+		//가만히 있는 경우 움직여준다.
+		if (map_d.Get_Enemy(index).Get_Status() == Enemy_Status::E_Stop) {
+			map_d.Get_Enemy(index).Set_Ani_Count(0);
+			map_d.Get_Enemy(index).Set_Status(Enemy_Status::E_Move);
+		}
 
-			//가만히 있는 경우 움직여준다.
-			if (map_d.Get_Enemy(index).Get_Status() == Enemy_Status::E_Stop) {
-				map_d.Get_Enemy(index).Set_Ani_Count(0);
-				map_d.Get_Enemy(index).Set_Status(Enemy_Status::E_Move);
-			}
-
-			//적이 왼쪽에 있을 경우
-			if (map_d.Get_Enemy_Const(index).Get_XPos() + map_d.Get_Enemy_Const(index).Get_Crash_Width() * 3 / 4 <= player.Get_XPos()) {
-				if (map_d.Get_Enemy_Const(index).Get_YPos() + map_d.Get_Enemy_Const(index).Get_Height() <= player.Get_YPos() + player.Get_Height() - player.Get_Crash_Height())
-					map_d.Get_Enemy(index).Set_Direction(Object_Direction::DownRight);
-				else if (map_d.Get_Enemy_Const(index).Get_YPos() + map_d.Get_Enemy_Const(index).Get_Height() - map_d.Get_Enemy_Const(index).Get_Crash_Height() >= player.Get_YPos() + player.Get_Height())
-					map_d.Get_Enemy(index).Set_Direction(Object_Direction::UpRight);
-				else
-					map_d.Get_Enemy(index).Set_Direction(Object_Direction::Right);
-			}
-			//적이 오른쪽에 있을 경우
-			else if (map_d.Get_Enemy_Const(index).Get_XPos() + map_d.Get_Enemy_Const(index).Get_Crash_Width() / 4 >= player.Get_XPos() + player.Get_Crash_Width()) {
-				if (map_d.Get_Enemy_Const(index).Get_YPos() + map_d.Get_Enemy_Const(index).Get_Height() <= player.Get_YPos() + player.Get_Height() - player.Get_Crash_Height())
-					map_d.Get_Enemy(index).Set_Direction(Object_Direction::DownLeft);
-				else if (map_d.Get_Enemy_Const(index).Get_YPos() + map_d.Get_Enemy_Const(index).Get_Height() - map_d.Get_Enemy_Const(index).Get_Crash_Height() >= player.Get_YPos() + player.Get_Height())
-					map_d.Get_Enemy(index).Set_Direction(Object_Direction::UpLeft);
-				else
-					map_d.Get_Enemy(index).Set_Direction(Object_Direction::Left);
-			}
-			else {
-				if (map_d.Get_Enemy_Const(index).Get_YPos() + map_d.Get_Enemy_Const(index).Get_Height() <= player.Get_YPos() + player.Get_Height() - player.Get_Crash_Height())
-					map_d.Get_Enemy(index).Set_Direction(Object_Direction::Down);
-				else
-					map_d.Get_Enemy(index).Set_Direction(Object_Direction::Up);
-			}
+		//적이 왼쪽에 있을 경우
+		if (map_d.Get_Enemy_Const(index).Get_XPos() + map_d.Get_Enemy_Const(index).Get_Crash_Width() * 3 / 4 <= player.Get_XPos()) {
+			if (map_d.Get_Enemy_Const(index).Get_YPos() + map_d.Get_Enemy_Const(index).Get_Height() - map_d.Get_Enemy_Const(index).Get_Crash_Height() / 4 <= player.Get_YPos() + player.Get_Height() - player.Get_Crash_Height())
+				map_d.Get_Enemy(index).Set_Direction(Object_Direction::DownRight);
+			else if (map_d.Get_Enemy_Const(index).Get_YPos() + map_d.Get_Enemy_Const(index).Get_Height() - map_d.Get_Enemy_Const(index).Get_Crash_Height() * 3 / 4 >= player.Get_YPos() + player.Get_Height())
+				map_d.Get_Enemy(index).Set_Direction(Object_Direction::UpRight);
+			else
+				map_d.Get_Enemy(index).Set_Direction(Object_Direction::Right);
+		}
+		//적이 오른쪽에 있을 경우
+		else if (map_d.Get_Enemy_Const(index).Get_XPos() + map_d.Get_Enemy_Const(index).Get_Crash_Width() / 4 >= player.Get_XPos() + player.Get_Crash_Width()) {
+			if (map_d.Get_Enemy_Const(index).Get_YPos() + map_d.Get_Enemy_Const(index).Get_Height() - map_d.Get_Enemy_Const(index).Get_Crash_Height() / 4 <= player.Get_YPos() + player.Get_Height() - player.Get_Crash_Height())
+				map_d.Get_Enemy(index).Set_Direction(Object_Direction::DownLeft);
+			else if (map_d.Get_Enemy_Const(index).Get_YPos() + map_d.Get_Enemy_Const(index).Get_Height() - map_d.Get_Enemy_Const(index).Get_Crash_Height() * 3 / 4 >= player.Get_YPos() + player.Get_Height())
+				map_d.Get_Enemy(index).Set_Direction(Object_Direction::UpLeft);
+			else
+				map_d.Get_Enemy(index).Set_Direction(Object_Direction::Left);
 		}
 		else {
-			//플레이어 근처에 있지 않을 경우의 움직임
-			if (map_d.Get_Enemy_Const(index).Get_Ani_Count() % 40 == 0) {
-				int r = rand() % 9;
-				if (r == 9)
-					map_d.Get_Enemy(index).Set_Status(Enemy_Status::E_Stop);
-				else {
-					map_d.Get_Enemy(index).Set_Status(Enemy_Status::E_Move);
-					map_d.Get_Enemy(index).Set_Direction(rand() % 8);
-				}
+			if (map_d.Get_Enemy_Const(index).Get_YPos() + map_d.Get_Enemy_Const(index).Get_Height() <= player.Get_YPos() + player.Get_Height() - player.Get_Crash_Height())
+				map_d.Get_Enemy(index).Set_Direction(Object_Direction::Down);
+			else
+				map_d.Get_Enemy(index).Set_Direction(Object_Direction::Up);
+		}
+	}
+	else {
+		//플레이어 근처에 있지 않을 경우의 움직임
+		if (map_d.Get_Enemy_Const(index).Get_Ani_Count() % 40 == 0) {
+			int r = rand() % 9;
+			if (r == 9)
+				map_d.Get_Enemy(index).Set_Status(Enemy_Status::E_Stop);
+			else {
+				map_d.Get_Enemy(index).Set_Status(Enemy_Status::E_Move);
+				map_d.Get_Enemy(index).Set_Direction(rand() % 8);
 			}
 		}
 	}
+}
 
-	//움직이는 중일 경우
+void Move_Enemy(Map_Dungeon& map_d, const Player& player, const int& index) {
+	//움직이기
 	if (map_d.Get_Enemy_Const(index).Get_Status() != Enemy_Status::E_Stop) {
 		switch (map_d.Get_Enemy_Const(index).Get_Direction())
 		{
@@ -183,7 +187,7 @@ void Attack_Base_Enemy(Map_Dungeon& map_d, const Player& player, const File& fil
 		if (map_d.Get_Enemy_Const(index).Get_Status() == Enemy_Status::E_Stop || map_d.Get_Enemy_Const(index).Get_Status() == Enemy_Status::E_Move)
 			Attack_Select(map_d.Get_Enemy(index), player);
 		else
-			Attack_Enemy_Action(map_d.Get_Enemy(index), player, file);
+			Attack_Enemy_Action(map_d.Get_Enemy(index), map_d, player, index, file);
 
 	}
 }

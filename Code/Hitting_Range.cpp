@@ -149,7 +149,43 @@ void Hitting_Range::Set_Range_Bitmap(const int& owner, const int& type, const in
 		case Enemy_Type::Sizarian:
 			if (attack_type == Attack_Type::A_Attack) {
 				for (int direction = Object_Direction::Right; direction <= Object_Direction::DownRight; direction++)
-					range_bitmap[direction] = (HBITMAP)LoadImage(NULL, _T(".\\BitMap\\Monster\\M20\\Attack\\Sizarian_Attack_Effect1.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+					range_bitmap[direction] = (HBITMAP)LoadImage(NULL, _T(".\\BitMap\\Monster\\M20\\Attack\\Sizarian_Attack_Effect.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+			}
+			break;
+		case Enemy_Type::Liagty1:
+			if (attack_type == Attack_Type::A_SkillW) {
+				for (int direction = Object_Direction::Right; direction <= Object_Direction::DownRight; direction++) {
+					wsprintf(str, _T(".\\BitMap\\Monster\\Boss5\\L1\\SkillW\\Liagty1_SkillW_Effect%d.bmp"), direction + 1);
+					range_bitmap[direction] = (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+				}
+			}
+			break;
+		case Enemy_Type::Liagty2:
+			if (attack_type == Attack_Type::A_SkillW) {
+				for (int direction = Object_Direction::Right; direction <= Object_Direction::DownRight; direction++) {
+					wsprintf(str, _T(".\\BitMap\\Monster\\Boss5\\L2\\SkillW\\Liagty2_SkillW_Effect%d.bmp"), direction + 1);
+					range_bitmap[direction] = (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+				}
+			}
+			break;
+		case Enemy_Type::Dularn:
+			if (attack_type == Attack_Type::A_SkillQ) {
+				for (int direction = Object_Direction::Right; direction <= Object_Direction::DownRight; direction++) {
+					wsprintf(str, _T(".\\BitMap\\Monster\\Boss6\\SkillQ\\Dularn_SkillQ_Effect%d.bmp"), direction % 2 + 1);
+					range_bitmap[direction] = (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+				}
+			}
+			else if (attack_type == Attack_Type::A_SkillE) {
+				for (int direction = Object_Direction::Right; direction <= Object_Direction::DownRight; direction++) {
+					wsprintf(str, _T(".\\BitMap\\Monster\\Boss6\\SkillE\\Dularn_SkillE_Effect.bmp"), direction + 1);
+					range_bitmap[direction] = (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+				}
+			}
+			else if (attack_type == Attack_Type::A_SkillR) {
+				for (int direction = Object_Direction::Right; direction <= Object_Direction::DownRight; direction++) {
+					wsprintf(str, _T(".\\BitMap\\Monster\\Boss6\\SkillR\\Dularn_SkillR_Effect%d.bmp"), direction + 1);
+					range_bitmap[direction] = (HBITMAP)LoadImage(NULL, str, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+				}
 			}
 			break;
 		default:
@@ -222,9 +258,7 @@ void Move_Hitting_Range_Polygon(Hitting_Range_Polygon& hit_range_p) {
 	}
 }
 
-void Paint_Hitting_Range(HDC hdc, HDC bitdc, const Hitting_Range_Polygon& hit_range_p) {
-
-	//내일 고쳐주자 형태에 따라 다르게 해야함
+void Paint_Hitting_Range(HDC hdc, HDC bitdc, const Hitting_Range_Polygon& hit_range_p, const int& shape) {
 
 	if (hit_range_p.Get_Range_Bitmap(hit_range_p.Get_Direction()) != NULL) {
 		SelectObject(bitdc, hit_range_p.Get_Range_Bitmap(hit_range_p.Get_Direction()));

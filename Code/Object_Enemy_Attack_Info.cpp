@@ -8,7 +8,7 @@
 #include "File.h"
 #include <iostream>
 
-void Attack_Enemy_Action(Enemy& enemy, const Player& player, const File& file) {
+void Attack_Enemy_Action(Enemy& enemy, Map_Dungeon& map_d, const Player& player, const int& index, const File& file) {
 	switch (enemy.Get_Enemy_Type())
 	{
 	case Enemy_Type::Bird:
@@ -31,7 +31,6 @@ void Attack_Enemy_Action(Enemy& enemy, const Player& player, const File& file) {
 		switch (enemy.Get_Status())
 		{
 		case Enemy_Status::E_Attack:
-			//공격의 Hitting_Point지점을 생성해줍니다.
 			if (enemy.Get_Ani_Count() == 13)
 				Create_Hitting_Point(enemy, player, file, Hit_Owner::HO_Enemy, enemy.Get_Enemy_Type(), enemy.Get_Status() - Enemy_Status::E_Attack);
 			break;
@@ -53,6 +52,7 @@ void Attack_Enemy_Action(Enemy& enemy, const Player& player, const File& file) {
 				Create_Hitting_Point(enemy, player, file, Hit_Owner::HO_Enemy, enemy.Get_Enemy_Type(), enemy.Get_Status() - Enemy_Status::E_Attack);
 			break;
 		}
+		break;
 	case Enemy_Type::Huba:
 	case Enemy_Type::Huba2:
 		switch (enemy.Get_Status())
@@ -62,6 +62,7 @@ void Attack_Enemy_Action(Enemy& enemy, const Player& player, const File& file) {
 				Create_Hitting_Point(enemy, player, file, Hit_Owner::HO_Enemy, enemy.Get_Enemy_Type(), enemy.Get_Status() - Enemy_Status::E_Attack);
 			break;
 		}
+		break;
 	case Enemy_Type::Grave:
 		switch (enemy.Get_Status())
 		{
@@ -85,13 +86,10 @@ void Attack_Enemy_Action(Enemy& enemy, const Player& player, const File& file) {
 				Create_Hitting_Point(enemy, player, file, Hit_Owner::HO_Enemy, enemy.Get_Enemy_Type(), enemy.Get_Status() - Enemy_Status::E_Attack);
 			break;
 		case Enemy_Status::E_SkillQ:
-			if (enemy.Get_Ani_Count() == 7) {
-				enemy.Set_Speed(enemy.Get_Speed() * 2);
-			}		
-			else if (enemy.Get_Ani_Count() == file.Get_Enemy_Attack_Info(enemy.Get_Enemy_Type(), enemy.Get_Status() - Enemy_Status::E_Attack, Attack_Info::Attack_Hit_Delay)) {
+			if (enemy.Get_Ani_Count() >= 7 && enemy.Get_Ani_Count() < 25) 
+				Move_Enemy(map_d, player, index);
+			else if (enemy.Get_Ani_Count() == file.Get_Enemy_Attack_Info(enemy.Get_Enemy_Type(), enemy.Get_Status() - Enemy_Status::E_Attack, Attack_Info::Attack_Hit_Delay)) 
 				Create_Hitting_Point(enemy, player, file, Hit_Owner::HO_Enemy, enemy.Get_Enemy_Type(), enemy.Get_Status() - Enemy_Status::E_Attack);
-				enemy.Set_Speed(enemy.Get_Speed() / 2);
-			}
 			break;
 		}
 		break;
@@ -108,17 +106,18 @@ void Attack_Enemy_Action(Enemy& enemy, const Player& player, const File& file) {
 		switch (enemy.Get_Status())
 		{
 		case Enemy_Status::E_Attack:
-		case Enemy_Status::E_SkillQ:
 			if (enemy.Get_Ani_Count() == file.Get_Enemy_Attack_Info(enemy.Get_Enemy_Type(), enemy.Get_Status() - Enemy_Status::E_Attack, Attack_Info::Attack_Hit_Delay))
 				Create_Hitting_Point(enemy, player, file, Hit_Owner::HO_Enemy, enemy.Get_Enemy_Type(), enemy.Get_Status() - Enemy_Status::E_Attack);
 			break;
-		case Enemy_Status::E_SkillW:
-			if (enemy.Get_Ani_Count() == 1)
-				enemy.Set_Speed(0);
-			else if (enemy.Get_Ani_Count() == 4)
+		case Enemy_Status::E_SkillQ:
+			if (enemy.Get_Ani_Count() == file.Get_Enemy_Attack_Info(enemy.Get_Enemy_Type(), enemy.Get_Status() - Enemy_Status::E_Attack, Attack_Info::Attack_Hit_Delay))
 				Create_Hitting_Point(enemy, player, file, Hit_Owner::HO_Enemy, enemy.Get_Enemy_Type(), enemy.Get_Status() - Enemy_Status::E_Attack);
-			else if (enemy.Get_Ani_Count() == 22)
-				enemy.Set_Speed(8);
+			if (enemy.Get_Ani_Count() > 0 && enemy.Get_Ani_Count() < 24)
+				Move_Enemy(map_d, player, index);
+			break;
+		case Enemy_Status::E_SkillW:
+			if (enemy.Get_Ani_Count() == 4)
+				Create_Hitting_Point(enemy, player, file, Hit_Owner::HO_Enemy, enemy.Get_Enemy_Type(), enemy.Get_Status() - Enemy_Status::E_Attack);
 			break;
 		}
 		break;
@@ -126,8 +125,7 @@ void Attack_Enemy_Action(Enemy& enemy, const Player& player, const File& file) {
 		switch (enemy.Get_Status())
 		{
 		case Enemy_Status::E_Attack:
-			//공격의 Hitting_Point지점을 생성해줍니다.
-			if (enemy.Get_Ani_Count() == 22)
+			if (enemy.Get_Ani_Count() == 22 || enemy.Get_Ani_Count() == 25 || enemy.Get_Ani_Count() == 28 || enemy.Get_Ani_Count() == 31)
 				Create_Hitting_Point(enemy, player, file, Hit_Owner::HO_Enemy, enemy.Get_Enemy_Type(), enemy.Get_Status() - Enemy_Status::E_Attack);
 			break;
 		}
@@ -140,13 +138,9 @@ void Attack_Enemy_Action(Enemy& enemy, const Player& player, const File& file) {
 				Create_Hitting_Point(enemy, player, file, Hit_Owner::HO_Enemy, enemy.Get_Enemy_Type(), enemy.Get_Status() - Enemy_Status::E_Attack);
 			break;
 		case Enemy_Status::E_SkillQ:
-			if (enemy.Get_Ani_Count() == 1)
-				enemy.Set_Speed(0);
-			else if (enemy.Get_Ani_Count() == 25 || enemy.Get_Ani_Count() == 28 || enemy.Get_Ani_Count() == 31 ||
+			if (enemy.Get_Ani_Count() == 25 || enemy.Get_Ani_Count() == 28 || enemy.Get_Ani_Count() == 31 ||
 				enemy.Get_Ani_Count() == 34 || enemy.Get_Ani_Count() == 37 || enemy.Get_Ani_Count() == 40 || enemy.Get_Ani_Count() == 43)
 				Create_Hitting_Point(enemy, player, file, Hit_Owner::HO_Enemy, enemy.Get_Enemy_Type(), enemy.Get_Status() - Enemy_Status::E_Attack);
-			else if (enemy.Get_Ani_Count() == 47)
-				enemy.Set_Speed(6);
 			break;
 		}
 		break;
@@ -155,8 +149,70 @@ void Attack_Enemy_Action(Enemy& enemy, const Player& player, const File& file) {
 		switch (enemy.Get_Status())
 		{
 		case Enemy_Status::E_Attack:
-			//공격의 Hitting_Point지점을 생성해줍니다.
 			if (enemy.Get_Ani_Count() == 13)
+				Create_Hitting_Point(enemy, player, file, Hit_Owner::HO_Enemy, enemy.Get_Enemy_Type(), enemy.Get_Status() - Enemy_Status::E_Attack);
+			break;
+		}
+		break;
+	case Enemy_Type::Liagty1:
+	case Enemy_Type::Liagty2:
+	case Enemy_Type::Liagty3:
+		switch (enemy.Get_Status())
+		{
+		case Enemy_Status::E_Attack:
+			if (enemy.Get_Ani_Count() == file.Get_Enemy_Attack_Info(enemy.Get_Enemy_Type(), enemy.Get_Status() - Enemy_Status::E_Attack, Attack_Info::Attack_Hit_Delay))
+				Create_Hitting_Point(enemy, player, file, Hit_Owner::HO_Enemy, enemy.Get_Enemy_Type(), enemy.Get_Status() - Enemy_Status::E_Attack);
+			break;
+		case Enemy_Status::E_SkillQ:
+			if (enemy.Get_Ani_Count() == 19 || enemy.Get_Ani_Count() == 25 || enemy.Get_Ani_Count() == 31)
+				Create_Hitting_Point(enemy, player, file, Hit_Owner::HO_Enemy, enemy.Get_Enemy_Type(), enemy.Get_Status() - Enemy_Status::E_Attack);
+			break;
+		case Enemy_Status::E_SkillW:
+			if (enemy.Get_Ani_Count() == 22)
+				Create_Hitting_Point(enemy, player, file, Hit_Owner::HO_Enemy, enemy.Get_Enemy_Type(), enemy.Get_Status() - Enemy_Status::E_Attack);
+			break;
+		case Enemy_Status::E_SkillE:
+			if (enemy.Get_Ani_Count() == file.Get_Enemy_Attack_Info(enemy.Get_Enemy_Type(), enemy.Get_Status() - Enemy_Status::E_Attack, Attack_Info::Attack_Hit_Delay))
+				Create_Hitting_Point(enemy, player, file, Hit_Owner::HO_Enemy, enemy.Get_Enemy_Type(), enemy.Get_Status() - Enemy_Status::E_Attack);
+			else if (enemy.Get_Ani_Count() == 46)
+				Set_Enemy_Direction(map_d, player, index);
+			else if (enemy.Get_Ani_Count() > 60 && enemy.Get_Ani_Count() <= 75) {
+				Move_Enemy(map_d, player, index);
+				if (enemy.Get_Ani_Count() == 64 || enemy.Get_Ani_Count() == 67 || enemy.Get_Ani_Count() == 70)
+					Create_Hitting_Point(enemy, player, file, Hit_Owner::HO_Enemy, enemy.Get_Enemy_Type(), enemy.Get_Status() - Enemy_Status::E_Attack + 1);
+			}
+			break;
+		}
+		break;
+	case Enemy_Type::Dularn:
+		switch (enemy.Get_Status())
+		{
+		case Enemy_Status::E_Attack:
+			if (enemy.Get_Ani_Count() == file.Get_Enemy_Attack_Info(enemy.Get_Enemy_Type(), enemy.Get_Status() - Enemy_Status::E_Attack, Attack_Info::Attack_Hit_Delay)) {
+				Create_Hitting_Point(enemy, player, file, Hit_Owner::HO_Enemy, enemy.Get_Enemy_Type(), enemy.Get_Status() - Enemy_Status::E_Attack);
+			}
+			break;
+		case Enemy_Status::E_SkillQ:
+			if(enemy.Get_Ani_Count() == 22 || enemy.Get_Ani_Count() == 25 || enemy.Get_Ani_Count() == 28)
+				Create_Hitting_Point(enemy, player, file, Hit_Owner::HO_Enemy, enemy.Get_Enemy_Type(), enemy.Get_Status() - Enemy_Status::E_Attack);
+			break;
+		case Enemy_Status::E_SkillW:
+			if (enemy.Get_Ani_Count() == 17) {
+				Move_Enemy_Check(enemy, map_d, player, index, ((rand() % 2 == 0) ? 100 : 100), ((rand() % 2 == 0) ? 100 : 100));
+				Set_Enemy_Direction(map_d, player, index);
+			}
+			break;
+		case Enemy_Status::E_SkillE:
+			if (enemy.Get_Ani_Count() == 16) {
+				for (int direction = Object_Direction::Right; direction <= Object_Direction::DownRight; direction++) {
+					enemy.Set_Direction(direction);
+					Create_Hitting_Point(enemy, player, file, Hit_Owner::HO_Enemy, enemy.Get_Enemy_Type(), enemy.Get_Status() - Enemy_Status::E_Attack);
+				}
+				Set_Enemy_Direction(map_d, player, index);
+			}
+			break;
+		case Enemy_Status::E_SkillR:
+			if (enemy.Get_Ani_Count() == 19) 
 				Create_Hitting_Point(enemy, player, file, Hit_Owner::HO_Enemy, enemy.Get_Enemy_Type(), enemy.Get_Status() - Enemy_Status::E_Attack);
 			break;
 		}

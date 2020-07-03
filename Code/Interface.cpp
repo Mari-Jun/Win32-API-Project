@@ -178,6 +178,23 @@ void Paint_Enemy_Interface(HDC hdc, HDC bitdc, const RECT c_rect, const Enemy_In
 			case Enemy_Type::Dark_Flower:
 				wsprintf(str, _T("암흑속에 피어난 꽃"));
 				break;
+			case Enemy_Type::Grave:
+				wsprintf(str, _T("문지기"));
+				break;
+			case Enemy_Type::Zeffel:
+				wsprintf(str, _T("실패한 비밀 병기"));
+				break;
+			case Enemy_Type::Vagullion:
+				wsprintf(str, _T("공허한 존재"));
+				break;
+			case Enemy_Type::Liagty1:
+			case Enemy_Type::Liagty2:
+			case Enemy_Type::Liagty3:
+				wsprintf(str, _T("하피"));
+				break;
+			case Enemy_Type::Dularn:
+				wsprintf(str, _T("?"));
+				break;
 			default:
 				break;
 			}
@@ -240,7 +257,7 @@ void Clear_Interface::Set_Bitmap() {
 
 void Clear_Interface::Set_Item() {
 	for (int index = 0; index < 3; index++)
-		item[index] = rand() % 9;
+		item[index] = rand() % 10;
 }
 
 void Clear_Interface::Set_Gold(const Player& player, const Map_Dungeon& map_d) {
@@ -258,8 +275,19 @@ void Clear_Interface::Set_Gold(const Player& player, const Map_Dungeon& map_d) {
 	switch (map_d.Get_Dungeon_Type())
 	{
 	case Map_Type::Dungeon1:
-	case Map_Type::Dungeon2:
 		gold += 500;
+		break;
+	case Map_Type::Dungeon2:
+		gold += 2000;
+		break;
+	case Map_Type::Dungeon3:
+		gold += 3500;
+		break;
+	case Map_Type::Dungeon4:
+		gold += 5000;
+		break;
+	case Map_Type::Dungeon5:
+		gold += 7500;
 		break;
 	default:
 		break;
